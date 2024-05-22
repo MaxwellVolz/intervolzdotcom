@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>InterVolz Homepage</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto:wght@900&family=Rochester&family=Saira+Stencil+One&display=swap"
+        rel="stylesheet">
+
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" type="text/css" href="../css/bulma.min.css">
+    <link rel="stylesheet" type="text/css" href="../css/blog.css">
+
+</head>
+
+<body>
+    {{> navbar}} <!-- This includes the navbar partial -->
+
+    <section class="hero is-info is-medium is-bold">
+        <div class="hero-body">
+            <div class="container has-text-centered">
+                <h1 class="title">Lorem ipsum dolor sit amet, consectetur adipiscing elit, <br>sed eiusmod tempor
+                    incididunt ut labore et dolore magna aliqua</h1>
+            </div>
+        </div>
+    </section>
+
+    <section class="articles">
+        <div class="column is-8 is-offset-2">
+
+            <!-- START ARTICLE -->
+            <div class="card article">
+                <div class="card-content">
+                    <div class="media">
+                        <div class="media-content has-text-centered">
+
+                            {{#each articles}}
+                            <article>
+                                <div class="title_box">
+                                    <a href="w/{{URL}}">
+
+                                        <div class="title">{{Title}}</div>
+                                    </a>
+
+                                    <div class="date"><time datetime={{Date}}>{{humandate}}</time></div>
+                                </div>
+                                <div class="tldr">{{TLDR}}</div>
+
+                                <div class="has-text-centered">
+                                    {{#each Tags}}
+                                    <a href="/tags/{{this}}/" class="tag">{{this}}</a>
+                                    {{/each}}
+                                </div>
+
+                            </article>
+                            {{/each}}
+                            {{!-- button here for more articles --}}
+                            <div class="older_posts_container">
+                                <a href="/archive" class="more-articles-button">Older Posts</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+    </main>
+    <footer>
+        <!-- Footer content -->
+    </footer>
+</body>
+
+</html>

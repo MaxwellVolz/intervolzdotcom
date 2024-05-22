@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>{{{title}}}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto:wght@900&family=Rochester&family=Saira+Stencil+One&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="../css/bulma.min.css">
+    <link rel="stylesheet" type="text/css" href="../css/blog.css">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+    <script>
+        hljs.addPlugin(
+            new CopyButtonPlugin({
+                callback: (text, el) => console.log("Copied to clipboard", text),
+            })
+        );
+        hljs.highlightAll();
+    </script>
+
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    {{> navbar}} <!-- navbar partial -->
+
+    <section class="hero is-info is-medium is-bold">
+        <div class="hero-body">
+            <div class="container has-text-centered">
+                <h1 class="title">Lorem ipsum dolor sit amet, consectetur adipiscing elit, <br>sed eiusmod tempor
+                    incididunt ut labore et dolore magna aliqua</h1>
+            </div>
+        </div>
+    </section>
+
+    <section class="articles">
+        <div class="column is-8 is-offset-2">
+
+            <!-- START ARTICLE -->
+            <div class="card article">
+                <div class="card-content">
+                    <div class="media">
+                        <div class="media-content has-text-centered">
+
+
+
+                            <p class="title article-title">{{Title}}</p>
+                            <div class="tags has-addons level-item">
+                                <span class="tag is-rounded is-info">@maxwellwhatever</span>
+                                <span class="tag is-rounded">{{WordCount}} words</span>
+                                <span class="tag is-success is-rounded">{{ReadEstimate}} mins</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content article-body">
+                        {{{content}}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+    <main class="content">
+        <section>
+
+            <div class="content"></div>
+            <div class="tags">{{{Tags}}}</div>
+        </section>
+    </main>
+    <footer>
+        <!-- Your site's footer content -->
+
+
+    </footer>
+</body>
+
+</html>
