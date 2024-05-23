@@ -3,8 +3,8 @@
 @@Date: 1/11/2024
 @@TLDR: a short guide to how InterVolz.com and how it's made
 @@Tags: web,js,nodejs
-@@WordCount: 200
-@@ReadEstimate: 15
+@@WordCount: 400
+@@ReadEstimate: 12
 
 - [Overview](#overview)
   - [Key Features](#key-features)

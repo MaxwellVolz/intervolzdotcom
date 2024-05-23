@@ -4,12 +4,15 @@
   "description": "website",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "node scripts/static_site_generator.js",
-    "watch": "nodemon --watch articles -e md,json,yaml --exec \"npm run build\"",
-    "serve": "npx serve src",
-    "start": "concurrently \"npm run watch\" \"npm run serve\""
+    "start": "concurrently \"npm run watch\" \"npm run serve\"",
+    "dev": "nodemon server.js",
+    "build": "node scripts/static_site_generator.js && npm run build-css",
+    "serve": "serve public",
+    "watch": "nodemon --watch styles --watch articles --ext js,json,md,scss --watch templates --ext .hbs  --exec npm run build",
+    "build-css": "sass --watch styles/main.scss public/css/main.css --load-path=node_modules && postcss public/css/main.css --use autoprefixer -o public/css/main.css"
+
   },
+
   "repository": {
     "type": "git",
     "url": "git+https://github.com/InterVolz/intervolzdotcom.git"
@@ -27,10 +30,14 @@
     "markdown-it": "^14.0.0"
   },
   "devDependencies": {
+    "autoprefixer": "^10.4.19",
+    "bulma": "^1.0.1",
     "concurrently": "^8.2.2",
     "handlebars": "^4.7.8",
     "highlight.js": "^11.9.0",
     "markdown-it-anchor": "^8.6.7",
-    "nodemon": "^3.0.2"
+    "nodemon": "^3.0.2",
+    "postcss-cli": "^11.0.0",
+    "sass": "^1.77.2"
   }
 }

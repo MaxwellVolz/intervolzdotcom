@@ -3,7 +3,8 @@
 @@Date: 11/14/2023
 @@TLDR: optimized optimizing is optimal...
 @@Tags: programming
-
+@@WordCount: 151
+@@ReadEstimate: 12
 
 # Big O No(tation)
 

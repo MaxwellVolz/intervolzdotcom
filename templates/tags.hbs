@@ -14,8 +14,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 
-    <link rel="stylesheet" type="text/css" href="/css/bulma.min.css">
-    <link rel="stylesheet" type="text/css" href="/css/blog.css">
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <link rel="stylesheet" type="text/css" href="../css/tags.css">
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
@@ -45,7 +45,7 @@
 
                             <div class="tags-container">
                                 {{#each Tags}}
-                                <a href="/tags/{{tag}}/" class="tag" data-count="{{count}}">
+                                <a href="/tags/{{tag}}/" class="tag is-primary is-large" data-count="{{count}}">
                                     {{tag}} <span>({{count}})</span>
                                 </a>
                                 {{/each}}

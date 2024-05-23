@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>{{{title}}}</title>
+    <title></title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,7 +30,36 @@
 </head>
 
 <body>
-    {{> navbar}} <!-- navbar partial -->
+    <nav class="navbar">
+    <div class="container">
+        <div class="navbar-brand">
+            <a class="navbar-item" id="nav_logo" href="../">
+                <img src="../images/logo.png" alt="Logo">
+            </a>
+            <span class="navbar-burger burger" data-target="navbarMenu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </span>
+        </div>
+        <div id="navbarMenu" class="navbar-menu">
+            <div class="navbar-end">
+                <a class="navbar-item" href="/">
+                    ~/
+                </a>
+                <a class="navbar-item" href="/archive">
+                    ~/archive
+                </a>
+                <a class="navbar-item" href="/tags">
+                    ~/tags
+                </a>
+                <a class="navbar-item" href="/about">
+                    ~/about
+                </a>
+            </div>
+        </div>
+    </div>
+</nav> <!-- navbar partial -->
 
     <section class="hero is-info is-medium is-bold">
         <div class="hero-body">
@@ -52,16 +81,19 @@
 
 
 
-                            <p class="title article-title">{{Title}}</p>
+                            <p class="title article-title">Unix Shift</p>
                             <div class="tags has-addons level-item">
                                 <span class="tag is-rounded is-info">@maxwellwhatever</span>
-                                <span class="tag is-rounded">{{WordCount}} words</span>
-                                <span class="tag is-success is-rounded">{{ReadEstimate}} mins</span>
+                                <span class="tag is-rounded">30 words</span>
+                                <span class="tag is-success is-rounded">1 mins</span>
                             </div>
                         </div>
                     </div>
                     <div class="content article-body">
-                        {{{content}}}
+                        <p>Call a shell script, deal with the first param, and iterate until we are done.</p>
+<p>The <em>shift</em> command deletes parameter $1 and shifts each of the remaining parameters down by one.</p>
+<h2 id="example-use-cases" tabindex="-1"><a class="header-anchor" href="#example-use-cases">Example Use Cases</a></h2>
+
                     </div>
                 </div>
             </div>
@@ -72,7 +104,7 @@
         <section>
 
             <div class="content"></div>
-            <div class="tags">{{{Tags}}}</div>
+            <div class="tags">jenkins,web</div>
         </section>
     </main>
     <footer>

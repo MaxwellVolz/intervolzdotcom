@@ -19,7 +19,36 @@
 </head>
 
 <body>
-    {{> navbar}} <!-- This includes the navbar partial -->
+    <nav class="navbar">
+    <div class="container">
+        <div class="navbar-brand">
+            <a class="navbar-item" id="nav_logo" href="../">
+                <img src="../images/logo.png" alt="Logo">
+            </a>
+            <span class="navbar-burger burger" data-target="navbarMenu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </span>
+        </div>
+        <div id="navbarMenu" class="navbar-menu">
+            <div class="navbar-end">
+                <a class="navbar-item" href="/">
+                    ~/
+                </a>
+                <a class="navbar-item" href="/archive">
+                    ~/archive
+                </a>
+                <a class="navbar-item" href="/tags">
+                    ~/tags
+                </a>
+                <a class="navbar-item" href="/about">
+                    ~/about
+                </a>
+            </div>
+        </div>
+    </div>
+</nav> <!-- This includes the navbar partial -->
 
     <section class="hero is-info is-medium is-bold">
         <div class="hero-body has-text-centered">
@@ -76,27 +105,56 @@
                     <div class="media">
                         <div class="media-content has-text-centered">
 
-                            {{#each articles}}
                             <article>
                                 <div class="title_box">
-                                    <a href="w/{{URL}}">
+                                    <a href="w/static-website-2024">
 
-                                        <div class="title">{{Title}}</div>
+                                        <div class="title">Static Website Generator 2024</div>
                                     </a>
 
-                                    <div class="date"><time datetime={{Date}}>{{humandate}}</time></div>
+                                    <div class="date"><time datetime=1/11/2024></time></div>
                                 </div>
-                                <div class="tldr">{{TLDR}}</div>
+                                <div class="tldr">a short guide to how InterVolz.com and how it&#x27;s made</div>
 
                                 <div class="has-text-centered">
-                                    {{#each Tags}}
-                                    <a href="/tags/{{this}}/" class="tag">{{this}}</a>
-                                    {{/each}}
+                                    <a href="/tags/web/" class="tag">web</a>
+                                    <a href="/tags/js/" class="tag">js</a>
+                                    <a href="/tags/nodejs/" class="tag">nodejs</a>
                                 </div>
 
                             </article>
-                            {{/each}}
-                            {{!-- button here for more articles --}}
+                            <article>
+                                <div class="title_box">
+                                    <a href="w/higher-order-python">
+
+                                        <div class="title">Higher Order Functions in Python</div>
+                                    </a>
+
+                                    <div class="date"><time datetime=12/27/2023></time></div>
+                                </div>
+                                <div class="tldr">functions that funk with other functions</div>
+
+                                <div class="has-text-centered">
+                                    <a href="/tags/py/" class="tag">py</a>
+                                </div>
+
+                            </article>
+                            <article>
+                                <div class="title_box">
+                                    <a href="w/zero-to-python-1">
+
+                                        <div class="title">Zero to Python</div>
+                                    </a>
+
+                                    <div class="date"><time datetime=11/15/2023></time></div>
+                                </div>
+                                <div class="tldr">set up a new project on a new machine the modern way</div>
+
+                                <div class="has-text-centered">
+                                    <a href="/tags/py/" class="tag">py</a>
+                                </div>
+
+                            </article>
                             <div class="older_posts_container">
                                 <a href="/archive" class="more-articles-button">More</a>
                             </div>

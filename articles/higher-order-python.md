@@ -3,6 +3,8 @@
 @@Date: 12/27/2023
 @@TLDR: functions that funk with other functions
 @@Tags: py
+@@WordCount: 153
+@@ReadEstimate: 12
 
 ## Analogy
 

@@ -183,7 +183,7 @@ function generateSite(articles) {
 
     // Generate homepage with latest 5 articles
     const sortedArticles = articles.sort((a, b) => new Date(b.Date) - new Date(a.Date));
-    const homepageHtml = renderTemplate('templates/homepage.hbs', { articles: sortedArticles.slice(0, 5) });
+    const homepageHtml = renderTemplate('templates/homepage.hbs', { articles: sortedArticles.slice(0, 3) });
     log(sortedArticles[0]["URL"])
     fs.writeFileSync('./public/index.html', homepageHtml);
     log("Homepage generated with latest 5 articles.");

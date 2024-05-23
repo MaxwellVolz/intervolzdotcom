@@ -3,7 +3,8 @@
 @@Date: 11/15/2023
 @@TLDR: set up a new project on a new machine the modern way
 @@Tags: py
-@@Wordcount: 200
+@@WordCount: 500
+@@ReadEstimate: 13
 
 If you are on a machine where you're unsure about the versions of Python, pip, or other dependencies, you can follow these steps to ensure a smooth installation and setup process:
 

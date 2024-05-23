@@ -43,10 +43,10 @@ html,body {
     margin-top: 3rem;
   }
   .article, .promo-block {
-    margin-top: 1rem;
+    margin-top: 6rem;
   }
-  article{
-    margin-bottom: 2rem;
+  article {
+    margin-bottom:2rem;
   }
   div.column.is-8:first-child {
     padding-top: 0;

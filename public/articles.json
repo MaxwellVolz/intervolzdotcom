@@ -1,0 +1,68 @@
+[
+  {
+    "title": "Static Website Generator 2024",
+    "url": "intervolz.com/w/2024/01/static-website-2024",
+    "date": "1/11/2024",
+    "tags": [
+      "web",
+      "js",
+      "nodejs"
+    ],
+    "tldr": "a short guide to how InterVolz.com and how it's made"
+  },
+  {
+    "title": "Higher Order Functions in Python",
+    "url": "intervolz.com/w/2023/12/higher-order-python",
+    "date": "12/27/2023",
+    "tags": [
+      "py"
+    ],
+    "tldr": "functions that funk with other functions"
+  },
+  {
+    "title": "Zero to Python",
+    "url": "intervolz.com/w/2023/11/zero-to-python-1",
+    "date": "11/15/2023",
+    "tags": [
+      "py"
+    ],
+    "tldr": "set up a new project on a new machine the modern way"
+  },
+  {
+    "title": "Big O No",
+    "url": "intervolz.com/w/2023/11/big-o-no",
+    "date": "11/14/2023",
+    "tags": [
+      "programming"
+    ],
+    "tldr": "optimized optimizing is optimal..."
+  },
+  {
+    "title": "Unix Shift",
+    "url": "intervolz.com/w/1999/12/unix-shift",
+    "date": "12/20/1999",
+    "tags": [
+      "jenkins",
+      "web"
+    ],
+    "tldr": "upgrade ur shell script game with"
+  },
+  {
+    "title": "Converting Videos for Discord with Powershell",
+    "url": "intervolz.com/w/1999/11/discord-video-conversion",
+    "date": "11/25/1999",
+    "tags": [
+      "python"
+    ],
+    "tldr": "easily downsample to 9MB with"
+  },
+  {
+    "title": "Writing python in 2024",
+    "url": "intervolz.com/w/1999/11/python-in-2024",
+    "date": "11/15/1999",
+    "tags": [
+      "python"
+    ],
+    "tldr": "there is too many ways, this is the right one"
+  }
+]

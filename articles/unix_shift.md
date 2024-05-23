@@ -3,6 +3,8 @@
 @@Date: 12/20/1999
 @@TLDR: upgrade ur shell script game with
 @@Tags: jenkins,web
+@@WordCount: 30
+@@ReadEstimate: 1
 
 Call a shell script, deal with the first param, and iterate until we are done.
 

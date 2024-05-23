@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>{{{title}}}</title>
+    <title></title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,42 +23,36 @@
 </head>
 
 <body>
-    {{> navbar}} <!-- navbar partial -->
-
-    <section class="hero is-info is-medium is-bold">
-        <div class="hero-body">
-            <div class="container has-text-centered">
-                <h1 class="title">{{tag}}</h1>
+    <nav class="navbar">
+    <div class="container">
+        <div class="navbar-brand">
+            <a class="navbar-item" id="nav_logo" href="../">
+                <img src="../images/logo.png" alt="Logo">
+            </a>
+            <span class="navbar-burger burger" data-target="navbarMenu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </span>
+        </div>
+        <div id="navbarMenu" class="navbar-menu">
+            <div class="navbar-end">
+                <a class="navbar-item" href="/">
+                    ~/
+                </a>
+                <a class="navbar-item" href="/archive">
+                    ~/archive
+                </a>
+                <a class="navbar-item" href="/tags">
+                    ~/tags
+                </a>
+                <a class="navbar-item" href="/about">
+                    ~/about
+                </a>
             </div>
         </div>
-    </section>
-
-    <section class="articles">
-        <div class="column is-8 is-offset-2">
-
-            <!-- START ARTICLE -->
-            <div class="card article">
-                <div class="card-content">
-                    <div class="media">
-                        <div class="media-content has-text-centered">
-
-                            <h1></h1>
-                            <ul>
-                                {{#each articles}}
-                                <li>
-                                    <a href="/{{url}}">{{Title}}</a>
-                                </li>
-
-                                {{/each}}
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </section>
-
+    </div>
+</nav> <!-- navbar partial -->
 
     <section class="articles">
 
@@ -67,28 +61,25 @@
             <!-- START ARTICLE -->
             <div class="card article">
                 <div class="card-content">
-                    <div class="title">{{tag}}</div>
+                    <div class="title">programming</div>
 
                     <div class="media">
 
                         <div class="media-content has-text-centered">
 
-                            {{#each articles}}
                             <article>
                                 <div class="title_box">
-                                    <a href="w/{{URL}}">
+                                    <a href="w/big-o-no">
 
-                                        <div class="title">{{Title}}</div>
+                                        <div class="title">Big O No</div>
                                     </a>
 
-                                    <div class="date"><time datetime={{Date}}>{{humandate}}</time></div>
+                                    <div class="date"><time datetime=11/14/2023></time></div>
                                 </div>
-                                <div class="tldr">{{TLDR}}</div>
+                                <div class="tldr">optimized optimizing is optimal...</div>
 
                                 <div class="has-text-centered">
-                                    {{#each Tags}}
-                                    <a href="/tags/{{this}}/" class="tag">{{this}}</a>
-                                    {{/each}}
+                                    <a href="/tags/programming/" class="tag">programming</a>
                                 </div>
 
                             </article>

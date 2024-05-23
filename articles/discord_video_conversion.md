@@ -3,6 +3,8 @@
 @@Date: 11/25/1999
 @@TLDR: easily downsample to 9MB with 
 @@Tags: python
+@@WordCount: 200
+@@ReadEstimate: 5
 
 When writing modern Python, it is important to test your code thoroughly to ensure that it works as expected. One way to do this is by testing features at the implementation level and end-to-end. This means writing functions that call specific implementation details, such as *tokenize* and *parse* and *eval_exp*, explicitly so that you can catch errors and other behavior as close to the implementation as possible.
 

@@ -3,6 +3,8 @@
 @@Date: 11/15/1999
 @@TLDR: there is too many ways, this is the right one
 @@Tags: python
+@@WordCount: 370
+@@ReadEstimate: 9
 
 A new year. Things change. I changed. Last year I thought "Wow! This Poetry thing is nice and everyone should get on board."
 
