@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>InterVolz Homepage</title>
+    <title>IV: About</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -13,7 +13,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet" type="text/css" href="../css/main.css">
-    <link rel="stylesheet" type="text/css" href="../css/blog.css">
+    <link rel="stylesheet" type="text/css" href="../css/about.css">
+    <link rel="stylesheet" type="text/css" href="../css/logo_anim.css">
 
 </head>
 
@@ -21,11 +22,48 @@
     {{> navbar}} <!-- This includes the navbar partial -->
 
     <section class="hero is-info is-medium is-bold">
-        <div class="hero-body">
-            <div class="container has-text-centered">
-                <h1 class="title">Lorem ipsum dolor sit amet, consectetur adipiscing elit, <br>sed eiusmod tempor
-                    incididunt ut labore et dolore magna aliqua</h1>
+        <div class="hero-body has-text-centered">
+            <!--?xml version="1.0" encoding="UTF-8"?-->
+            <div id="svg_container">
+                <svg xmlns="http://www.w3.org/2000/svg" id="guide" height='220px' width='220px'
+                    viewBox="0 0 719.07 719.07">
+                    <defs>
+                        <style>
+                            .cls-1 {
+                                fill: none;
+                                stroke: #36454f;
+                                stroke-linecap: round;
+                                stroke-linejoin: round;
+                                stroke-width: 15px
+                            }
+
+                            .cls-2,
+                            .cls-3 {
+                                fill: #623d8a;
+                                stroke-width: 0
+                            }
+
+                            .cls-3 {
+                                fill: #7851a9
+                            }
+                        </style>
+                    </defs>
+                    <path d="M711.57 359.54 359.53 711.57v-277l156.94-156.94 195.1 81.91z" class="cls-3" />
+                    <path d="m711.57 359.54-195.1-81.91-156.94-156.94L202.6 277.63 7.5 359.54 359.53 7.5l352.04 352.04z"
+                        style="fill:#2b373f;stroke-width:0" />
+                    <path
+                        d="M516.47 277.63 359.53 434.57V120.69l156.94 156.94zM359.53 434.57v277L7.5 359.54l195.1-81.91 156.93 156.94z"
+                        class="cls-2" />
+                    <path d="M359.53 120.69v313.88L202.6 277.63l156.93-156.94z" class="cls-3" />
+                    <path
+                        d="m359.53 711.57 352.04-352.03M516.47 277.63 359.53 434.57M7.5 359.54 359.53 7.5l352.04 352.04-195.1-81.91-156.94-156.94"
+                        class="cls-1" />
+                    <path d="m202.6 277.63 156.93-156.94v313.88" class="cls-1" />
+                    <path d="M359.53 434.57v277L7.5 359.54l195.1-81.91 156.93 156.94z" class="cls-1" />
+                </svg>
             </div>
+
+        </div>
         </div>
     </section>
 
@@ -37,7 +75,25 @@
                 <div class="card-content">
                     <div class="media">
                         <div class="media-content has-text-centered">
-                            Yo
+
+
+                            <article>
+                                <div class="title">About</div>
+
+
+                                <div class="has-text-centered">
+                                    Welcome to Intervolz, a technical blog dedicated to programming and software
+                                    development. Whether you’re just dabbling in technology or trying new web
+                                    frameworks, we’ve got you covered.
+
+                                    Intervolz is run by a seasoned Python developer who knows their way around
+                                    modern
+                                    web frameworks, data analysis, and system architecture. Dive into our content
+                                    and
+                                    join us in exploring the ever-evolving world of technology.
+                                </div>
+
+                            </article>
                         </div>
                     </div>
                 </div>

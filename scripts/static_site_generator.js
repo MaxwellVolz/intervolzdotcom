@@ -89,6 +89,17 @@ function copyImages() {
         }
     });
     log('Images copied successfully.');
+
+    const srcPathVideo = './videos';
+    const destPathVideo = './public/videos';
+    ensureDirectoryExists(destPathVideo);
+    const filesVideo = fs.readdirSync(srcPathVideo);
+    filesVideo.forEach(file => {
+        if (file.endsWith('.mp4')) {
+            fs.copyFileSync(path.join(srcPathVideo, file), path.join(destPathVideo, file));
+        }
+    });
+    log('Images copied successfully.');
 }
 
 
@@ -160,6 +171,7 @@ function generateSite(articles) {
     });
 
     ensureDirectoryExists("public/tags");
+    log(tags)
     Object.keys(tags).forEach(tag => {
         const tagPageHtml = renderTemplate('templates/tag.hbs', { tag, articles: tags[tag] });
         fs.writeFileSync(`./public/tags/${tag}.html`, tagPageHtml);
@@ -230,6 +242,8 @@ function main() {
     } else {
         log("No markdown files found to generate the site.", 'error');
     }
+    fs.writeFileSync(`./public/about.html`, renderTemplate('templates/about.hbs', []));
+
 }
 
 main();  // Execute the script

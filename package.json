@@ -9,7 +9,8 @@
     "build": "node scripts/static_site_generator.js && npm run build-css",
     "serve": "serve public",
     "watch": "nodemon --watch styles --watch articles --ext js,json,md,scss --watch templates --ext .hbs  --exec npm run build",
-    "build-css": "sass --watch styles/main.scss public/css/main.css --load-path=node_modules && postcss public/css/main.css --use autoprefixer -o public/css/main.css"
+    "build-css": "sass --watch styles:public/css --load-path=node_modules && postcss public/css/main.css --use autoprefixer -o public/css/main.css"
+
 
   },
 

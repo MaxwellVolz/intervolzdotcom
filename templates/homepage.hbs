@@ -19,51 +19,13 @@
 </head>
 
 <body>
-    {{> navbar}} <!-- This includes the navbar partial -->
+    {{> navbar}}
 
     <section class="hero is-info is-medium is-bold">
         <div class="hero-body has-text-centered">
-            <!--?xml version="1.0" encoding="UTF-8"?-->
-            <div id="svg_container">
-                <svg xmlns="http://www.w3.org/2000/svg" id="guide" height='220px' width='220px'
-                    viewBox="0 0 719.07 719.07">
-                    <defs>
-                        <style>
-                            .cls-1 {
-                                fill: none;
-                                stroke: #36454f;
-                                stroke-linecap: round;
-                                stroke-linejoin: round;
-                                stroke-width: 15px
-                            }
-
-                            .cls-2,
-                            .cls-3 {
-                                fill: #623d8a;
-                                stroke-width: 0
-                            }
-
-                            .cls-3 {
-                                fill: #7851a9
-                            }
-                        </style>
-                    </defs>
-                    <path d="M711.57 359.54 359.53 711.57v-277l156.94-156.94 195.1 81.91z" class="cls-3" />
-                    <path d="m711.57 359.54-195.1-81.91-156.94-156.94L202.6 277.63 7.5 359.54 359.53 7.5l352.04 352.04z"
-                        style="fill:#2b373f;stroke-width:0" />
-                    <path
-                        d="M516.47 277.63 359.53 434.57V120.69l156.94 156.94zM359.53 434.57v277L7.5 359.54l195.1-81.91 156.93 156.94z"
-                        class="cls-2" />
-                    <path d="M359.53 120.69v313.88L202.6 277.63l156.93-156.94z" class="cls-3" />
-                    <path
-                        d="m359.53 711.57 352.04-352.03M516.47 277.63 359.53 434.57M7.5 359.54 359.53 7.5l352.04 352.04-195.1-81.91-156.94-156.94"
-                        class="cls-1" />
-                    <path d="m202.6 277.63 156.93-156.94v313.88" class="cls-1" />
-                    <path d="M359.53 434.57v277L7.5 359.54l195.1-81.91 156.93 156.94z" class="cls-1" />
-                </svg>
-            </div>
-
-        </div>
+            <video autoplay loop muted playsinline class="background-video">
+                <source src="videos/glitch.mp4" type="video/mp4">
+            </video>
         </div>
     </section>
 
