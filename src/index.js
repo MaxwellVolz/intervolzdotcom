@@ -2,7 +2,7 @@ import * as d3 from 'd3';
 import { feature } from 'topojson-client';
 // import land_data from '../data/land-110m.json';
 
-const dataPath = '../data/land-110m.json';
+const dataPath = 'https://intervolz.com/data/land-110m.json';
 
 
 // Dimensions and projection
