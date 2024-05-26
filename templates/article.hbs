@@ -10,8 +10,9 @@
         href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto:wght@900&family=Rochester&family=Saira+Stencil+One&display=swap"
         rel="stylesheet">
 
-    <link rel="stylesheet" type="text/css" href="../css/main.css">
-    <link rel="stylesheet" type="text/css" href="../css/blog.css">
+    <link rel="stylesheet" type="text/css" href="css/bulma.min.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" type="text/css" href="css/blog.css">
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
@@ -21,16 +22,37 @@
 </head>
 
 <body>
-    {{> navbar}} <!-- navbar partial -->
-
-    <section class="hero is-info is-medium is-bold">
-        <div class="hero-body">
-            <div class="container has-text-centered">
-                <h1 class="title">Lorem ipsum dolor sit amet, consectetur adipiscing elit, <br>sed eiusmod tempor
-                    incididunt ut labore et dolore magna aliqua</h1>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-brand">
+                <a class="navbar-item" id="nav_logo" href="../">
+                    <img src="images/logo.png" alt="Logo">
+                </a>
+                <span class="navbar-burger burger" data-target="navbarMenu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </span>
+            </div>
+            <div id="navbarMenu" class="navbar-menu">
+                <div class="navbar-end">
+                    <a class="navbar-item" href="/">
+                        ~/
+                    </a>
+                    <a class="navbar-item" href="/archive">
+                        ~/archive
+                    </a>
+                    <a class="navbar-item" href="/tags">
+                        ~/tags
+                    </a>
+                    <a class="navbar-item" href="/about">
+                        ~/about
+                    </a>
+                </div>
             </div>
         </div>
-    </section>
+    </nav>
+    <div id="world"></div>
 
     <section class="articles">
         <div class="column is-8 is-offset-2">
@@ -71,6 +93,8 @@
 
 
     </footer>
+    <script src="/bundle.js"></script>
+
 </body>
 
 </html>

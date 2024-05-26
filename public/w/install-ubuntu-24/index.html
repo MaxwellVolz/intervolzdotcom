@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title></title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto:wght@900&family=Rochester&family=Saira+Stencil+One&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="css/bulma.min.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" type="text/css" href="css/blog.css">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-brand">
+                <a class="navbar-item" id="nav_logo" href="../">
+                    <img src="images/logo.png" alt="Logo">
+                </a>
+                <span class="navbar-burger burger" data-target="navbarMenu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </span>
+            </div>
+            <div id="navbarMenu" class="navbar-menu">
+                <div class="navbar-end">
+                    <a class="navbar-item" href="/">
+                        ~/
+                    </a>
+                    <a class="navbar-item" href="/archive">
+                        ~/archive
+                    </a>
+                    <a class="navbar-item" href="/tags">
+                        ~/tags
+                    </a>
+                    <a class="navbar-item" href="/about">
+                        ~/about
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div id="world"></div>
+
+    <section class="articles">
+        <div class="column is-8 is-offset-2">
+
+            <!-- START ARTICLE -->
+            <div class="card article">
+                <div class="card-content">
+                    <div class="media">
+                        <div class="media-content has-text-centered">
+
+
+
+                            <p class="title article-title">Fresh Ubuntu 24</p>
+                            <div class="tags has-addons level-item">
+                                <span class="tag is-rounded is-info">@maxwellwhatever</span>
+                                <span class="tag is-rounded">151 words</span>
+                                <span class="tag is-success is-rounded">12 mins</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content article-body">
+                        <h1>Ubuntu Home Webserver</h1>
+<h2>What is it?</h2>
+<p>A home ser</p>
+<h2>Install Ubuntu</h2>
+<h3>Download Ubuntu ISO:</h3>
+<p>Visit <a href="https://ubuntu.com/download">Ubuntu Downloads</a>.
+Choose the version you want and download the ISO file.</p>
+<h3>On Linux</h3>
+<p>Double check your volumes.</p>
+<pre><code class="language-sh">sudo dd bs=4M if=/path/to/ubuntu.iso of=/dev/sdX status=progress oflag=sync
+</code></pre>
+<p>Replace <strong>/path/to/ubuntu.iso</strong> with the path to the ISO file and <strong>/dev/sdX</strong> with the USB drive (be very careful with this command as it can overwrite data).</p>
+<h3>On Windows &amp; Mac</h3>
+<ol>
+<li>Use Rufus</li>
+<li>Use Disk Partition</li>
+</ol>
+<h3>Boot from USB Drive:</h3>
+<ol>
+<li>Insert the bootable USB drive into the computer where you want to install Ubuntu.</li>
+<li>Restart the computer and enter the BIOS/UEFI settings (usually by pressing a key like F2, F12, DEL, or ESC during boot).</li>
+<li>Change the boot order to prioritize the USB drive.</li>
+<li>Save changes and exit.</li>
+</ol>
+<h2>System Setup</h2>
+<h3>Google Chrome</h3>
+<pre><code class="language-sh">sudo apt update
+
+# chrome
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+sudo dpkg -i google-chrome-stable_current_amd64.deb
+sudo apt-get install -f
+sudo apt update
+sudo apt upgrade google-chrome-stable
+
+</code></pre>
+<h3>Git, zsh, oh my zsh</h3>
+<pre><code class="language-sh">sudo apt install git
+sudo apt update
+
+sudo apt install zsh
+chsh -s $(which zsh)
+
+# open zsh
+sh -c &quot;$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)&quot;
+
+</code></pre>
+<h3>Jenkins with Github Credentials</h3>
+<pre><code class="language-sh">sudo apt update
+sudo apt install openjdk-11-jdk -y
+
+sudo wget -O /usr/share/keyrings/jenkins-keyring.asc \
+  https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+echo &quot;deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc]&quot; \
+  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list &gt; /dev/null
+sudo apt-get update
+sudo apt-get install jenkins
+</code></pre>
+<h3>Enable Jenkins service</h3>
+<pre><code>sudo systemctl start jenkins
+sudo systemctl enable jenkins
+</code></pre>
+<h3>Configure Firewall</h3>
+<pre><code class="language-sh">sudo ufw allow 8080
+sudo ufw status
+</code></pre>
+<h3></h3>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+    <main class="content">
+        <section>
+
+            <div class="content"></div>
+            <div class="tags">programming</div>
+        </section>
+    </main>
+    <footer>
+        <!-- Your site's footer content -->
+
+
+    </footer>
+    <script src="/bundle.js"></script>
+
+</body>
+
+</html>

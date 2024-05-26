@@ -10,20 +10,12 @@
         href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto:wght@900&family=Rochester&family=Saira+Stencil+One&display=swap"
         rel="stylesheet">
 
-    <link rel="stylesheet" type="text/css" href="../css/main.css">
-    <link rel="stylesheet" type="text/css" href="../css/blog.css">
+    <link rel="stylesheet" type="text/css" href="css/bulma.min.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" type="text/css" href="css/blog.css">
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
-
-    <script>
-        hljs.addPlugin(
-            new CopyButtonPlugin({
-                callback: (text, el) => console.log("Copied to clipboard", text),
-            })
-        );
-        hljs.highlightAll();
-    </script>
 
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -31,44 +23,36 @@
 
 <body>
     <nav class="navbar">
-    <div class="container">
-        <div class="navbar-brand">
-            <a class="navbar-item" id="nav_logo" href="../">
-                <img src="../images/logo.png" alt="Logo">
-            </a>
-            <span class="navbar-burger burger" data-target="navbarMenu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </span>
-        </div>
-        <div id="navbarMenu" class="navbar-menu">
-            <div class="navbar-end">
-                <a class="navbar-item" href="/">
-                    ~/
+        <div class="container">
+            <div class="navbar-brand">
+                <a class="navbar-item" id="nav_logo" href="../">
+                    <img src="images/logo.png" alt="Logo">
                 </a>
-                <a class="navbar-item" href="/archive">
-                    ~/archive
-                </a>
-                <a class="navbar-item" href="/tags">
-                    ~/tags
-                </a>
-                <a class="navbar-item" href="/about">
-                    ~/about
-                </a>
+                <span class="navbar-burger burger" data-target="navbarMenu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </span>
+            </div>
+            <div id="navbarMenu" class="navbar-menu">
+                <div class="navbar-end">
+                    <a class="navbar-item" href="/">
+                        ~/
+                    </a>
+                    <a class="navbar-item" href="/archive">
+                        ~/archive
+                    </a>
+                    <a class="navbar-item" href="/tags">
+                        ~/tags
+                    </a>
+                    <a class="navbar-item" href="/about">
+                        ~/about
+                    </a>
+                </div>
             </div>
         </div>
-    </div>
-</nav> <!-- navbar partial -->
-
-    <section class="hero is-info is-medium is-bold">
-        <div class="hero-body">
-            <div class="container has-text-centered">
-                <h1 class="title">Lorem ipsum dolor sit amet, consectetur adipiscing elit, <br>sed eiusmod tempor
-                    incididunt ut labore et dolore magna aliqua</h1>
-            </div>
-        </div>
-    </section>
+    </nav>
+    <div id="world"></div>
 
     <section class="articles">
         <div class="column is-8 is-offset-2">
@@ -92,7 +76,7 @@
                     <div class="content article-body">
                         <p>A new year. Things change. I changed. Last year I thought “Wow! This Poetry thing is nice and everyone should get on board.”</p>
 <p>I was wrong. I will keep the article up for setting up Python projects managed with Poetry but we are going a different direction now.</p>
-<h2 id="back-to-venv" tabindex="-1"><a class="header-anchor" href="#back-to-venv">Back to venv</a></h2>
+<h2>Back to venv</h2>
 <p>Poetry works well once configured but the bloat exceeds the benefits.</p>
 <ul>
 <li>Cumbersome to set up and configure correctly</li>
@@ -106,13 +90,13 @@
 <li>Compatible with a wider range of libraries and tools</li>
 <li>Comes installed with Python</li>
 </ul>
-<h2 id="pre-setup" tabindex="-1"><a class="header-anchor" href="#pre-setup">Pre-setup</a></h2>
+<h2>Pre-setup</h2>
 <p>Before setting up a virtual environment, it’s important to check which version of Python you have installed on your system. You can do this by running the following command in your terminal:</p>
 <pre><code class="language-sh">python --version
 # Python 3.12.2
 </code></pre>
 <p>If you don’t have Python installed, you can download and install the latest version from the <a href="https://www.python.org/">official Python website</a>.</p>
-<h3 id="setup" tabindex="-1"><a class="header-anchor" href="#setup">Setup</a></h3>
+<h3>Setup</h3>
 <p>To set up a virtual environment using venv, follow these steps:</p>
 <p><em>Tip: Creating is not activating</em></p>
 <pre><code class="language-sh"># Create a virtual environment
@@ -128,7 +112,7 @@ source venv/bin/activate # Unix
 # Deactivate venv
 deactivate
 </code></pre>
-<h3 id="general-workflow" tabindex="-1"><a class="header-anchor" href="#general-workflow">General Workflow</a></h3>
+<h3>General Workflow</h3>
 <p>BleedingEdgeTechPerson1999:</p>
 <blockquote>
 <p>Heyo, did you hear about that library <em>pandas</em>? I heard all the cool new data scientists are using it to <a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.describe.html">generate descriptive statistics</a>.</p>
@@ -142,7 +126,7 @@ source venv/bin/activate
 python -m pip install pandas
 python main.py
 </code></pre>
-<h2 id="prosper" tabindex="-1"><a class="header-anchor" href="#prosper">Prosper</a></h2>
+<h2>Prosper</h2>
 <p>Once you have activated the virtual environment, any packages or dependencies you install will only be available within that environment. This means you can safely test and develop your code without affecting other projects or the system Python installation.</p>
 
                     </div>
@@ -163,6 +147,8 @@ python main.py
 
 
     </footer>
+    <script src="/bundle.js"></script>
+
 </body>
 
 </html>

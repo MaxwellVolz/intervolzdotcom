@@ -13,9 +13,10 @@
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <link rel="stylesheet" type="text/css" href="css/bulma.min.css">
 
-    <link rel="stylesheet" type="text/css" href="../css/main.css">
-    <link rel="stylesheet" type="text/css" href="../css/tags.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" type="text/css" href="css/tags.css">
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
@@ -24,43 +25,43 @@
 
 <body>
     <nav class="navbar">
-    <div class="container">
-        <div class="navbar-brand">
-            <a class="navbar-item" id="nav_logo" href="../">
-                <img src="../images/logo.png" alt="Logo">
-            </a>
-            <span class="navbar-burger burger" data-target="navbarMenu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </span>
-        </div>
-        <div id="navbarMenu" class="navbar-menu">
-            <div class="navbar-end">
-                <a class="navbar-item" href="/">
-                    ~/
+        <div class="container">
+            <div class="navbar-brand">
+                <a class="navbar-item" id="nav_logo" href="../">
+                    <img src="images/logo.png" alt="Logo">
                 </a>
-                <a class="navbar-item" href="/archive">
-                    ~/archive
-                </a>
-                <a class="navbar-item" href="/tags">
-                    ~/tags
-                </a>
-                <a class="navbar-item" href="/about">
-                    ~/about
-                </a>
+                <span class="navbar-burger burger" data-target="navbarMenu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </span>
+            </div>
+            <div id="navbarMenu" class="navbar-menu">
+                <div class="navbar-end">
+                    <a class="navbar-item" href="/">
+                        ~/
+                    </a>
+                    <a class="navbar-item" href="/archive">
+                        ~/archive
+                    </a>
+                    <a class="navbar-item" href="/tags">
+                        ~/tags
+                    </a>
+                    <a class="navbar-item" href="/about">
+                        ~/about
+                    </a>
+                </div>
             </div>
         </div>
-    </div>
-</nav> <!-- navbar partial -->
+    </nav>
+    <div id="world"></div>
 
     <section class="hero is-info is-medium is-bold">
         <div class="hero-body has-text-centered">
-            <video autoplay loop muted playsinline class="background-video">
-                <source src="videos/glitch.mp4" type="video/mp4">
-            </video>
+
         </div>
     </section>
+
 
     <section class="articles">
         <div class="column is-8 is-offset-2">
@@ -72,8 +73,8 @@
                         <div class="media-content has-text-centered">
 
                             <div class="tags-container">
-                                <a href="/tags/programming/" class="tag is-primary is-large" data-count="1">
-                                    programming <span>(1)</span>
+                                <a href="/tags/programming/" class="tag is-primary is-large" data-count="2">
+                                    programming <span>(2)</span>
                                 </a>
                                 <a href="/tags/python/" class="tag is-primary is-large" data-count="2">
                                     python <span>(2)</span>
@@ -104,6 +105,8 @@
     <footer>
         <!-- Footer content -->
     </footer>
+    <script src="/bundle.js"></script>
+
 </body>
 
 </html>
