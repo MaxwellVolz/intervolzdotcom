@@ -112,9 +112,10 @@ const generateSite = articles => {
     const sortedArticles = articles.sort((a, b) => new Date(b.Date) - new Date(a.Date));
     fs.writeFileSync('./src/index.html', renderTemplate('templates/homepage.hbs', { articles: sortedArticles.slice(0, 5) }));
     log("Homepage generated with latest 5 articles.");
+    ensureDirectoryExists("public/archive");
 
     const groupedArticles = groupArticlesByYear(articles);
-    fs.writeFileSync('./public/archive.html', renderTemplate('templates/archive.hbs', { years: groupedArticles }));
+    fs.writeFileSync('./public/archive/index.html', renderTemplate('templates/archive.hbs', { years: groupedArticles }));
     log("Archive page generated with articles organized by year.");
 };
 
@@ -144,7 +145,9 @@ const main = () => {
     } else {
         log("No markdown files found to generate the site.", 'error');
     }
-    fs.writeFileSync(`./public/about.html`, renderTemplate('templates/about.hbs', []));
+    ensureDirectoryExists("public/about");
+
+    fs.writeFileSync(`./public/about/index.html`, renderTemplate('templates/about.hbs', []));
 };
 
 main();
