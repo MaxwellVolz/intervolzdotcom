@@ -12,6 +12,7 @@ const TagsChart = () => {
     const theme = useTheme();
     const { articles, loading } = useArticles();
     const [chartData, setChartData] = useState({ labels: [], datasets: [] });
+    const [activeIndex, setActiveIndex] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -53,6 +54,15 @@ const TagsChart = () => {
                     stepSize: 1, // Ensure X-axis displays whole numbers
                 },
             },
+            y: {
+                ticks: {
+                    color: (context) => {
+                        return activeIndex !== null && context.index === activeIndex
+                            ? theme.palette.primary.main
+                            : "#999999";
+                    },
+                },
+            },
         },
         plugins: {
             legend: {
@@ -68,6 +78,13 @@ const TagsChart = () => {
                 titleColor: theme.palette.text.primary,
                 bodyColor: theme.palette.text.secondary,
             },
+        },
+        onHover: (event, elements) => {
+            if (elements.length > 0) {
+                setActiveIndex(elements[0].index);
+            } else {
+                setActiveIndex(null);
+            }
         },
         onClick: (event, elements) => {
             if (elements.length > 0) {

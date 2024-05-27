@@ -12,8 +12,8 @@ const ThemeSwitcher = () => {
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     const themes = [
-        { name: 'light', color: '#f5f5f5', icon: <Brightness7Icon /> },
         { name: 'dark', color: '#424242', icon: <Brightness4Icon /> },
+        { name: 'light', color: '#f5f5f5', icon: <Brightness7Icon /> },
         { name: 'blue', color: '#3f51b5', icon: <PaletteIcon /> },
         { name: 'green', color: '#4caf50', icon: <PaletteIcon /> },
     ];
