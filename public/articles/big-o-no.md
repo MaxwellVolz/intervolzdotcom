@@ -1,4 +1,4 @@
-@@Title: Big O No
+@@Title: Big O (No!)
 @@URL: big-o-no
 @@Date: 11/14/2023
 @@TLDR: optimized optimizing is optimal...

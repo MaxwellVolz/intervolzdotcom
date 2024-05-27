@@ -25,10 +25,16 @@ const ArticleList = ({ limit }) => {
                         borderRadius: '8px'
                     }}
                 >
-                    <Typography variant="h3" component="h2" gutterBottom>
-                        {article.Title}
+                    <Typography variant="h2" component="h2" gutterBottom>
+                        <Link
+                            component={RouterLink}
+                            to={`/articles/${article.URL}`}
+                            style={{ textDecoration: 'none', color: 'inherit' }}
+                        >
+                            {article.Title}
+                        </Link>
                     </Typography>
-                    <Typography variant="h5" component="p" style={{ fontSize: '1.5em' }}>
+                    <Typography variant="h3" component="p" style={{ fontSize: '1.5em' }}>
                         {article.TLDR}
                     </Typography>
                     <Box mt={4}>
