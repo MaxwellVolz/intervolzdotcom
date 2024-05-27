@@ -59,7 +59,7 @@ const TagsChart = () => {
                     color: (context) => {
                         return activeIndex !== null && context.index === activeIndex
                             ? theme.palette.primary.main
-                            : "#999999";
+                            : "#666666";
                     },
                 },
             },
