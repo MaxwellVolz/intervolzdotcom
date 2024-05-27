@@ -10,7 +10,11 @@
 
 ## What is it?
 
-A home ser
+A home server for our websites! And hosting whatever we want! Free from the shackles (heh) of AWS. AWS is amazing. I just don't wanna pay...
+
+We will be setting up a homeserver from scratch on an old box we have laying around.
+
+Let's get to it.
 
 ## Install Ubuntu
 

@@ -36,6 +36,15 @@
     "ReadEstimate": 12
   },
   {
+    "Title": "Walkthrough - Making this website with React + Material UI with an Express backend",
+    "URL": "making-this-01",
+    "Date": "5/27/2024",
+    "TLDR": "spent a few more hours than I'd like to admit rolling my own over the weekend. miss the features, miss the fun, miss the hooks, it's react time...",
+    "Tags": "web,js,node",
+    "WordCount": 151,
+    "ReadEstimate": 12
+  },
+  {
     "Title": "Writing python in 2024",
     "URL": "python-in-2024",
     "Date": "11/15/2023",

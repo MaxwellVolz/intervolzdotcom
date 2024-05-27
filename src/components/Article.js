@@ -4,11 +4,13 @@ import { useParams } from 'react-router-dom';
 import useArticles from '../hooks/useArticles';
 import Markdown from 'markdown-to-jsx';
 import { Box, Button, Container, Chip, Typography, CircularProgress, Tooltip, useTheme } from '@mui/material';
-import './Article.css'; // Custom styles
 import AbcIcon from '@mui/icons-material/Abc';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import EventIcon from '@mui/icons-material/Event';
-import { Link } from 'react-router-dom';
+import LinkIcon from '@mui/icons-material/Link';
+import CustomCodeBlock from './CustomCodeBlock';
+import './Article.css';
+import { Link as RouterLink } from 'react-router-dom';
 
 const Article = () => {
     const { url } = useParams();
@@ -18,12 +20,7 @@ const Article = () => {
 
     useEffect(() => {
         if (!loading) {
-            console.log("Articles:", articles); // Debug articles array
-            console.log("URL Param:", url); // Debug URL parameter
-
             const article = articles.find(article => article.URL === url);
-            console.log("Matched Article:", article); // Debug matched article
-
             if (article) {
                 fetch(`${process.env.PUBLIC_URL}/articles/${article.URL}.md`)
                     .then(response => {
@@ -77,7 +74,7 @@ const Article = () => {
                     <Chip
                         key={tag.trim()}
                         label={tag.trim()}
-                        component={Link}
+                        component={RouterLink}
                         to={`/tags/${tag.trim()}`}
                         clickable
                         style={{ marginRight: '0.5em', marginBottom: '0.5em', backgroundColor: theme.palette.background.default, color: theme.palette.text.primary }}
@@ -85,10 +82,25 @@ const Article = () => {
                 ))}
             </Box>
             <Box mt={4}>
-                <Markdown options={{ overrides: { a: { component: Link, props: { style: { color: theme.palette.primary.main } } } } }}>{markdownContent}</Markdown>
+                <Markdown
+                    options={{
+                        overrides: {
+                            pre: {
+                                component: ({ children }) => <div>{children}</div>,
+                            },
+                            code: {
+                                component: CustomCodeBlock,
+                            },
+                        },
+                    }}
+                >
+                    {markdownContent}
+                </Markdown>
             </Box>
             <Box mt={2} mb={4}>
-                <Button color="primary" component={Link} to="/archive" variant="contained">To Archive</Button>
+                <Button color="primary" component="a" href="https://maxwellvolz.com" target="_blank" rel="noopener noreferrer" variant="contained" startIcon={<LinkIcon />}>
+                    Personal Site
+                </Button>
             </Box>
         </Container>
     );
