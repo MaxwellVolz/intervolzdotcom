@@ -1,6 +1,6 @@
 @@Title: Writing python in 2024
 @@URL: python-in-2024
-@@Date: 11/15/1999
+@@Date: 11/15/2023
 @@TLDR: there is too many ways, this is the right one
 @@Tags: python
 @@WordCount: 370

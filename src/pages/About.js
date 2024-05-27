@@ -1,7 +1,8 @@
 // src/pages/About.js
 import React from 'react';
-import { Box, Container, Typography, useTheme } from '@mui/material';
+import { Box, Button, Link, Container, Typography, useTheme } from '@mui/material';
 import './About.css';
+import LinkIcon from '@mui/icons-material/Link';
 
 const About = () => {
     const theme = useTheme();
@@ -26,6 +27,14 @@ const About = () => {
                 <Typography variant="h2" component="p" paragraph style={{ color: theme.palette.text.secondary }}>
                     Hopefully you can find some value in the tutorials, walkthroughs, rants(?), and use it to make something you like.
                 </Typography>
+                <br />
+
+
+                <Box mt={2} mb={4} style={{ marginBottom: "0" }}>
+                    <Button color="primary" component="a" href="https://maxwellvolz.com" target="_blank" rel="noopener noreferrer" variant="contained" startIcon={<LinkIcon />}>
+                        Personal Site
+                    </Button>
+                </Box>
             </Box>
         </Container>
     );

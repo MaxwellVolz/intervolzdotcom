@@ -1,6 +1,6 @@
 [
   {
-    "Title": "Big O No",
+    "Title": "Big O (No!)",
     "URL": "big-o-no",
     "Date": "11/14/2023",
     "TLDR": "optimized optimizing is optimal...",
@@ -11,7 +11,7 @@
   {
     "Title": "Converting Videos for Discord with Powershell",
     "URL": "discord-video-conversion",
-    "Date": "11/25/1999",
+    "Date": "11/25/2023",
     "TLDR": "easily downsample to 9MB with ",
     "Tags": "python",
     "WordCount": 200,
@@ -38,7 +38,7 @@
   {
     "Title": "Writing python in 2024",
     "URL": "python-in-2024",
-    "Date": "11/15/1999",
+    "Date": "11/15/2023",
     "TLDR": "there is too many ways, this is the right one",
     "Tags": "python",
     "WordCount": 370,
@@ -56,7 +56,7 @@
   {
     "Title": "Unix Shift",
     "URL": "unix-shift",
-    "Date": "12/20/1999",
+    "Date": "12/20/2023",
     "TLDR": "upgrade ur shell script game with",
     "Tags": "jenkins,web",
     "WordCount": 30,

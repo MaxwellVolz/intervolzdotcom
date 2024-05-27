@@ -1,6 +1,6 @@
 @@Title: Converting Videos for Discord with Powershell
 @@URL: discord-video-conversion
-@@Date: 11/25/1999
+@@Date: 11/25/2023
 @@TLDR: easily downsample to 9MB with 
 @@Tags: python
 @@WordCount: 200
