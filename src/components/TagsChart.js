@@ -67,18 +67,6 @@ const TagsChart = () => {
                 bodyColor: theme.palette.text.secondary,
             },
         },
-        onClick: (event, element) => {
-            if (element.length > 0) {
-                const index = element[0].index;
-                const tag = chartData.labels[index];
-                window.location.href = `/tags/${tag}`;
-            }
-        },
-        hover: {
-            onHover: (event, chartElement) => {
-                event.native.target.style.cursor = chartElement[0] ? 'pointer' : 'default';
-            },
-        },
     };
 
     return (
