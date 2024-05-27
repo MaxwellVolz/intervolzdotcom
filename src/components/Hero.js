@@ -1,15 +1,11 @@
+// src/components/Hero.js
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 
 const Hero = () => (
-    <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="100vh"
-        bgcolor="grey.100"
-    >
-        <Typography variant="h1" align="center">Welcome to Intervolz</Typography>
+    <Box className="hero">
+        <Typography variant="h2" component="h1">Welcome to Intervolz</Typography>
+        <Typography variant="h5">Explore our articles and learn something new today!</Typography>
     </Box>
 );
 

@@ -1,29 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import LoadingScreen from '../components/LoadingScreen';
-import Hero from '../components/Hero';
-// import ArticleList from '../components/ArticleList';
-// import articles from '../articles';
-import { Link } from 'react-router-dom';
+// src/pages/Home.js
+import React from 'react';
+import ArticleList from '../components/ArticleList';
+import { Container, Typography } from '@mui/material';
 
 const Home = () => {
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        setTimeout(() => setLoading(false), 3000); // simulate loading delay
-    }, []);
-
-    // const latestArticles = articles.slice(0, 5);
-
     return (
-        <div>
-            {loading ? <LoadingScreen /> : (
-                <>
-                    <Hero />
-                    <Link to="/article/big-o-no">Read Big O No</Link>
-                    {/* <ArticleList articles={latestArticles} /> */}
-                </>
-            )}
-        </div>
+        <Container maxWidth="lg" style={{ paddingTop: '2em' }}>
+            <Typography variant="h4" component="h1" gutterBottom>
+                Home
+            </Typography>
+            <ArticleList limit={3} />
+        </Container>
     );
 };
 

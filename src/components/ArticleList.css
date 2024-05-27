@@ -1,0 +1,19 @@
+body {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-family: Arial, sans-serif;
+}
+
+.article-box {
+    padding: 4em;
+    margin-bottom: 4em;
+    border-radius: 8px;
+}
+
+.article-link {
+    margin-right: 1em;
+    text-decoration: none;
+    color: #007bff;
+    font-size: 1.25em;
+}

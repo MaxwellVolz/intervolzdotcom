@@ -1,13 +1,15 @@
+// src/pages/Archive.js
 import React from 'react';
-import { Box, Typography } from '@mui/material';
 import ArticleList from '../components/ArticleList';
-// import articles from '../articles';
+import { Container, Typography } from '@mui/material';
 
-const Archive = () => (
-    <Box>
-        <Typography variant="h3" p={4}>Archive</Typography>
-        {/* <ArticleList articles={articles} /> */}
-    </Box>
-);
+const Archive = () => {
+    return (
+        <Container maxWidth="lg" style={{ paddingTop: '2em' }}>
+
+            <ArticleList />
+        </Container>
+    );
+};
 
 export default Archive;
