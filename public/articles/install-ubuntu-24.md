@@ -2,7 +2,7 @@
 @@URL: install-ubuntu-24
 @@Date: 5/25/2024
 @@TLDR: because a fresh system is a fast system...
-@@Tags: programming
+@@Tags: unix
 @@WordCount: 151
 @@ReadEstimate: 12
 

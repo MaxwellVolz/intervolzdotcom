@@ -2,7 +2,7 @@
 @@URL: big-o-no
 @@Date: 11/14/2023
 @@TLDR: optimized optimizing is optimal...
-@@Tags: programming
+@@Tags: cs
 @@WordCount: 151
 @@ReadEstimate: 12
 

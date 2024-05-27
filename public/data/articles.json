@@ -4,7 +4,7 @@
     "URL": "big-o-no",
     "Date": "11/14/2023",
     "TLDR": "optimized optimizing is optimal...",
-    "Tags": "programming",
+    "Tags": "cs",
     "WordCount": 151,
     "ReadEstimate": 12
   },
@@ -13,7 +13,7 @@
     "URL": "discord-video-conversion",
     "Date": "11/25/2023",
     "TLDR": "easily downsample to 9MB with ",
-    "Tags": "python",
+    "Tags": "py",
     "WordCount": 200,
     "ReadEstimate": 5
   },
@@ -31,7 +31,7 @@
     "URL": "install-ubuntu-24",
     "Date": "5/25/2024",
     "TLDR": "because a fresh system is a fast system...",
-    "Tags": "programming",
+    "Tags": "unix",
     "WordCount": 151,
     "ReadEstimate": 12
   },
@@ -58,7 +58,7 @@
     "URL": "python-in-2024",
     "Date": "11/15/2023",
     "TLDR": "there is too many ways, this is the right one",
-    "Tags": "python",
+    "Tags": "py",
     "WordCount": 370,
     "ReadEstimate": 9
   },
@@ -67,7 +67,7 @@
     "URL": "static-website-2024",
     "Date": "1/11/2024",
     "TLDR": "a short guide to how InterVolz.com and how it's made",
-    "Tags": "web,js,nodejs",
+    "Tags": "web,js,node",
     "WordCount": 400,
     "ReadEstimate": 12
   },

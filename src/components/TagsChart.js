@@ -2,9 +2,9 @@
 import React, { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { Box, useTheme, Card, CardContent, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import useArticles from '../hooks/useArticles';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
-// import { Link } from 'react-router-dom';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -12,6 +12,7 @@ const TagsChart = () => {
     const theme = useTheme();
     const { articles, loading } = useArticles();
     const [chartData, setChartData] = useState({ labels: [], datasets: [] });
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (!loading) {
@@ -44,11 +45,12 @@ const TagsChart = () => {
     const chartOptions = {
         responsive: true,
         maintainAspectRatio: false,
+        indexAxis: 'y', // Make the bars horizontal
         scales: {
-            y: {
+            x: {
                 beginAtZero: true,
                 ticks: {
-                    stepSize: 1, // Ensure Y-axis displays whole numbers
+                    stepSize: 1, // Ensure X-axis displays whole numbers
                 },
             },
         },
@@ -66,6 +68,13 @@ const TagsChart = () => {
                 titleColor: theme.palette.text.primary,
                 bodyColor: theme.palette.text.secondary,
             },
+        },
+        onClick: (event, elements) => {
+            if (elements.length > 0) {
+                const index = elements[0].index;
+                const tag = chartData.labels[index];
+                navigate(`/tags/${tag}`);
+            }
         },
     };
 

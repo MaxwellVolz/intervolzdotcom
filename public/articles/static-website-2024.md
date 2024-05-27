@@ -2,7 +2,7 @@
 @@URL: static-website-2024
 @@Date: 1/11/2024
 @@TLDR: a short guide to how InterVolz.com and how it's made
-@@Tags: web,js,nodejs
+@@Tags: web,js,node
 @@WordCount: 400
 @@ReadEstimate: 12
 

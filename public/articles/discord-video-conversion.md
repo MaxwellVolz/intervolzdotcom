@@ -2,7 +2,7 @@
 @@URL: discord-video-conversion
 @@Date: 11/25/2023
 @@TLDR: easily downsample to 9MB with 
-@@Tags: python
+@@Tags: py
 @@WordCount: 200
 @@ReadEstimate: 5
 

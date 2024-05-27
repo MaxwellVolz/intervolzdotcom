@@ -2,7 +2,7 @@
 @@URL: python-in-2024
 @@Date: 11/15/2023
 @@TLDR: there is too many ways, this is the right one
-@@Tags: python
+@@Tags: py
 @@WordCount: 370
 @@ReadEstimate: 9
 
