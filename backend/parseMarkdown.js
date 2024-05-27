@@ -2,7 +2,7 @@ const fs = require('fs-extra');
 const path = require('path');
 
 const articlesDir = path.join(__dirname, '../public/articles');
-const outputDir = path.join(__dirname, '/public/data');
+const outputDir = path.join(__dirname, '../public/data');
 
 const requiredFields = ['Title', 'URL', 'Date', 'TLDR', 'Tags', 'WordCount', 'ReadEstimate'];
 

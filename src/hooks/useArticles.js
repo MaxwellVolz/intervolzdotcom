@@ -1,4 +1,3 @@
-// src/hooks/useArticles.js
 import { useState, useEffect } from 'react';
 
 const useArticles = () => {
@@ -6,15 +5,20 @@ const useArticles = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('http://localhost:5000/public/data/articles.json') // Adjust the path to your articles API or static files
-            .then(response => response.json())
+        fetch('/data/articles.json') // Use relative path to the public directory
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => {
                 const sortedArticles = data.sort((a, b) => new Date(b.Date) - new Date(a.Date));
                 setArticles(sortedArticles);
                 setLoading(false);
             })
             .catch(error => {
-                console.error('Error fetching articles:', error);
+                console.error('Error fetching the articles:', error);
                 setLoading(false);
             });
     }, []);
