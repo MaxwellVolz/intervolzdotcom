@@ -44,10 +44,11 @@ src/
 ├── index.css
 └── index.js
 backend/
-├── data/
-│   ├── articles.json
-├── parseMarkdown.css
-└── server.js - :5000
+├── public/
+│   ├── data/
+│   │   ├── articles.json
+│   ├── parseMarkdown.css
+└── server.js
 
 ```
 

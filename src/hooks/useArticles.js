@@ -6,11 +6,15 @@ const useArticles = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('/data/articles.json')// Adjust the path to your articles API or static files
+        fetch('http://localhost:5000/public/data/articles.json') // Adjust the path to your articles API or static files
             .then(response => response.json())
             .then(data => {
                 const sortedArticles = data.sort((a, b) => new Date(b.Date) - new Date(a.Date));
                 setArticles(sortedArticles);
+                setLoading(false);
+            })
+            .catch(error => {
+                console.error('Error fetching articles:', error);
                 setLoading(false);
             });
     }, []);
