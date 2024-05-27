@@ -1,34 +1,33 @@
-// src/pages/Home.js
+// src/pages/About.js
 import React from 'react';
-import ArticleList from '../components/ArticleList';
-import { Box, Container, Typography } from '@mui/material';
-import './Home.css';
+import { Box, Container, Typography, useTheme } from '@mui/material';
+import './About.css';
 
 const About = () => {
+    const theme = useTheme();
+
     return (
-        <Container maxWidth="lg" style={{ paddingTop: '2em' }}>
+        <Container maxWidth="lg" style={{ paddingTop: '2em', backgroundColor: theme.palette.background.default, color: theme.palette.text.primary }}>
             <Box className="hero">
-                <Typography variant="h1" component="h1">About</Typography>
+                <Typography variant="h1" component="h1" gutterBottom style={{ color: theme.palette.primary.main }}>
+                    About
+                </Typography>
             </Box>
-            <Container maxWidth="lg" className="article-container">
-                <Box className="hero">
-                    <Typography variant="h2" component="p" paragraph>
-                        Welcome to InterVolz! A place for me to formalize documentation I enjoy writing into articles, for you!
-                    </Typography>
-                    <Typography variant="h2" component="p" paragraph>
+            <Box style={{ backgroundColor: theme.palette.background.paper, padding: theme.spacing(4), borderRadius: theme.shape.borderRadius }}>
 
-                        Including a variety of topics, including web development, Python programming, and making things.
-                    </Typography>
-
-                    <Typography variant="h2" component="p" paragraph>
-
-                        The goal here is to share knowledge and experiences through detailed tutorials, project walkthroughs, and insightful articles that inspire and educate.
-                    </Typography>
-                </Box>
-
-            </Container>
+                <Typography variant="h2" component="p" paragraph style={{ color: theme.palette.text.secondary }}>
+                    Welcome to InterVolz! A place for me to formalize documentation I enjoy writing into articles, for you!
+                </Typography>
+                <br />
+                <Typography variant="h2" component="p" paragraph style={{ color: theme.palette.text.secondary }}>
+                    Topics include web development, JavaScript, Python, and more!
+                </Typography>
+                <br />
+                <Typography variant="h2" component="p" paragraph style={{ color: theme.palette.text.secondary }}>
+                    Hopefully you can find some value in the tutorials, walkthroughs, rants(?), and use it to make something you like.
+                </Typography>
+            </Box>
         </Container>
-
     );
 };
 

@@ -5,7 +5,7 @@ import { createTheme, ThemeProvider as MuiThemeProvider } from '@mui/material/st
 const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
-    const [themeName, setThemeName] = useState('light');
+    const [themeName, setThemeName] = useState('dark');
 
     const theme = useMemo(() => createTheme(getThemeOptions(themeName)), [themeName]);
 
