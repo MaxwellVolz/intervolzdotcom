@@ -82,3 +82,32 @@ but we need a way to parse the article markdown into a json to use for the pages
 lets make this a backend task.
 
 our currnet /backend is containing our express code we will implement later but lets keep that in mind
+
+
+lets make a new component for our Home Page.
+
+it should render to half the container width
+
+it should be a line plot with articles 
+x-axis is month
+y-axis is num of articles
+
+```json
+  {
+    "Title": "Big O No",
+    "URL": "big-o-no",
+    "Date": "11/14/2023",
+```
+
+
+- site needs uuid
+
+
+
+mobiles
+
+articles month and tag should be stackeed
+
+
+tags horizontal bars with links back in
+

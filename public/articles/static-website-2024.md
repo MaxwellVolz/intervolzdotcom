@@ -1,6 +1,6 @@
-@@Title: Static Website Generator 2024
-@@URL: static-website-2024
-@@Date: 1/11/2024
+@@Title: Static Website Generator - depreciated
+@@URL: static-website-2023
+@@Date: 11/19/2023
 @@TLDR: a short guide to how InterVolz.com and how it's made
 @@Tags: web,js,node
 @@WordCount: 400

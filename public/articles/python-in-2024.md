@@ -1,14 +1,14 @@
 @@Title: Writing python in 2024
 @@URL: python-in-2024
-@@Date: 11/15/2023
+@@Date: 1/15/2024
 @@TLDR: there is too many ways, this is the right one
 @@Tags: py
 @@WordCount: 370
 @@ReadEstimate: 9
 
-A new year. Things change. I changed. Last year I thought "Wow! This Poetry thing is nice and everyone should get on board."
+A new year. Things change. I changed. Last year I thought "Wow! This Poetry thing is nice and everyone should get onboard."
 
-I was wrong. I will keep the article up for setting up Python projects managed with Poetry but we are going a different direction now.
+I was wrong. I will keep the article up for reference, but we are done doing that.
 
 ## Back to venv
 
@@ -16,13 +16,11 @@ Poetry works well once configured but the bloat exceeds the benefits.
 
 - Cumbersome to set up and configure correctly
 - Does not play nice with certain libraries or tools (unacceptable)
-- My hammer does not need a screwdriver on the handle
 
 In contrast, [venv](https://docs.python.org/3/library/venv.html) is:
 
-- Widely used
-- Easier to debug
-- Compatible with a wider range of libraries and tools
+- Widely used and easier to debug
+- Compatible with a wider range of libraries and tools, all of them.
 - Comes installed with Python
 
 ## Pre-setup
@@ -59,14 +57,6 @@ deactivate
 
 ### General Workflow
 
-BleedingEdgeTechPerson1999:
-
-> Heyo, did you hear about that library *pandas*? I heard all the cool new data scientists are using it to [generate descriptive statistics](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.describe.html). 
-
-FollowerOfThisTutorialPerson:
-
-> Sounds neat! I just set up a new Python project using *venv*. I can easily add *pandas* to the isolated environment I made just made.
-
 ```sh
 cd new_project
 source venv/bin/activate
@@ -77,3 +67,4 @@ python main.py
 ## Prosper
 
 Once you have activated the virtual environment, any packages or dependencies you install will only be available within that environment. This means you can safely test and develop your code without affecting other projects or the system Python installation.
+

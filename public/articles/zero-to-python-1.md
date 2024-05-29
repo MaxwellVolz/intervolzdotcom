@@ -1,4 +1,4 @@
-@@Title: Zero to Python
+@@Title: Zero to Python - depreciated
 @@URL: zero-to-python-1
 @@Date: 11/15/2023
 @@TLDR: set up a new project on a new machine the modern way

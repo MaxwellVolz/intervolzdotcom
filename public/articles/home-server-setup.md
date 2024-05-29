@@ -1,7 +1,7 @@
-@@Title: Fresh Ubuntu 24
-@@URL: install-ubuntu-24
+@@Title: Home Server Setup
+@@URL: home-server-setup
 @@Date: 5/25/2024
-@@TLDR: because a fresh system is a fast system...
+@@TLDR: Setting up a homeserver with Ubuntu 24, basic tooling, and hosting a website behind Cloudflare with Nginx
 @@Tags: unix
 @@WordCount: 151
 @@ReadEstimate: 12
@@ -57,7 +57,6 @@ sudo dpkg -i google-chrome-stable_current_amd64.deb
 sudo apt-get install -f
 sudo apt update
 sudo apt upgrade google-chrome-stable
-
 ```
 
 ### Git, zsh, oh my zsh
@@ -74,8 +73,17 @@ sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.
 
 ```
 
+## Serving a Website
 
-### Jenkins with Github Credentials
+### DNS
+
+### Cloudflare
+
+### Nginx Setup
+
+## Improving the Build Process
+
+## Jenkins with Github Credentials
 
 ```sh
 sudo apt update
@@ -103,4 +111,4 @@ sudo ufw allow 8080
 sudo ufw status
 ```
 
-###
+## NodeJS

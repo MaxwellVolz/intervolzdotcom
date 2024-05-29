@@ -1,7 +1,7 @@
 @@Title: Higher Order Functions in Python
 @@URL: higher-order-python
 @@Date: 12/27/2023
-@@TLDR: functions that funk with other functions
+@@TLDR: maps, filters, maps with filters, decorators, and a fun analogy about consultants
 @@Tags: py
 @@WordCount: 153
 @@ReadEstimate: 12

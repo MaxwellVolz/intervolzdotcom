@@ -1,8 +1,8 @@
 @@Title: Big O (No!)
 @@URL: big-o-no
-@@Date: 11/14/2023
+@@Date: 3/14/2023
 @@TLDR: optimized optimizing is optimal...
-@@Tags: cs
+@@Tags: general
 @@WordCount: 151
 @@ReadEstimate: 12
 
