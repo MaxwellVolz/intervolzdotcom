@@ -30,7 +30,7 @@
     "Title": "Home Server Setup",
     "URL": "home-server-setup",
     "Date": "4/25/2024",
-    "TLDR": "Setting up a homeserver with Ubuntu 24, basic tooling, and hosting a website behind Cloudflare with Nginx",
+    "TLDR": "Setting up a homeserver with Ubuntu 24, basic apps and tooling",
     "Tags": "unix",
     "WordCount": 151,
     "ReadEstimate": 12
@@ -79,6 +79,15 @@
     "Tags": "jenkins,web",
     "WordCount": 30,
     "ReadEstimate": 1
+  },
+  {
+    "Title": "Webhosting from Home",
+    "URL": "webhosting-from-home",
+    "Date": "5/31/2024",
+    "TLDR": "Setting up web hosting from a home computer to save costs and own your content",
+    "Tags": "nodejs",
+    "WordCount": 400,
+    "ReadEstimate": 14
   },
   {
     "Title": "Zero to Python - depreciated",

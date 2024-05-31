@@ -3,8 +3,25 @@
 @@Date: 5/31/2024
 @@TLDR: Setting up web hosting from a home computer to save costs and own your content
 @@Tags: nodejs
-@@WordCount: 151
-@@ReadEstimate: 12
+@@WordCount: 400
+@@ReadEstimate: 14
+
+- [Webhosting from Home](#webhosting-from-home)
+  - [Local Testing](#local-testing)
+    - [Install Node.js](#install-nodejs)
+    - [Serving a Website](#serving-a-website)
+  - [Buy a Domain](#buy-a-domain)
+    - [Cloudflare](#cloudflare)
+    - [Update DNS Settings](#update-dns-settings)
+  - [Nginx Setup](#nginx-setup)
+    - [Install Nginx on Ubuntu](#install-nginx-on-ubuntu)
+    - [Directory Structure](#directory-structure)
+    - [Nginx Configuration](#nginx-configuration)
+    - [Install Nginx on Windows](#install-nginx-on-windows)
+    - [Directory Structure](#directory-structure-1)
+    - [Verify and Restart Nginx](#verify-and-restart-nginx)
+
+
 # Webhosting from Home
 
 Setting up a web server at home can be a rewarding experience. Not only does it give you complete control over your website, but it also offers a great way to learn about web technologies, server management, and networking. Let's walk through the steps to get your home web server up and running.
