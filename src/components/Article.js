@@ -48,7 +48,7 @@ const Article = () => {
     if (!article) return <div>Article not found</div>;
 
     return (
-        <Container maxWidth="lg" className="article-container" style={{ backgroundColor: theme.palette.background.paper, color: theme.palette.text.primary }}>
+        <Container maxWidth="lg" className="article-container" style={{ backgroundColor: theme.palette.background.paper, color: theme.palette.text.primary, marginBottom: '2em' }}>
             <Box mt={2} mb={4}>
                 <Typography variant="h3" component="h1" gutterBottom style={{ color: theme.palette.primary.main }}>
                     {article.Title}
@@ -97,9 +97,10 @@ const Article = () => {
                     {markdownContent}
                 </Markdown>
             </Box>
-            <Box mt={2} mb={4}>
-                <Button color="primary" component="a" href="https://maxwellvolz.com" target="_blank" rel="noopener noreferrer" variant="contained" startIcon={<LinkIcon />}>
-                    Personal Site
+            <br />
+            <Box mt={2} mb={4} style={{ marginBottom: 0 }}>
+                <Button color="primary" component="a" href="/archive" target="_blank" rel="noopener noreferrer" variant="contained" >
+                    More Articles
                 </Button>
             </Box>
         </Container>

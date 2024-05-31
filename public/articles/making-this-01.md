@@ -1,10 +1,10 @@
-@@Title: Walkthrough - React + Material UI with Express
+@@Title: Making This Site - Part 1
 @@URL: making-this-01
-@@Date: 5/27/2024
-@@TLDR: Spent a few more hours than I'd like to admit rolling my own over the weekend. miss the features, miss the fun, miss the hooks, it's react time...
+@@Date: 5/28/2024
+@@TLDR: Spent a few more hours than I'd like to admit rolling my own static website over the weekend. miss the features, miss the fun, miss the hooks, it's react time...
 @@Tags: web,js,node
-@@WordCount: 151
-@@ReadEstimate: 12
+@@WordCount: 900
+@@ReadEstimate: 15
 
 # React + Material UI with an Express backend
 
@@ -115,16 +115,11 @@ const app = express();
 // Use the CORS middleware
 app.use(cors());
 
-// Serve static files from the React app
+// Serve static files from the React app's build directory
 app.use(express.static(path.join(__dirname, '../build')));
 
 // Serve static files from the public directory
 app.use('/public', express.static(path.join(__dirname, 'public')));
-
-// API endpoint to get articles
-app.get('/api/articles', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/data/articles.json'));
-});
 
 // Handles any requests that don't match the ones above
 app.get('*', (req, res) => {
@@ -135,6 +130,7 @@ const port = process.env.PORT || 5000;
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
+
 ```
 
 ### Parsing and Serving Articles
@@ -145,14 +141,16 @@ We use custom identifiers `@@` in the **markdown** to specify params for the art
 
 ### Example of Markdown articles
 
+> Tip: remove the '-' between the '@' symbols...this error caused me an hour, parseMarkdown.js wouldn't update the title due to this haha.
+
 ```markdown
-@@Title: Walkthrough - Making this website with React + Material UI with an Express backend
-@@URL: making-this-01
-@@Date: 5/27/2024
-@@TLDR: spent a few more hours than I'd like to admit rolling my own over the weekend. miss the features, miss the fun, miss the hooks, it's react time...
-@@Tags: web,js,node
-@@WordCount: 151
-@@ReadEstimate: 12
+@-@Title: Walkthrough - Making this website with React + Material UI with an Express backend
+@-@URL: making-this-01
+@-@Date: 5/27/2024
+@-@TLDR: spent a few more hours than I'd like to admit rolling my own over the weekend. miss the features, miss the fun, miss the hooks, it's react time...
+@-@Tags: web,js,node
+@-@WordCount: 151
+@-@ReadEstimate: 12
 ```
 
 Our backend script `parseMarkdown.js` takes the articles and outputs a JSON file contains metadata about each article, such as the title, URL, date, and tags.
@@ -176,7 +174,9 @@ Our backend script `parseMarkdown.js` takes the articles and outputs a JSON file
 
 ## Fetching Articles in the Frontend
 
-In the frontend, we use a custom hook (useArticles) to fetch the articles from the backend and manage the loading state.
+In the frontend, we use a custom hook (useArticles) to fetch the articles.
+
+For now, we will load the articles from a local json. Later, we will load the articles from our backend server, but this is unnecessary complexity at this point.
 
 ```js
 // src/hooks/useArticles.js
@@ -187,11 +187,20 @@ const useArticles = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('/api/articles')
-            .then(response => response.json())
+        fetch('/data/articles.json') // Use relative path to the public directory
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => {
                 const sortedArticles = data.sort((a, b) => new Date(b.Date) - new Date(a.Date));
                 setArticles(sortedArticles);
+                setLoading(false);
+            })
+            .catch(error => {
+                console.error('Error fetching the articles:', error);
                 setLoading(false);
             });
     }, []);
@@ -200,6 +209,7 @@ const useArticles = () => {
 };
 
 export default useArticles;
+
 ```
 
 In the next part of this series, we'll dive into creating and styling the frontend components using Material UI and React. Stay tuned for more!

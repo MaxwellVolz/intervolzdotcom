@@ -1,6 +1,6 @@
 @@Title: Big O (No!)
 @@URL: big-o-no
-@@Date: 3/14/2023
+@@Date: 2/14/2024
 @@TLDR: optimized optimizing is optimal...
 @@Tags: general
 @@WordCount: 151
@@ -43,7 +43,7 @@
 ## How to Eyeball It
 
 1. Counting *primitive operations*, AKA math, comparisons, assignments
-2. Identify *dominant terms*, 
+2. Identify *dominant terms*
    1. overall time complexity is based on the slowest performer that scales the worst
 3. Worst Case First
    1. Big O Analysis focuses on the worst-case scenario to provide the upper bound of the time complexity

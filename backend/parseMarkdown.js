@@ -3,6 +3,7 @@ const path = require('path');
 
 const articlesDir = path.join(__dirname, '../public/articles');
 const outputDir = path.join(__dirname, '../public/data');
+const outputFilePath = path.join(outputDir, 'articles.json');
 
 const requiredFields = ['Title', 'URL', 'Date', 'TLDR', 'Tags', 'WordCount', 'ReadEstimate'];
 
@@ -61,11 +62,26 @@ async function parseArticles() {
         }
 
         await fs.ensureDir(outputDir);
-        await fs.writeJson(path.join(outputDir, 'articles.json'), articles, { spaces: 2 });
+        await fs.writeJson(outputFilePath, articles, { spaces: 2 });
         console.log('Articles parsed successfully.');
     } catch (err) {
         console.error('Error parsing articles:', err);
     }
 }
 
-parseArticles();
+async function clearOutput() {
+    try {
+        if (await fs.pathExists(outputFilePath)) {
+            await fs.unlink(outputFilePath);
+        }
+    } catch (err) {
+        console.error('Error clearing output file:', err);
+    }
+}
+
+async function run() {
+    await clearOutput();
+    await parseArticles();
+}
+
+run();
