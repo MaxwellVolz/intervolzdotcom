@@ -11,7 +11,7 @@
   {
     "Title": "Converting Videos for Discord with Powershell",
     "URL": "discord-video-conversion",
-    "Date": "3/25/2023",
+    "Date": "3/25/2024",
     "TLDR": "easily downsample to 9MB with ",
     "Tags": "py",
     "WordCount": 200,
@@ -29,7 +29,7 @@
   {
     "Title": "Home Server Setup",
     "URL": "home-server-setup",
-    "Date": "5/25/2024",
+    "Date": "4/25/2024",
     "TLDR": "Setting up a homeserver with Ubuntu 24, basic tooling, and hosting a website behind Cloudflare with Nginx",
     "Tags": "unix",
     "WordCount": 151,

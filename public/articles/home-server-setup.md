@@ -1,6 +1,6 @@
 @@Title: Home Server Setup
 @@URL: home-server-setup
-@@Date: 5/25/2024
+@@Date: 4/25/2024
 @@TLDR: Setting up a homeserver with Ubuntu 24, basic tooling, and hosting a website behind Cloudflare with Nginx
 @@Tags: unix
 @@WordCount: 151

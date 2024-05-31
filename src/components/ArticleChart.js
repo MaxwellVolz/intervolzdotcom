@@ -1,4 +1,3 @@
-// src/components/ArticleChart.js
 import React, { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import { Box, useTheme, Card, CardContent, Typography } from '@mui/material';
@@ -14,11 +13,24 @@ const ArticleChart = () => {
 
     useEffect(() => {
         if (!loading) {
-            const articlesByMonth = articles.reduce((acc, article) => {
+            const currentDate = new Date();
+            const articlesByMonth = {};
+
+            // Initialize articlesByMonth with all months from the earliest article to the current date
+            const startDate = articles.length ? new Date(articles[articles.length - 1].Date) : new Date();
+            startDate.setDate(1); // Start from the first day of the month
+
+            while (startDate <= currentDate) {
+                const month = startDate.toLocaleString('default', { month: 'short', year: 'numeric' });
+                articlesByMonth[month] = 0;
+                startDate.setMonth(startDate.getMonth() + 1);
+            }
+
+            // Count articles per month
+            articles.forEach(article => {
                 const month = new Date(article.Date).toLocaleString('default', { month: 'short', year: 'numeric' });
-                acc[month] = (acc[month] || 0) + 1;
-                return acc;
-            }, {});
+                articlesByMonth[month] = (articlesByMonth[month] || 0) + 1;
+            });
 
             const labels = Object.keys(articlesByMonth).sort((a, b) => new Date(a) - new Date(b));
             const data = labels.map(month => articlesByMonth[month]);
@@ -31,8 +43,8 @@ const ArticleChart = () => {
                         data,
                         borderColor: theme.palette.primary.main,
                         backgroundColor: theme.palette.primary.light,
-                        pointRadius: 10, // Increase marker size
-                        pointHoverRadius: 30, // Increase hover marker size
+                        pointRadius: 10,
+                        pointHoverRadius: 30,
                         fill: false,
                     },
                 ],
@@ -62,13 +74,13 @@ const ArticleChart = () => {
                                 y: {
                                     beginAtZero: true,
                                     ticks: {
-                                        stepSize: 1, // Ensure Y-axis displays whole numbers
+                                        stepSize: 1,
                                     },
                                 },
                             },
                             plugins: {
                                 legend: {
-                                    display: false, // Hide the legend
+                                    display: false,
                                 },
                                 tooltip: {
                                     backgroundColor: theme.palette.background.paper,
