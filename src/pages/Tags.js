@@ -29,26 +29,34 @@ const Tags = () => {
                 Tag: {tag}
             </Typography>
             {filteredArticles.map((article, index) => (
-                <Box key={article.URL} style={{ backgroundColor: backgroundColors[index % backgroundColors.length], padding: '2em', marginBottom: '2em', borderRadius: '8px' }}>
-                    <Typography variant="h5" component="h2" gutterBottom>
-                        {article.Title}
-                    </Typography>
-                    <Typography variant="body1" component="p">
-                        {article.TLDR}
-                    </Typography>
-                    <Box mt={2}>
-                        {article.Tags.split(',').map(tag => (
-                            <Link
-                                component={RouterLink}
-                                to={`/tags/${tag.trim()}`}
-                                key={tag.trim()}
-                                style={{ marginRight: '0.5em', textDecoration: 'none', color: theme.palette.primary.main }}
-                            >
-                                {`#${tag.trim()}`}
-                            </Link>
-                        ))}
+                <Link
+                    component={RouterLink}
+                    to={`/articles/${article.URL}`}
+                    key={article.URL}
+                    style={{ textDecoration: 'none', color: theme.palette.primary.main }}
+                >
+                    <Box key={article.URL} style={{ backgroundColor: backgroundColors[index % backgroundColors.length], padding: '2em', marginBottom: '2em', borderRadius: '8px' }}>
+                        <Typography variant="h5" component="h2" gutterBottom style={{ textDecoration: 'none', color: theme.palette.text.primary }}>
+                            {article.Title}
+                        </Typography>
+                        <Typography variant="body1" component="p" style={{ textDecoration: 'none', color: theme.palette.text.secondary }}>
+                            {article.TLDR}
+                        </Typography>
+                        <Box mt={2}>
+                            {article.Tags.split(',').map(tag => (
+                                <Link
+                                    component={RouterLink}
+                                    to={`/tags/${tag.trim()}`}
+                                    key={tag.trim()}
+                                    style={{ marginRight: '0.5em', textDecoration: 'none', color: theme.palette.secondary.dark }}
+                                >
+                                    {`#${tag.trim()}`}
+                                </Link>
+                            ))}
+                        </Box>
                     </Box>
-                </Box>
+                </Link>
+
             ))}
         </Container>
     );

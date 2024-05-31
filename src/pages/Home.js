@@ -30,7 +30,7 @@ const Home = () => {
                     <TagsChart />
                 </Box>
             </Box>
-            <ArticleList limit={3} />
+            <ArticleList limit={5} />
         </Container>
     );
 };

@@ -1,7 +1,7 @@
 @@Title: Writing python in 2024
 @@URL: python-in-2024
 @@Date: 1/15/2024
-@@TLDR: there is too many ways, this is the right one
+@@TLDR: there are too many ways, this is the right one
 @@Tags: py
 @@WordCount: 370
 @@ReadEstimate: 9

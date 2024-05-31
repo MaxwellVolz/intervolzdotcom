@@ -4,7 +4,7 @@
 @@TLDR: optimized optimizing is optimal...
 @@Tags: general
 @@WordCount: 151
-@@ReadEstimate: 12
+@@ReadEstimate: 5
 
 # Big O No(tation)
 
@@ -35,7 +35,7 @@
 | O(1)       | "Oh-one"     | Constant Time     | Access element of array by index; using modulus for even/odd check |
 | O(log N)   | "Oh log-N"   | Logarithmic Time  | Binary search on a sorted list, each sort halves search space      |
 | O(N)       | "Oh N"       | Linear Time       | Simple loop, finding max() or min() by checking all elements once  |
-| O(N log N) | "            | Linearithmic Time | Merge-sort, list is split, sorted, and merged back                 |
+| O(N log N) | "Oh N-log-N"  | Linearithmic Time | Merge-sort, list is split, sorted, and merged back                 |
 | O(N^2)     | "Oh shit"*   | Quadradic Time    | Nested loops, bubble sort, elements evaluated in pair-wise fashion |
 
 *Basically, but really its Quadradically 

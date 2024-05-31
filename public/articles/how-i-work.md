@@ -1,6 +1,6 @@
 @@Title: How I Work
 @@URL: how-i-work
-@@Date: 5/28/2024
+@@Date: 5/30/2024
 @@TLDR: Short review of my current setup and some of my most commonly used applications
 @@Tags: general
 @@WordCount: 500

@@ -33,7 +33,7 @@ const ThemeSwitcher = () => {
             sx={{ transform: isMobile ? 'scale(0.5)' : 'scale(1)', transformOrigin: 'bottom right' }}
         >
             {themes.map((theme, index) => (
-                <Tooltip key={index} title={theme.name}>
+                <Tooltip key={index} title={theme.name} placement="left" arrow>
                     <IconButton
                         onClick={() => toggleTheme(theme.name)}
                         style={{ backgroundColor: theme.color, margin: '0.25em' }}
