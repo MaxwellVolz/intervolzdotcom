@@ -1,8 +1,8 @@
 @@Title: Converting Videos for Discord with Powershell
 @@URL: discord-video-conversion
 @@Date: 3/25/2024
-@@TLDR: easily downsample to 9MB with 
-@@Tags: py
+@@TLDR: easily downsample to 9MB with ffmpeg after trimming with VLC
+@@Tags: general
 @@WordCount: 200
 @@ReadEstimate: 5
 

@@ -13,6 +13,8 @@
   - [Buy a Domain](#buy-a-domain)
     - [Cloudflare](#cloudflare)
     - [Update DNS Settings](#update-dns-settings)
+      - [Quick Guide to AWS](#quick-guide-to-aws)
+      - [Cloudflare Alias to homeserver](#cloudflare-alias-to-homeserver)
   - [Nginx Setup](#nginx-setup)
     - [Install Nginx on Ubuntu](#install-nginx-on-ubuntu)
     - [Directory Structure](#directory-structure)
@@ -116,9 +118,26 @@ Next, you'll need to update your domain's DNS settings to point to Cloudflare:
 1. Log in to your domain name vendor's website (e.g., AWS, GoDaddy).
 2. Locate the DNS settings or nameserver settings for your domain.
 3. Replace the existing nameservers with the nameservers provided by Cloudflare.
-4. Save the changes.
+5. Save the changes.
    
+#### Quick Guide to AWS
+
+1. Register domain name with `Route53`
+2. Wait for registration
+3. Go to `Hosted Zones` and select your new domain name
+4. Select the `NS` Record and `Edit Record`
+5. Replace `Value` with nameservers from `Cloudflare`
+
+#### Cloudflare Alias to homeserver
+
+1. Log in to `Cloudflare`
+2. Select new domain name > `DNS`
+3. Add an `A` type record with name `@` and your IPv4 address
+4. Add an `A` type record with name `www` and your IPv4 address
+
 > Note: DNS propagation can take up to 24 hours. Once complete, your traffic will start routing through Cloudflare.
+
+
 
 ## Nginx Setup
 
