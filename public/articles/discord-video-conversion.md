@@ -6,14 +6,91 @@
 @@WordCount: 200
 @@ReadEstimate: 5
 
-When writing modern Python, it is important to test your code thoroughly to ensure that it works as expected. One way to do this is by testing features at the implementation level and end-to-end. This means writing functions that call specific implementation details, such as *tokenize* and *parse* and *eval_exp*, explicitly so that you can catch errors and other behavior as close to the implementation as possible.
+# Video Editing
 
-Here are some examples of tests for the tokenize, parse, and eval_exp functions:
+## Export for Discord
 
-- The tokenize function might take an input string and check that the function correctly identifies all of the tokens in the string. For example, if the input string is "2 + 3", the test should check that the function returns the tokens "2", "+", and "3".
-- The parse function might take an input string and check that the function correctly generates an abstract syntax tree (AST) for the string. For example, if the input string is "2 + 3", the test should check that the function returns an AST representing the addition operation.
-- The eval_exp function might take an input string and check that the function correctly evaluates the expression represented by the string. For example, if the input string is "2 + 3", the test should check that the function returns the value 5.
+- Target File Size: ~9 MB
 
-In addition to testing at the implementation level, it is also important to write full integration tests. These tests can be used as a feature showcase and are easily portable to other implementations. They allow you to test the entire system from end to end, ensuring that all components are working together correctly.
+## Trim Video with [VLC](https://www.videolan.org/vlc/)
 
-By testing both at the implementation level and end-to-end, you can catch any issues or bugs early on in the development process and ensure that your code is reliable and robust. This will save you time and effort in the long run and help you deliver high-quality software.
+1. Open Video
+2. View > Advanced Controls
+3. Scrub to Start of Video and Push the **[🔴](https://emojipedia.org/large-red-circle) Record Button**
+4. Watch Video
+5. Pause near end
+6. Use frame by frame at end
+7. Push the **[🔴](https://emojipedia.org/large-red-circle) Record Button**
+8. Video is exported to **Videos**
+
+## Windows Setup - install ffmpeg with Powershell
+
+```powershell
+winget install "FFmpeg (Essentials Build)"
+```
+
+## Powershell Script
+
+1. Place in **Videos Folder** as Convert-Video.ps1
+2. Open Powershell
+
+```powershell
+cd Videos
+./Convert-Video input.mp4
+# file gets saved with filename_compressed.mp4
+```
+
+## Source Code
+
+```powershell script
+param (
+    [string]$inputFile
+)
+
+# Extract the duration using ffmpeg and process the output
+$ffmpegOutput = & ffmpeg -i $inputFile 2>&1
+$durationLine = $ffmpegOutput | Select-String "Duration"
+$durationString = $durationLine -replace "Duration: ", "" -replace ",.*$", ""
+$durationParts = $durationString.Split(':')
+$hours = [int]$durationParts[0]
+$minutes = [int]$durationParts[1]
+$seconds = [double]$durationParts[2]
+
+$duration = $hours * 3600 + $minutes * 60 + $seconds
+
+# Output the duration in seconds
+$duration
+
+# Define target file size in MB
+$targetSizeMB = 9
+# Convert MB to kilobits
+$targetSizeKbits = $targetSizeMB * 8000
+# Calculate bitrate
+$bitrate = [Math]::Round($targetSizeKbits / $duration)
+
+# Define the output file name
+$outputFile = [System.IO.Path]::GetFileNameWithoutExtension($inputFile) + "_compressed.mp4"
+
+# Execute ffmpeg to convert the video
+& ffmpeg -i $inputFile -b:v "${bitrate}k" -bufsize "${bitrate}k" -maxrate "${bitrate}k" -an $outputFile
+
+Write-Host "Conversion complete. File saved as $outputFile"
+```
+
+## How it Works
+
+## Calculate bitrate for desired filesize
+
+```math
+bitrate = (8000×8) / seconds of video
+
+bitrate = 64000 / seconds of video
+
+Example: 7s video ≈ 9143 kbps
+```
+
+## Convert file
+
+```powershell
+ffmpeg -i input.mp4 -b:v 9143k -bufsize 9143k -maxrate 9143k -an output.mp4
+```
