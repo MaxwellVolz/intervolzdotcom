@@ -1,6 +1,6 @@
 // src/pages/About.js
 import React from 'react';
-import { Box, Button, Link, Container, Typography, useTheme, useMediaQuery } from '@mui/material';
+import { Box, Button, Container, Typography, useTheme, useMediaQuery } from '@mui/material';
 import './About.css';
 import LinkIcon from '@mui/icons-material/Link';
 

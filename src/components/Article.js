@@ -7,7 +7,6 @@ import { Box, Button, Container, Chip, Typography, CircularProgress, Tooltip, us
 import AbcIcon from '@mui/icons-material/Abc';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import EventIcon from '@mui/icons-material/Event';
-import LinkIcon from '@mui/icons-material/Link';
 import CustomCodeBlock from './CustomCodeBlock';
 import './Article.css';
 import { Link as RouterLink } from 'react-router-dom';
