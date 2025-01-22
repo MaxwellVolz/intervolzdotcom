@@ -41,23 +41,15 @@ const About = () => {
                     paragraph
                     style={{ color: theme.palette.text.secondary }}
                 >
-                    Welcome to InterVolz! A place for me to formalize documentation I enjoy writing into articles, for you!
+                    Welcome to InterVolz
                 </Typography>
                 <Typography
-                    variant={isMobile ? "h5" : "h2"}
+                    variant={isMobile ? "h5" : "p"}
                     component="p"
                     paragraph
                     style={{ color: theme.palette.text.secondary }}
                 >
-                    Topics include web development, JavaScript, Python, and more!
-                </Typography>
-                <Typography
-                    variant={isMobile ? "h5" : "h2"}
-                    component="p"
-                    paragraph
-                    style={{ color: theme.palette.text.secondary }}
-                >
-                    Hopefully you can find some value in the tutorials, walkthroughs, rants(?), and use it to make something you like.
+                    Topics include: software development, javacript, python, me ranting, maybe some art!
                 </Typography>
 
                 <Box mt={2} mb={4} style={{ marginBottom: "0" }}>
@@ -71,7 +63,7 @@ const About = () => {
                         startIcon={<LinkIcon />}
                         size={isMobile ? "small" : "medium"}
                     >
-                        Personal Site
+                        Authors Site
                     </Button>
                 </Box>
             </Box>
