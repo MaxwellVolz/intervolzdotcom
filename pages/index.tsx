@@ -56,7 +56,7 @@ export default function BlogIndex({ posts }: { posts: Post[] }) {
 
   return (
     <main style={{ padding: '2rem' }} className={styles.main}>
-      <h1 className={styles.title}>Where to Eat and Why</h1>
+      <h1 className={styles.title}>InterVolz</h1>
       <ul className={styles.postList}>
         {posts.map((post) => (
           <li key={post.slug} className={styles.postItem}>
@@ -75,6 +75,12 @@ export default function BlogIndex({ posts }: { posts: Post[] }) {
                   </p>
                 </>
               )}
+              <>
+                <h2>{post.title}</h2>
+                <p className={styles.date}>
+                  {new Date(post.date).toLocaleDateString()}
+                </p>
+              </>
             </button>
           </li>
         ))}
