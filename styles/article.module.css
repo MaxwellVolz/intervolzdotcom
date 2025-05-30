@@ -1,0 +1,56 @@
+.article {
+  max-width: 800px;
+  max-height: 90vh;
+  width: 100%;
+  overflow-y: auto;
+  margin: 4rem auto;
+  padding: 2rem;
+  font-family: system-ui, sans-serif;
+  line-height: 1.7;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+.article h1 {
+  font-size: 2.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.article h2 {
+  font-size: 1.6rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.article p {
+  margin: 1rem 0;
+}
+
+.article a {
+  color: var(--link);
+}
+
+.article pre {
+  background: var(--pre-bg);
+  padding: 1rem;
+  overflow: auto;
+  border-radius: 5px;
+  font-size: 0.95rem;
+}
+
+.article code {
+  font-family: monospace;
+  background: var(--code-bg);
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+}
+
+.article img {
+  display: block;
+  max-width: 100% !important;
+  /* force override */
+  height: auto !important;
+  margin: 1.5rem 0;
+  border-radius: 6px;
+  object-fit: contain;
+}

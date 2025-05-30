@@ -1,0 +1,24 @@
+{
+  "name": "intervolzdotcom",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "gray-matter": "^4.0.3",
+    "next": "^15.3.2",
+    "next-mdx-remote": "^5.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.52",
+    "@types/react": "^18.2.41",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.3"
+  }
+}
