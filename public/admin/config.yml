@@ -1,6 +1,6 @@
 backend:
   name: github
-  repo: maxwellvolz/wheretoeatandwhy
+  repo: maxwellvolz/intervolzdotcom
   branch: master
 
 media_folder: 'public/uploads'
