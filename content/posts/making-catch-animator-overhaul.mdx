@@ -39,20 +39,17 @@ Moving toward this!
 
 ### Concept Art - Ball Dispenser
 
-
-
 ![Dall-E Generated Concept Art](/uploads/ball_machine_concept.png)
 
 ### Quick Blender Concept Export -> .fbx
 
 ![](/uploads/ball_machine.png)
 
-
 ## Back to Animator! Dynamic Interacts
 
-- Detect where the ball hits the player (chest, overhead, side, etc.)
-- Players may animate differently based on how or where they catch the ball
-- Hit detection is initiated by the moving ball entering the player’s collider zones
+* Detect where the ball hits the player (chest, overhead, side, etc.)
+* Players may animate differently based on how or where they catch the ball
+* Hit detection is initiated by the moving ball entering the player’s collider zones
 
 Player (has CharacterController, Animator, PlayerInteraction.cs)
 ├── ChestCatchZone (BoxCollider, IsTrigger ✅, tag: CatchZone_Chest)
@@ -60,6 +57,7 @@ Player (has CharacterController, Animator, PlayerInteraction.cs)
 ├── DiveCatchZone (BoxCollider, IsTrigger ✅, tag: CatchZone_Dive)
 
 Current Interact:
+
 ```casual
 void TryInteract()
     {
@@ -97,7 +95,6 @@ void TryInteract()
 New Interact
 
 ```
-
     public void TriggerCatch(GameObject ball, PlayerCatchZone.CatchType type)
     {
         if (heldObject != null) return;
@@ -154,3 +151,6 @@ New Interact
     }
 ```
 
+
+
+![](/uploads/ballz.png)
