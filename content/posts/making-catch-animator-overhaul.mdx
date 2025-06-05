@@ -3,4 +3,26 @@ title: "Making Catch: Animator Overhaul"
 date: 2025-06-05T10:51:00.000Z
 cover: /uploads/animator_p1.png
 ---
+
 Refactoring the **Animator**
+
+The preview image for this article is the pre-refactored ultra-mega-super unoptimized version.
+
+Moving toward this!
+
+```
+         +----------------+
+         |   Any State    |
+         +----------------+
+           |          |
+     [Trigger]   [Trigger]
+           ↓          ↓
+      +--------+  +--------+
+      | PickUp |  | Throw  |
+      +--------+  +--------+
+           \         /
+            \       /
+          +-------------+
+          | Locomotion  |  <-- Blend Tree (Idle → Walk → Run)
+          +-------------+
+```
