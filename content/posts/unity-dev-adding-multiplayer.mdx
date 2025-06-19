@@ -1,33 +1,30 @@
 ---
-title: Unity Dev - Adding Multiplayer
+title: Depreciated - Unity Dev - Adding Multiplayer
 date: 2025-06-05T16:32:00.000Z
 ---
 
-- [Fresh Project!](#fresh-project)
+- [🎯 GOAL: Strip Boss Room to Multiplayer Catch Core](#-goal-strip-boss-room-to-multiplayer-catch-core)
   - [Network Architecture Goals](#network-architecture-goals)
   - [Gameobjects / Hierarchy](#gameobjects--hierarchy)
   - [Networking](#networking)
   - [Gameplay Functionality](#gameplay-functionality)
-- [🎯 GOAL: Strip Boss Room to Multiplayer Catch Core](#-goal-strip-boss-room-to-multiplayer-catch-core)
-  - [✅ PHASE 1: Clone \& Boot](#-phase-1-clone--boot)
-  - [🔥 PHASE 2: Rework systems be rework for catch](#-phase-2-rework-systems-be-rework-for-catch)
-  - [✅ KEEP (but rework):](#-keep-but-rework)
+  - [PHASE 1: Clone \& Boot](#phase-1-clone--boot)
+  - [PHASE 2: Rework systems be rework for catch](#phase-2-rework-systems-be-rework-for-catch)
   - [🛠 TASKS](#-tasks)
-    - [🔁 Repurpose RPG Systems](#-repurpose-rpg-systems)
-    - [🧼 Disable/Remove Unused Combat](#-disableremove-unused-combat)
+    - [Repurpose RPG Systems](#repurpose-rpg-systems)
+    - [Disable/Remove Unused Combat](#disableremove-unused-combat)
     - [Add Catch Gameplay Mechanics](#add-catch-gameplay-mechanics)
-    - [Update UI](#update-ui)
-    - [🛠 Code Touchpoints](#-code-touchpoints)
-- [✅ Once done:](#-once-done)
   - [🎮 PHASE 3: Repurpose Player Logic for Catch](#-phase-3-repurpose-player-logic-for-catch)
   - [🎥 PHASE 4: Camera \& Input](#-phase-4-camera--input)
   - [🧑‍🤝‍🧑 PHASE 5: Multiplayer \& Sync](#-phase-5-multiplayer--sync)
   - [🧽 PHASE 6: Polish \& Steam Prep](#-phase-6-polish--steam-prep)
 - [🧩 Optional: Add Later](#-optional-add-later)
-- [⚡ Ready to go?](#-ready-to-go)
 
 
-## Fresh Project!
+
+## 🎯 GOAL: Strip Boss Room to Multiplayer Catch Core
+
+> Note: This effort has been abandoned for the `Mirror + FizzySteamWorks + Steamworks.NET` implementation and kept here for reference.
 
 ### Network Architecture Goals
 
@@ -36,7 +33,6 @@ date: 2025-06-05T16:32:00.000Z
     1. players position
     2. players animation state
     3. ball position and ownership
-
 
 Reading the [Unity Netcode Docs](https://docs-multiplayer.unity3d.com/netcode/current/about/)...
 
@@ -106,23 +102,16 @@ Authority Model:
   - Over the Shoulder Aiming Mode for target and pitch selection
     
 
-Here’s a **high-priority task list** to turn the **Unity Boss Room** project into your **Play Catch! multiplayer game**, focused on shipping on **Steam fast** by stripping, reskinning, and repurposing.
-
 ---
 
-
-## 🎯 GOAL: Strip Boss Room to Multiplayer Catch Core
-
----
-
-### ✅ PHASE 1: Clone & Boot
+### PHASE 1: Clone & Boot
 
 **Objective**: Get the Boss Room project building and running.
 
-* [X] ✅ Clone [Boss Room GitHub repo](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop)
-* [X] ✅ Open in Unity (same Unity version as project)
-* [X] ✅ Test Relay/Lobby: Build & run a local host/client game
-* [X] ✅ Confirm input, camera, player movement work
+* Clone [Boss Room GitHub repo](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop)
+* Open in Unity (same Unity version as project)
+* Test Relay/Lobby: Build & run a local host/client game
+* Confirm input, camera, player movement work
 
 1. Installed the Unity version 2022.3 something
 2. Built game
@@ -131,7 +120,7 @@ Here’s a **high-priority task list** to turn the **Unity Boss Room** project i
 
 ---
 
-### 🔥 PHASE 2: Rework systems be rework for catch
+### PHASE 2: Rework systems be rework for catch
 
 **Objective**: Keep the netcode + character systems, creatively rework RPG logic into fast, action-oriented mechanics.
 
@@ -142,30 +131,9 @@ Here’s a **high-priority task list** to turn the **Unity Boss Room** project i
 
 ---
 
-### ✅ KEEP (but rework):
-
-| System              | New Purpose in Catch                               |
-| ------------------- | -------------------------------------------------- |
-| `SprintAction`      | Keep as-is (stamina-gated dash)                    |
-| `ActionSystem`      | Remap to Dash, Vault, Teleport                     |
-| `StatSystem`        | Rework into throw power, speed, stamina            |
-| `InventorySystem`   | Repurpose for temporary power-ups or pickup boosts |
-| `AbilityUI`, hotbar | Turn into visual cooldowns for dashes, throws      |
-
----
-
 ### 🛠 TASKS
 
-#### 🔁 Repurpose RPG Systems
-
-* [X] 🔁 `ActionSystem` →
-  * `Dash`
-* [X] 🔁 `StatSystem` → Convert to:
-  * `Stamina`
-  * `SprintSpeed`
-  * `ThrowPower`
-  * `CatchRadius`
-  * `ZoomMultiplier` (for aim cam)
+#### Repurpose RPG Systems
 
 - Created `ConcreteActions/DashAction.cs`
 - Created `BossRoom/Actions/Dash Action`
@@ -174,7 +142,7 @@ Here’s a **high-priority task list** to turn the **Unity Boss Room** project i
 - Updated: `Assets\Scripts\Gameplay\Configuration\CharacterClass.cs`
   - Added Stats: SprintSpeed, ThrowPower, CatchRadius, Stamina, ZoomMultiplier
 
-#### 🧼 Disable/Remove Unused Combat
+#### Disable/Remove Unused Combat
 
 * [X] 🗑 Strip boss/AI enemy prefabs from scene
 
@@ -182,8 +150,8 @@ Here’s a **high-priority task list** to turn the **Unity Boss Room** project i
   
 #### Add Catch Gameplay Mechanics
 
-* [ ] Networked Balls
-* [ ] Pickup and Throw Balls
+* [X] Networked Balls
+* [X] Pickup and Throw Balls
 
 - Create prefab: `Assets/Prefabs/Balls/OriginalBall.prefab`
   - NetworkObject, Rigidbody (with gravity), SphereCollider, Ball script
@@ -191,35 +159,6 @@ Here’s a **high-priority task list** to turn the **Unity Boss Room** project i
 - Created: `Assets/Scripts/Gameplay/Action/ConcreteActions/ThrowBallAction.cs`
 
 
-####  Update UI
-
-* [ ] 🔁 Replace `HealthUI` with:
-
-  * Catch count
-  * Stamina bar
-  * Throw charge meter
-* [ ] 🗑 Remove unused: spell buttons, XP bars, combat logs
-* [ ] 🎨 Style UI for casual/competitive action (Catch! theme)
-
-#### 🛠 Code Touchpoints
-
-* [ ] 🔍 `ActionDescriptionSO` → convert RPG abilities to action movement types
-* [ ] 🔍 `ServerCharacter` → delete or empty
-* [ ] 🔍 `ActionPlayer.cs` → map new input keys (dash, throw, aim, vault)
-* [ ] 🔍 `StatSystem.cs` → rename + rename `StatType` enum to `CatchStatType`
-
----
-
-## ✅ Once done:
-
-You'll have:
-
-* Multiplayer movement with dash/sprint/catch/throw
-* Attribute system supporting player boosts
-* Cleaner UI for action gameplay
-* No leftover RPG logic or dependencies
-
----
 ---
 
 ### 🎮 PHASE 3: Repurpose Player Logic for Catch
@@ -278,9 +217,3 @@ You'll have:
 * Steam Friends invite flow
 * Gamepad support
 * Custom character skins
-
----
-
-## ⚡ Ready to go?
-
-I can generate a stripped folder map or help you rename and isolate just the needed files. Want that next?

@@ -75,12 +75,6 @@ export default function BlogIndex({ posts }: { posts: Post[] }) {
                   </p>
                 </>
               )}
-              <>
-                <h2>{post.title}</h2>
-                <p className={styles.date}>
-                  {new Date(post.date).toLocaleDateString()}
-                </p>
-              </>
             </button>
           </li>
         ))}
