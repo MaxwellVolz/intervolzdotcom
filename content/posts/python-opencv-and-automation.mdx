@@ -2,4 +2,46 @@
 title: Python - OpenCV and Automation
 date: 2025-06-21T13:14:00.000Z
 ---
-Coming Soon!
+
+## Scoping
+
+### Goal
+
+Easy to setup generic automation that beats AutoHotKey
+
+### Must Haves
+
+1. Easy install
+2. Easy running
+3. Modes
+   1. Repeat Key
+   2. Triggers
+
+### Architecture
+
+1. OpenCV
+2. Input Control uses: `pyautogui` `pydirectinput`, `pynput.mouse`
+
+## Implementation
+
+### Testing Input Controls
+input_controller.py
+```py
+import time
+import pyautogui
+import pydirectinput
+from pynput.mouse import Controller, Button
+
+def right_click_pyautogui():
+    print("Performing right click using pyautogui...")
+    pyautogui.click(button="right")
+
+def right_click_pynput():
+    print("Performing right click using pynput...")
+    mouse = Controller()
+    mouse.click(Button.right, 1)
+
+def press_key_pydirectinput():
+    print("Pressing 'K' key using pydirectinput...")
+    pydirectinput.press("k")
+```
