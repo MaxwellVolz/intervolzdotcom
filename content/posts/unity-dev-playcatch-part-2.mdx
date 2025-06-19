@@ -1,0 +1,65 @@
+---
+title: Unity Dev - PlayCatch Part 2
+date: 2025-06-19T12:55:00.000Z
+---
+
+- [Goal](#goal)
+- [Next To Add](#next-to-add)
+- [Backlog](#backlog)
+  - [GameObjects / Hierarchy](#gameobjectshierarchy)
+
+
+## Goal
+
+Backlogging network test until tonight and focussing on `Catch` functionality from local side
+
+1. Camera
+   1. Third-Person Chase Orbital Camera
+      1. Chase Cam with orbital controls using mouse/joystick
+   2. Right-Click to enter `Grenade Throw Mode`
+      1. Overshoulder Cam for precision aiming with vertical tilt
+2. Throwing the ball
+   1. Power Levels
+      1. Like setting drivers in a golf game: close, medium, long
+   2. When in `Throw Mode`:
+      1. Left click should start powering up a throw
+      2. Release to throw
+
+## Next To Add
+
+- Rework Weapon.cs to be about holding a ball in hand
+  - balls will be a list of prefabs
+- ball networking
+  - onCatch of a ball destroy the ball and put that ball from list in hand
+  - if not holding a ball
+    - network event to broadcast the player is now holding a ball
+    - network event to broadcast to destroy the ball
+
+## Backlog
+
+### GameObjects / Hierarchy
+
+* **NetworkManager** (component: `NetworkManager`, transport: `FizzySteamworks`, helper: `NetworkManagerHUD`)
+* **Player** (prefab)
+  * Scripts
+    * `PlayerController`
+    * `PlayerInput`
+    * `PlayerMovement`
+    * `PlayerNetworking`
+  * Children
+    * `LeftHand`, `RightHand`
+    * `CatchArea` (trigger collider)
+  * Animator
+    * Blend‑tree: Idle → Walk → Sprint
+    * Triggers: Jump, Catch, Dive, Pickup, Aim
+* **Balls** (prefab)
+* Gameplay
+  * Consecutive‑catch counter per ball
+* Networking
+  * `NetworkTransform` for players & balls
+  * `NetworkAnimator` for player states
+  * RPCs: Throw, Catch, ResetCounter
+* UI
+  * Minimal HUD: catch count, ping
+* Polish
+  * Steam Rich Presence
