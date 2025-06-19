@@ -7,22 +7,25 @@ date: 2025-06-21T13:14:00.000Z
 
 ### Goal
 
-Easy to setup generic automation that beats AutoHotKey
+Easy to setup generic automation that obliterates AutoHotKey
 
-### Must Haves
+### Phases of Development
 
-1. Easy install
-2. Easy running
-3. Modes
-   1. Repeat Key
-   2. Triggers
+1. Python project setup for Windows
+   1. Readme with Usage and Install
+2. Press Keyboard/Mouse Button on timed loop
+3. Moving the Mouse
+4. Taking screenshot of specific window
+5. Processing screenshot and triggering action
 
 ### Architecture
 
-1. OpenCV
-2. Input Control uses: `pyautogui` `pydirectinput`, `pynput.mouse`
+1. Python with `venv`
+2. Input Control dependencies: `pyautogui` `pydirectinput`, `pynput.mouse`
 
 ## Implementation
+
+### Python
 
 ### Testing Input Controls
 input_controller.py
@@ -45,3 +48,7 @@ def press_key_pydirectinput():
     print("Pressing 'K' key using pydirectinput...")
     pydirectinput.press("k")
 ```
+
+### Backlog
+
+1. OpenCV
