@@ -1,0 +1,71 @@
+---
+title: Unity Dev - PlayCatch Dev Patch Notes
+date: 2025-06-24T12:55:00.000Z
+---
+
+## Patch Notes
+
+### 6/19
+
+- Found potential fix for Multiplayer Test
+- Camera v1: Orbital Camera and Throw Mode
+- Charged Throw with added pitch and throw-from-hand
+
+### 6/18
+
+- Fresh Unity Project
+- Followed the `Mirror Quick Start Guide`
+- Working local multiplayer
+- Swapped Transport Layer to Steam.NET
+  - Added Steam.NET and FizzySteamworks
+- Built and shipped `0.0.1`
+- Testing Steam Friends Multiplayer: Failed to Connect
+
+## Current Work:
+
+Backlogging network test and focussing on `Catch` functionality from local side
+
+
+- Camera Control Movement Change
+  - the WASD controls should make the character run and face in that direction
+  - when Throw Mode is enabled make the character rotate to the direction of the camera
+- Rework Weapon.cs to be about holding a ball in hand
+  - balls will be a list of prefabs
+- Ball Networking
+  - onCatch of a ball destroy the ball and put that ball from list in hand
+  - if not holding a ball
+    - network event to broadcast the player is now holding a ball
+    - network event to broadcast to destroy the ball
+- Networked Scene Objects (targets, scoreboard, rigidbodies)
+- Power Levels
+  - Like selecting clubs in a golf game: close, medium, long
+
+
+## Backlog
+
+### GameObjects / Hierarchy
+
+* **NetworkManager** (component: `NetworkManager`, transport: `FizzySteamworks`, helper: `NetworkManagerHUD`)
+* **Player** (prefab)
+  * Scripts
+    * `PlayerController`
+    * `PlayerInput`
+    * `PlayerMovement`
+    * `PlayerNetworking`
+  * Children
+    * `LeftHand`, `RightHand`
+    * `CatchArea` (trigger collider)
+  * Animator
+    * Blend‑tree: Idle → Walk → Sprint
+    * Triggers: Jump, Catch, Dive, Pickup, Aim
+* **Balls** (prefab)
+* Gameplay
+  * Consecutive‑catch counter per ball
+* Networking
+  * `NetworkTransform` for players & balls
+  * `NetworkAnimator` for player states
+  * RPCs: Throw, Catch, ResetCounter
+* UI
+  * Minimal HUD: catch count, ping
+* Polish
+  * Steam Rich Presence
