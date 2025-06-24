@@ -5,6 +5,34 @@ date: 2025-06-24T12:55:00.000Z
 
 ## Patch Notes
 
+
+### 6/23
+
+- Throw Animation with steps and RPC 
+- Networked Ball prefab
+  - Holding a ball in hand
+  - balls list of prefabs
+- Animator Throw still has issues
+
+
+### 6/22
+
+- Added Mirror
+- Network Animator and local test success
+- Animator Overhaul with Mixamo Character Model
+
+### 6/21
+
+- Third Person Controller Overhaul
+- Graphics Render Pipeline fix
+- Camera working good enough with run jump walk and spin
+dwad
+
+### 6/20
+
+- Character Controller rework to failure, needs more work
+  - Throw mode working but will be scraped 
+
 ### 6/19
 
 - Found potential fix for Multiplayer Test
@@ -21,35 +49,29 @@ date: 2025-06-24T12:55:00.000Z
 - Built and shipped `0.0.1`
 - Testing Steam Friends Multiplayer: Failed to Connect
 
-## Current Work:
+## Current TODO:
 
-Backlogging network test and focussing on `Catch` functionality from local side
-
-
-- Camera Control Movement Change
-  - the WASD controls should make the character run and face in that direction
-  - when Throw Mode is enabled make the character rotate to the direction of the camera
-- Rework Weapon.cs to be about holding a ball in hand
-  - balls will be a list of prefabs
-- Ball Networking
-  - onCatch of a ball destroy the ball and put that ball from list in hand
-  - if not holding a ball
-    - network event to broadcast the player is now holding a ball
-    - network event to broadcast to destroy the ball
-- Networked Scene Objects (targets, scoreboard, rigidbodies)
-- Power Levels
-  - Like selecting clubs in a golf game: close, medium, long
-- Character movement: Diving / Jumping
-  - lerp angle of character to upside-down (landing on head) based on vertical speed
-  - if oververtical on land then trigger roll animation
-  - if character jumps(spacebar) then dives(spacebar again) set tilt to 45 degrees and give boost to direction
-- Character movement:
-  - movement in a direction should tiltthe character in that direction up to 15degrees
-
+- Steam.NET with Fizzy network test
+- Networked Scene Objects (throw count, targets, scoreboard, rigidbodies)
 
 ## Backlog
 
-### GameObjects / Hierarchy
+- Power Levels
+  - Like selecting clubs in a golf game: close, medium, long
+  - held power is metronome with a *perfect* that activates trail
+- Zones
+  - Teleport between Parks
+- Catch Animation Trigger
+  - Ragdoll Catch
+- Quests and Vendors
+  - Throw and have caught from X to Y
+  - Cosmetics
+    - Hats, Ball Trails, Shoes
+- SinglePlayer
+  - Set a Dummy for catch
+  - Remote Launcher
+
+## Outdated - GameObjects / Hierarchy
 
 * **NetworkManager** (component: `NetworkManager`, transport: `FizzySteamworks`, helper: `NetworkManagerHUD`)
 * **Player** (prefab)
@@ -75,3 +97,8 @@ Backlogging network test and focussing on `Catch` functionality from local side
   * Minimal HUD: catch count, ping
 * Polish
   * Steam Rich Presence
+
+
+
+### Concept Imaging
+
