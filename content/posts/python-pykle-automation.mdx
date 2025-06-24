@@ -1,31 +1,31 @@
 ---
 title: Python - Pykle - Automation toolkit
 date: 2025-06-21T13:14:00.000Z
+cover: /uploads/northbeach.webp
 ---
-
-
 ## Goal
 
 Python-based automation toolkit for Windows that replaces AutoHotKey with a more maintainable, modern, and extensible architecture.
 
 ## Features
 
-- Virtual-env first workflow (`.venv`)
-- Keyboard and mouse control via `pyautogui`, `pydirectinput`, and `pynput`
-- YAML-defined input sequences
-- Optional timing jitter for more human-like delays
-- Simple, extensible project layout ready for vision-based triggers
+* Virtual-env first workflow (`.venv`)
+* Keyboard and mouse control via `pyautogui`, `pydirectinput`, and `pynput`
+* YAML-defined input sequences
+* Optional timing jitter for more human-like delays
+* Simple, extensible project layout ready for vision-based triggers
 
 ## How it works
 
 Input sequences are defined as YAML files and executed in order.
 
 Each step can define:
+
 * The type of input (`mouse_click`, `key_press`)
 * The method (e.g., `pyautogui`, `pynput`)
 * Timing between repeats or after steps (`interval`, `post_delay`)
 * Optional randomness (`interval_jitter`, `post_jitter`)
- 
+
 ### YAML format
 
 ```yaml
@@ -49,26 +49,33 @@ sequence:
 * Language: Python
 * Environment: `venv`-based, platform-focused on Windows
 * Core Libraries:
+
   * `pyautogui` – basic automation
   * `pydirectinput` – bypass some game input protections
   * `pynput` – low-level input control
   * `opencv-python` (planned) – image recognition and detection
 * Modular Design:
+
   * `input_controller.py` – encapsulates input simulation logic
   * Future: `screenshot.py`, `trigger_logic.py`, `main.py`
 
 ## Phases of Development
 
 1. Project Setup
+
    * Python project using `venv`
    * `README.md` with setup instructions, usage examples, and key bindings
 2. Basic Input Automation
+
    * Simulate keyboard and mouse presses in timed loops
 3. Mouse Movement
+
    * Programmatic cursor movement with pixel precision
 4. Window Screenshot Capture
+
    * Capture screenshots of specific windows or regions
 5. Image-Based Action Triggers
+
    * Use image processing (e.g. OpenCV) to detect visual cues and trigger input
 
 ## Backlog
@@ -77,4 +84,3 @@ sequence:
 * Add `screenshot.py` module for window or region capture
 * Add basic trigger config (JSON or YAML)
 * CLI interface or simple GUI toggle
-
