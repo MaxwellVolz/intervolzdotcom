@@ -1,8 +1,8 @@
 ---
 title: Unity Dev - PlayCatch Dev Patch Notes
 date: 2025-06-24T12:55:00.000Z
+cover: /uploads/blender_unity.png
 ---
-
 ## Patch Notes
 
 ### 6/24
@@ -23,96 +23,108 @@ date: 2025-06-24T12:55:00.000Z
   - balls list of prefabs
 - Animator Throw still has issues
 
+
 ### 6/22
 
-- Added Mirror
-- Network Animator and local test success
-- Animator Overhaul with Mixamo Character Model
+* Added Mirror
+* Network Animator and local test success
+* Animator Overhaul with Mixamo Character Model
 
 ### 6/21
 
-- Third Person Controller Overhaul
-- Graphics Render Pipeline fix
-- Camera working good enough with run jump walk and spin
-dwad
+* Third Person Controller Overhaul
+* Graphics Render Pipeline fix
+* Camera working good enough with run jump walk and spin
+  dwad
 
 ### 6/20
 
-- Character Controller rework to failure, needs more work
-  - Throw mode working but will be scraped 
+* Character Controller rework to failure, needs more work
+
+  * Throw mode working but will be scraped 
 
 ### 6/19
 
-- Found potential fix for Multiplayer Test
-- Camera v1: Orbital Camera and Throw Mode
-- Charged Throw with added pitch and throw-from-hand
+* Found potential fix for Multiplayer Test
+* Camera v1: Orbital Camera and Throw Mode
+* Charged Throw with added pitch and throw-from-hand
 
 ### 6/18
 
-- Fresh Unity Project
-- Followed the `Mirror Quick Start Guide`
-- Working local multiplayer
-- Swapped Transport Layer to Steam.NET
-  - Added Steam.NET and FizzySteamworks
-- Built and shipped `0.0.1`
-- Testing Steam Friends Multiplayer: Failed to Connect
+* Fresh Unity Project
+* Followed the `Mirror Quick Start Guide`
+* Working local multiplayer
+* Swapped Transport Layer to Steam.NET
+
+  * Added Steam.NET and FizzySteamworks
+* Built and shipped `0.0.1`
+* Testing Steam Friends Multiplayer: Failed to Connect
 
 ## Current TODO:
 
-Blender development, help provide guidance with the model development:
-
-- Vibe
-  - Washington Square Park
-  - North Beach
-    - the alleys
 - Steam.NET with Fizzy network test
 - Networked Scene Objects (throw count, targets, scoreboard, rigidbodies)
 
 ## Backlog
 
-- Power Levels
-  - Like selecting clubs in a golf game: close, medium, long
-  - held power is metronome with a *perfect* that activates trail
-- Zones
-  - Teleport between Parks
-- Catch Animation Trigger
-  - Ragdoll Catch
-- Quests and Vendors
-  - Throw and have caught from X to Y
-  - Cosmetics
-    - Hats, Ball Trails, Shoes
-- SinglePlayer
-  - Set a Dummy for catch
-  - Remote Launcher
+* Power Levels
+
+  * Like selecting clubs in a golf game: close, medium, long
+  * held power is metronome with a *perfect* that activates trail
+* Zones
+
+  * Teleport between Parks
+* Catch Animation Trigger
+
+  * Ragdoll Catch
+* Quests and Vendors
+
+  * Throw and have caught from X to Y
+  * Cosmetics
+
+    * Hats, Ball Trails, Shoes
+* SinglePlayer
+
+  * Set a Dummy for catch
+  * Remote Launcher
 
 ## Outdated - GameObjects / Hierarchy
 
 * **NetworkManager** (component: `NetworkManager`, transport: `FizzySteamworks`, helper: `NetworkManagerHUD`)
 * **Player** (prefab)
+
   * Scripts
+
     * `PlayerController`
     * `PlayerInput`
     * `PlayerMovement`
     * `PlayerNetworking`
   * Children
+
     * `LeftHand`, `RightHand`
     * `CatchArea` (trigger collider)
   * Animator
+
     * Blend‑tree: Idle → Walk → Sprint
     * Triggers: Jump, Catch, Dive, Pickup, Aim
 * **Balls** (prefab)
 * Gameplay
+
   * Consecutive‑catch counter per ball
 * Networking
+
   * `NetworkTransform` for players & balls
   * `NetworkAnimator` for player states
   * RPCs: Throw, Catch, ResetCounter
 * UI
+
   * Minimal HUD: catch count, ping
 * Polish
+
   * Steam Rich Presence
-
-
 
 ### Concept Imaging
 
+![](/uploads/catch_concept_01.png)
+
+![](/uploads/blender_unity.png)
