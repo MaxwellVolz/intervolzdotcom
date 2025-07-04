@@ -3,20 +3,89 @@ title: "Blender: North Beach Buildings and Topography"
 date: 2025-07-03T00:01:00.000Z
 cover: /uploads/north_beach_buildings.png
 ---
-## Relevant Info
+
+Goal: 
+
+Combine the Blosm buildings with USGS topography data using geometry nodes to set them at the correct elevation.
+
+## North Beach
 
 Coords: -122.41471,37.79653,-122.40409,37.80388
-
 
 ## Blosm Options
 
 import: buildings, roads and paths
 
-## Topography
+Then import Terrain
 
-Download `USGS/ 1/3` data from [portal.opentopography](https://portal.opentopography.org/raster?opentopoID=OTNED.012021.4269.1&minX=-122.41269350051881&minY=37.79508772962089&maxX=-122.40342378616333&maxY=37.8048876560168)
-
-Unzip Unzip until .tif
+Then..........
 
 
+Use my script to face project all the buildings min-Z based on bounding box to the Terrain.
 
+```py
+import bpy
+import mathutils
+import bmesh
+from mathutils.bvhtree import BVHTree
+
+# Get terrain and building collection
+terrain = bpy.data.objects["Terrain"]
+buildings = bpy.data.collections["all_buildings"].objects
+
+depsgraph = bpy.context.evaluated_depsgraph_get()
+terrain_eval = terrain.evaluated_get(depsgraph)
+terrain_mesh = terrain_eval.to_mesh()
+
+# Create bmesh and BVH tree from terrain
+bm = bmesh.new()
+bm.from_mesh(terrain_mesh)
+bm.transform(terrain.matrix_world)  # Important: account for object transforms
+bm.normal_update()
+bvh = BVHTree.FromBMesh(bm)
+
+# Raycast each object to terrain
+for obj in buildings:
+    if obj.type != 'MESH':
+        continue
+
+    # Get world-space bounding box corners
+    bbox_world = [obj.matrix_world @ mathutils.Vector(corner) for corner in obj.bound_box]
+    min_point = min(bbox_world, key=lambda v: v.z)
+
+    ray_origin = min_point + mathutils.Vector((0, 0, 1000))
+    ray_direction = mathutils.Vector((0, 0, -1))
+
+    hit = bvh.ray_cast(ray_origin, ray_direction)
+
+
+
+    hit = bvh.ray_cast(ray_origin, ray_direction)
+
+    if hit is not None and hit[0] is not None:
+        location, normal, index, distance = hit
+        delta_z = location.z - min_point.z
+        obj.location.z += delta_z
+    else:
+        print(f"[WARN] Raycast missed for object '{obj.name}' at XY = ({min_point.x:.2f}, {min_point.y:.2f})")
+
+# Cleanup
+bm.free()
+terrain_eval.to_mesh_clear()
+```
+
+Blosm -> Import Satellite Imagery with Mapbox API Key @ Terrain
+
+## Drawing Curbs
+
+Grease Pencil → Polyline → Join Vertices (F) → Shrinkwrap
+
+### Edit Mode
+
+Use Grid Fill instead of F (works best for more regular shapes):
+
+Delete existing edges (if needed)
+
+Select edge loop (Alt + click)
+
+Face → Grid Fill
