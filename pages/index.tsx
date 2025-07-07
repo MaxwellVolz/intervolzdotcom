@@ -44,7 +44,6 @@ type PostMeta = {
 
 export async function getStaticProps() {
 
-  console.log(`getStaticProps()`);
 
   const postsDir = path.join(process.cwd(), 'content/posts');
   const files = fs.readdirSync(postsDir);
@@ -53,8 +52,6 @@ export async function getStaticProps() {
     const slug = file.replace(/\.mdx?$/, '');
     const raw = fs.readFileSync(path.join(postsDir, file), 'utf8');
     const { content, data } = matter(raw);
-
-    console.log(`[DEBUG] ${file} frontmatter:`, data);
 
     const mdxSource = await serialize(content, {
       mdxOptions: {
@@ -84,7 +81,6 @@ export async function getStaticProps() {
     };
   }));
 
-  console.log(`visiblePosts filtering...`);
 
   // Filter out drafts and sort by pinned first, then date
   const visiblePosts = posts
@@ -93,8 +89,6 @@ export async function getStaticProps() {
 
   const pinned = visiblePosts.filter((post) => post.pinned);
   const unpinned = visiblePosts.filter((post) => !post.pinned);
-
-  console.log(`[DEBUG] pinned:`, pinned);   // empty
 
   const sortedPosts = [...pinned, ...unpinned];
 
