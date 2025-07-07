@@ -24,4 +24,7 @@ collections:
         required: false
         hint: 'Optional cover image for blog index'
 
+      - { name: 'pinned', label: 'Pinned', widget: 'boolean', default: false, required: false }
+      - { name: 'draft', label: 'Draft', widget: 'boolean', default: false, required: false }
+
       - { name: 'body', label: 'Body', widget: 'markdown' }

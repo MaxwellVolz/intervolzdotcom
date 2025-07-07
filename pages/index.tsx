@@ -28,6 +28,8 @@ type Post = PostMeta & {
     title: string;
     date: string;
     cover?: string;
+    pinned?: boolean;
+    draft?: boolean;
   };
 };
 
@@ -36,9 +38,14 @@ type PostMeta = {
   title: string;
   date: string;
   cover?: string;
+  pinned?: boolean;
+  draft?: boolean;
 };
 
 export async function getStaticProps() {
+
+  console.log(`getStaticProps()`);
+
   const postsDir = path.join(process.cwd(), 'content/posts');
   const files = fs.readdirSync(postsDir);
 
@@ -47,6 +54,8 @@ export async function getStaticProps() {
     const raw = fs.readFileSync(path.join(postsDir, file), 'utf8');
     const { content, data } = matter(raw);
 
+    console.log(`[DEBUG] ${file} frontmatter:`, data);
+
     const mdxSource = await serialize(content, {
       mdxOptions: {
         remarkPlugins: [remarkSubstitutions],
@@ -54,26 +63,47 @@ export async function getStaticProps() {
     });
 
 
+    const pinned = !!data.pinned;
+    const draft = !!data.draft;
+
     return {
       slug,
       title: data.title || slug,
       date: data.date ? new Date(data.date).toISOString() : '',
       cover: data.cover || null,
       source: mdxSource,
+      pinned: pinned,
+      draft: draft,
       frontmatter: {
         title: data.title || slug,
         date: data.date ? new Date(data.date).toISOString() : '',
         cover: data.cover || null,
+        pinned: pinned,
+        draft: draft,
       },
     };
   }));
 
-  posts.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  console.log(`visiblePosts filtering...`);
 
-  return { props: { posts } };
+  // Filter out drafts and sort by pinned first, then date
+  const visiblePosts = posts
+    .filter((post) => !post.draft)
+    .sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+
+  const pinned = visiblePosts.filter((post) => post.pinned);
+  const unpinned = visiblePosts.filter((post) => !post.pinned);
+
+  console.log(`[DEBUG] pinned:`, pinned);   // empty
+
+  const sortedPosts = [...pinned, ...unpinned];
+
+  return { props: { posts: sortedPosts } };
+
 }
 
-export default function BlogIndex({ posts }: { posts: Post[] }) {
+export default function BlogIndex({ posts = [] }: { posts?: Post[] }) {
+
   const [openPost, setOpenPost] = useState<Post | null>(null);
 
   return (
@@ -91,10 +121,15 @@ export default function BlogIndex({ posts }: { posts: Post[] }) {
                 <img src={post.cover} alt={post.title} className={styles.coverImage} />
               ) : (
                 <>
-                  <h2>{post.title}</h2>
-                  <p className={styles.date}>
-                    {new Date(post.date).toLocaleDateString()}
-                  </p>
+                  <h2>
+                    {post.pinned && '📌 '}
+                    {post.title}
+                  </h2>
+                  {post.pinned ? ('') : (
+                    <p className={styles.date}>
+                      {new Date(post.date).toLocaleDateString()}
+                    </p>
+                  )}
                 </>
               )}
             </button>
