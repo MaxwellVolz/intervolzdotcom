@@ -7,6 +7,21 @@ import PostModal from '../components/PostModal';
 import { serialize } from 'next-mdx-remote/serialize';
 import type { MDXRemoteSerializeResult } from 'next-mdx-remote';
 
+import { visit } from 'unist-util-visit';
+import type { Plugin } from 'unified';
+import type { Root, Text } from 'mdast';
+
+const remarkSubstitutions: Plugin<[], Root> = () => {
+  return (tree) => {
+    visit(tree, 'text', (node: Text) => {
+      node.value = node.value
+        .replace(/->/g, '→')
+        .replace(/<-/g, '←')
+        .replace(/<3/g, '♥');
+    });
+  };
+};
+
 type Post = PostMeta & {
   source: MDXRemoteSerializeResult;
   frontmatter: {
@@ -31,7 +46,14 @@ export async function getStaticProps() {
     const slug = file.replace(/\.mdx?$/, '');
     const raw = fs.readFileSync(path.join(postsDir, file), 'utf8');
     const { content, data } = matter(raw);
-    const mdxSource = await serialize(content);
+
+    const mdxSource = await serialize(content, {
+      mdxOptions: {
+        remarkPlugins: [remarkSubstitutions],
+      },
+    });
+
+
     return {
       slug,
       title: data.title || slug,
