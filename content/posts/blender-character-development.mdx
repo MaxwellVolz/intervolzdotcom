@@ -4,17 +4,25 @@ date: 2025-07-02T21:15:00.000Z
 cover: /uploads/char_dev.png
 ---
 
-Working Path:
+- [Making Models in Blender](#making-models-in-blender)
+- [Exporting Baked textures with Blender scripts](#exporting-baked-textures-with-blender-scripts)
+- [Unity material hookup phase](#unity-material-hookup-phase)
+  - [Overview](#overview)
+  - [1. Extract Materials from the FBX](#1-extract-materials-from-the-fbx)
+  - [2. Assign the Correct Baked Textures](#2-assign-the-correct-baked-textures)
+  - [3. Preview the Model](#3-preview-the-model)
 
-1. [Blender -> Install MPFB and assets](https://www.youtube.com/watch?v=s6XjmNweE_0)
+## Making Models in Blender
+
+1. [Blender -> Install MXFB and assets](https://www.youtube.com/watch?v=s6XjmNweE_0)
 2. Make Character
 3. Use `export_materials.bpy` to get baked textures for character (see below)
 4. Mixamo Auto-Rigger (could be reworked)
 5. Import `.fbx` -> Unity
 
-Ok! So MXFB got us a character in Blender. Nice. Now lets export the mesh so it's not a blank porcelain model in Unity.
+Using MXFB to make a character in Blender. Nice. Now lets export the mesh so it's not a blank porcelain model in Unity.
 
-### Scripting in Blender!
+## Exporting Baked textures with Blender scripts
 
 We can automate the process of manual exporting each mesh from the generated character using **Scripting**.
 
@@ -101,21 +109,19 @@ print("All bakes completed and saved.")
 https://www.youtube.com/watch?v=s6XjmNweE_
 Now, the **Unity material hookup phase**.
 
-## Overview
+
+---
+
+## Unity material hookup phase
+
+### Overview
 
 * Import baked textures (e.g., `baked_Human.shirt.png`, etc.) to`Assets/Character/Models/baked_textures/`
 * Import **Mixamo-rigged FBX** model to Unity (`.fbx`)
 * Apply the correct `baked_*.png` textures to the model’s materials so it looks like it did in Blender
 
----
-
-## Unity material hookup phase:
-
 Reassign the Unity materials for each mesh in the Mixamo rig to use the **corresponding baked image textures**.
 
----
-
-## Unity
 
 ### 1. Extract Materials from the FBX
 
@@ -146,5 +152,3 @@ Example:
 1. Drag the `.fbx` model into your scene.
 2. If materials were extracted and edited correctly, you should see all baked textures mapped and lit properly.
 3. If not, you lose!
-
-Lol! I'll polish this up so I think.
