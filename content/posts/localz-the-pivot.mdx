@@ -4,4 +4,157 @@ date: 2025-07-07T17:24:00.000Z
 pinned: false
 draft: false
 ---
-here it comes!
+
+## Gameplay Concept
+
+Become a local in North Beach, San Francisco.
+
+Engage in social rituals, earn local status, and uncover a deeper simulation of community living and urban play.
+
+## Gameplay Loop
+
+* Complete tasks at real-world locations to build rapport with neighborhood NPCs.
+* Unlock deeper relationships and social interactions:
+  * NPCs start greeting you by name.
+  * Access to minigames, secret challenges, and insider info.
+* Make money doing local deliveries.
+* Customize your look with cosmetics.
+* Uncover hidden layers of the simulation.
+* **TODO:** Add long-form questlines, environmental modifiers, weather, time-of-day effects.
+
+## Technical TODO
+
+### Quests System
+
+* Implement **proximity-based triggers** (e.g. “Hey! Listen!”)
+  * Example: character in the park offers a narrated introduction
+* Store quest data in structured JSON/YAML (by location or NPC)
+
+### Challenges System
+
+* Short skill-based or timing-based mechanics at known hotspots
+* Examples: dice at Bing’s, oyster eating competition
+
+### Social Interactions
+
+* Implement **reputation system** per NPC
+* Unlock new conversation branches, perks, or items based on social level
+* Agent-based dialogue trees with probabilistic or branching logic
+
+### Character Progression
+
+* Leveling or notoriety system tied to local recognition
+* Cosmetic unlocks via vendors (hats, shoes, ball trails)
+* All data stored in easy-to-edit formats per location/NPC
+
+## North Beach Feature List
+
+### Gameplay Mechanics
+
+* Deliveries: Marios, Graffeo, Liguiria, HITW, Lillies
+* Events: “Afters”, Oyster Competition, Tai Chi at W2
+* Bars: Bing’s dice, Tony Niks, Specs, Bow Bow karaoke
+* Shifts: Work at HITW after meeting Nick
+* Items: Condor magnet, Fernet (drunk vision), Specs secret order
+* Minigames: Skate the Hill, underground poker
+* Books: Meet Dave by reading his favorite
+
+
+## Mechanics to Prototype
+
+* Dialogue engine
+* Dynamic reputation gates
+* Simple job system
+* Delivery → Inventory → Reward loop
+* Environmental state triggers (time of day, popularity zones)
+
+## Super Backlog
+
+* Expansion Cities (e.g. Lower Haight, The Mission, Brooklyn, etc.)
+* Mobile version
+* NPC phone/text interactions
+* Offline/local save mode
+* “Localz” branded merch and story expansions
+
+## Patch Notes
+
+### 7/3
+
+- New North Beach Model
+  - Building bases with aligned satellite imagery
+
+### 7/2
+
+- Making Character Models in Blender
+- Exporting Baked textures with Blender scripts
+- Unity material hookup successful with Mixamo Auto-Rigger
+
+### 6/26
+
+- Networking
+  - Testing to **Success**
+  - Demo'd with: John, Josh, and Matt! Successfully!
+  - Able to join via Steam Friends with and without and invite
+- Models
+  - Progress on procedural generated buildings
+  - Marios, OJs, the other place.
+
+### 6/25
+
+- Steam.NET integration with FuzzySteamworks
+- Blender
+  - Washington Square Park Huge updates
+
+### 6/24
+
+- Concept Art
+- Blender
+  - Washington Square Park, Church, Tony Niks, Marios
+  - Filbert, Union Streets and Buildings
+  - North Beach Streets Grid
+- Unity Scale and North Beach Model .fbx Testings Successful
+
+
+### 6/23
+
+- Throw Animation with steps and RPC 
+- Networked Ball prefab
+  - Holding a ball in hand
+  - balls list of prefabs
+- Animator Throw still has issues
+
+
+### 6/22
+
+* Added Mirror
+* Network Animator and local test success
+* Animator Overhaul with Mixamo Character Model
+
+### 6/21
+
+* Third Person Controller Overhaul
+* Graphics Render Pipeline fix
+* Camera working good enough with run jump walk and spin
+  dwad
+
+### 6/20
+
+* Character Controller rework to failure, needs more work
+  * Throw mode working but will be scraped 
+
+### 6/19
+
+* Found potential fix for Multiplayer Test
+* Camera v1: Orbital Camera and Throw Mode
+* Charged Throw with added pitch and throw-from-hand
+
+### 6/18
+
+* Fresh Unity Project
+* Followed the `Mirror Quick Start Guide`
+* Working local multiplayer
+* Swapped Transport Layer to Steam.NET
+
+  * Added Steam.NET and FizzySteamworks
+* Built and shipped `0.0.1`
+* Testing Steam Friends Multiplayer: Failed to Connect
