@@ -4,8 +4,6 @@ date: 2025-07-09T11:54:00.000Z
 pinned: false
 draft: false
 ---
-
-
 ## Architecture
 
 ### 1. **Spawner GameObject**
@@ -25,6 +23,10 @@ Placed manually at doorsteps (or wherever). Each one controls a schedule for spa
 * Uses root motion or syncs movement speed with `NavMeshAgent`
 * References a "behavior" script for pathing and actions
 
+\> Don't forget to install the tools!
+
+![](/uploads/install_nav.png)
+
 ### 3. **Movement Target System**
 
 Use **Checkpoint GameObjects** in the scene (like path targets or nav anchors).
@@ -37,7 +39,7 @@ Options:
 
 Each NPC picks random ones to walk to and idles there, then picks another.
 
----
+- - -
 
 ## 🧠 Best Practices Considered
 
@@ -45,7 +47,7 @@ Each NPC picks random ones to walk to and idles there, then picks another.
 * **Scalability**: You can later assign specific behaviors per NPC type (e.g. loiter, buy coffee, sit on bench).
 * **Multiplayer**: NPCs should be **server-authoritative**. Only server runs spawner and pathing logic, and syncs position and animations via network.
 
----
+- - -
 
 ## 💡 Optional Features (for later)
 
@@ -53,7 +55,7 @@ Each NPC picks random ones to walk to and idles there, then picks another.
 * **Scheduled spawn times** (e.g. 9am–5pm active)
 * **Behavior trees** or state machines for complex behavior
 
----
+- - -
 
 ## 📌 Implementation Breakdown
 
@@ -61,7 +63,7 @@ Each NPC picks random ones to walk to and idles there, then picks another.
 
 * `spawnIntervalMin/Max`
 * `npcPrefab`
-*  (optional, or just use its own transform)
+* (optional, or just use its own transform)
 
 ### `NPCController.cs`
 
@@ -70,7 +72,7 @@ Each NPC picks random ones to walk to and idles there, then picks another.
 * Uses `NavMeshAgent` to move there
 * Triggers animator blend tree with speed
 
----
+- - -
 
 ## 🔗 Network Considerations
 
@@ -78,13 +80,13 @@ Each NPC picks random ones to walk to and idles there, then picks another.
 * NPC movement should be **synced with position + animation** (use Mirror `NetworkTransform` or custom sync if you want tight control)
 * Avoid syncing pathfinding logic client-side
 
----
+- - -
 
 ## **Tag-Based Target Discovery**
 
 **Reasoning:** Just drop GameObjects in the scene and tag them `"NPCTarget"`.
 
----
+- - -
 
 ## ✅ Proceeding to Implementation
 
@@ -99,4 +101,5 @@ Max concurrent NPCs per spawner
 * **Randomized interval between `spawnIntervalMin` and `spawnIntervalMax`**
 * **Max concurrent NPCs per spawner**
 * **Spawns at its own transform** (can later be extended with offset array)
----
+
+- - -
