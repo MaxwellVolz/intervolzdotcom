@@ -4,4 +4,99 @@ date: 2025-07-09T11:54:00.000Z
 pinned: false
 draft: false
 ---
-Incoming!
+
+
+## Architecture
+
+### 1. **Spawner GameObject**
+
+Placed manually at doorsteps (or wherever). Each one controls a schedule for spawning NPCs.
+
+**Spawner Script Responsibilities:**
+
+* Timer to spawn NPCs at intervals (fixed or randomized)
+* Keep track of active NPCs if you want to limit total (e.g. max # per spawner)
+* Reference an NPC prefab to instantiate
+
+### 2. **NPC Prefab**
+
+* Includes `NavMeshAgent` for walking
+* Has an `Animator` with a blend tree or simple state machine
+* Uses root motion or syncs movement speed with `NavMeshAgent`
+* References a "behavior" script for pathing and actions
+
+### 3. **Movement Target System**
+
+Use **Checkpoint GameObjects** in the scene (like path targets or nav anchors).
+
+Options:
+
+* Tag them (`"NPCTarget"`)
+* Place them under a parent (`/NPCCheckpoints/`)
+* Use a ScriptableObject list if you want dynamic ones per scene
+
+Each NPC picks random ones to walk to and idles there, then picks another.
+
+---
+
+## 🧠 Best Practices Considered
+
+* **Loose coupling**: Spawner doesn't know about how NPCs behave, only spawns them.
+* **Scalability**: You can later assign specific behaviors per NPC type (e.g. loiter, buy coffee, sit on bench).
+* **Multiplayer**: NPCs should be **server-authoritative**. Only server runs spawner and pathing logic, and syncs position and animations via network.
+
+---
+
+## 💡 Optional Features (for later)
+
+* **NPC pooling** instead of instantiate/destroy (for perf)
+* **Scheduled spawn times** (e.g. 9am–5pm active)
+* **Behavior trees** or state machines for complex behavior
+
+---
+
+## 📌 Implementation Breakdown
+
+### `NPCSpawner.cs` (on the door)
+
+* `spawnIntervalMin/Max`
+* `npcPrefab`
+*  (optional, or just use its own transform)
+
+### `NPCController.cs`
+
+* Handles state (Idle, Walking, etc.)
+* Picks a random destination from a list of walkable target transforms `Transform[] destinations`
+* Uses `NavMeshAgent` to move there
+* Triggers animator blend tree with speed
+
+---
+
+## 🔗 Network Considerations
+
+* NPCs should only be spawned on the **server**
+* NPC movement should be **synced with position + animation** (use Mirror `NetworkTransform` or custom sync if you want tight control)
+* Avoid syncing pathfinding logic client-side
+
+---
+
+## **Tag-Based Target Discovery**
+
+**Reasoning:** Just drop GameObjects in the scene and tag them `"NPCTarget"`.
+
+---
+
+## ✅ Proceeding to Implementation
+
+Next, I’ll start with the `NPCSpawner.cs` script (server-side), then the `NPCController.cs` for basic wandering behavior.
+
+Max concurrent NPCs per spawner
+
+`NPCSpawner.cs`:
+
+* **Mirror-based multiplayer**
+* **Server-authoritative NPC spawning**
+* **Randomized interval between `spawnIntervalMin` and `spawnIntervalMax`**
+* **Max concurrent NPCs per spawner**
+* **Spawns at its own transform** (can later be extended with offset array)
+---
