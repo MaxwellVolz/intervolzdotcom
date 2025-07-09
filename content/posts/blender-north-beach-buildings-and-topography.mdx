@@ -9,7 +9,11 @@ draft: false
 ![](/uploads/north_beach_render.png)- [North Beach](#north-beach)
 - [North Beach](#north-beach)
 - [Blosm Options](#blosm-options)
-- [Drawing Curbs](#drawing-curbs)
+- [Unity Import](#unity-import)
+- [Park](#park)
+  - [General Object](#general-object)
+  - [Benches](#benches)
+  - [Curbs](#curbs)
   - [Edit Mode](#edit-mode)
 
 Goal: 
@@ -84,16 +88,43 @@ terrain_eval.to_mesh_clear()
 
 Blosm -> Import Satellite Imagery with Mapbox API Key @ Terrain
 
-## Drawing Curbs
+Scale increase: Z-axis 1.5x
 
-Grease Pencil → Polyline → Join Vertices (F) → Shrinkwrap
+
+## Unity Import
+
+Position: X: -40   Y: -20    Z: 40
+
+Paste this into the position: `Vector3(-40,-20,40)`
+
+Select Verticies of all buildings
+
+
+## Park
+
+### General Object
+
+1. Make sure to set the origin
+1. Edit Mode -> `Shift - S` to Set Cursor
+2. Object Mode -> Object -> Set Origin to 3D Cursor
+
+### Benches
+
+Use `Alt - D` to use **Instancing**.
+
+---
+
+### Curbs
+
+1. Make Plane
+2. Cover Area
+3. Grid it with Loop Cuts
+4. Modifier -> Bevel -> 4m and 5 segments `Ctrl - Shift - B`
+5. Shrinkwrap to Terrain
+6. Extrude 0.2m
 
 ### Edit Mode
 
-Use Grid Fill instead of F (works best for more regular shapes):
+Use Grid Fill or Loop Cuts instead of F (works best for more regular shapes):
 
-Delete existing edges (if needed)
 
-Select edge loop (Alt + click)
-
-Face → Grid Fill

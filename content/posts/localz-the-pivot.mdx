@@ -1,5 +1,5 @@
 ---
-title: Localz - The Pivot
+title: Localz - North Beach
 date: 2025-07-07T17:24:00.000Z
 pinned: false
 draft: false
@@ -12,15 +12,74 @@ Engage in social rituals, earn local status, and uncover a deeper simulation of 
 
 ## Gameplay Loop
 
-* Complete tasks at real-world locations to build rapport with neighborhood NPCs.
-* Unlock deeper relationships and social interactions:
+* Complete tasks at real-world locations to build rapport with neighborhood NPCs
+* Make money doing local deliveries
+* Use money to hang out at **Places of Interest**
+* Manage drunkeness
+* Unlock social interactions from localz
+  * NPCs start greeting you by name
+  * Access to minigames, secret challenges, and insider info
+* Time-of-day effects
+* Environmental modifiers, weather
+* Customize your look with unlocked cosmetics
 
-  * NPCs start greeting you by name.
-  * Access to minigames, secret challenges, and insider info.
-* Make money doing local deliveries.
-* Customize your look with cosmetics.
-* Uncover hidden layers of the simulation.
-* **TODO:** Add long-form questlines, environmental modifiers, weather, time-of-day effects.
+## Places of Interest
+
+### Game Start - Spawn
+
+1. Bus Stop at Columbus and Union
+2. Meet **Kevin** and get directed to Italian Athletic Club
+
+### Italian Athletic Club - Main Hub
+
+1. Social Boards that track progress - non-networked objects
+  1. Empty boards fill with progression
+2. Balcony - first area unlock
+
+### Marios
+
+Player can only be in Mario's Zone X minutes a day unless buying food / drink.
+
+Zone: Extends partially across street
+Enable Access: First Mission from IAC / meet Dario on street
+
+1. Meet Dario
+2. Run deliveries: Liguria
+3. Minigame: Make Panini
+4. Scope for localz
+   1. Buy menu items to extend access in zone
+   2. NPC that spawns doors away and then returns home after
+   3. Appear after X minutes at place
+
+| Menu Item  | +Duration | Effect | Cost |
+| ---------- | --------- | ------ | ---- |
+| Beer       | 2minutes  | +drunk | 5    |
+| Espresso   | 1minutes  | -drunk | 10   |
+| Salad      | 2minutes  |        | 20   |
+| Panini     | 3minutes  | -drunk | 20   |
+| Cannelloni | 5minutes  | -drunk | 50   |
+
+### Hole in the Wall
+
+1. Meet Nick / Matt
+2. Run deliveries
+   1. Graffeo
+   2. Liquor Store
+3. Pick up shifts
+4. Minigame: Make Coffee at HITW
+
+### Tony Niks
+
+Player can only be inside Tony Niks while buying drinks.
+
+1. Meet Sebastian
+2. Pay Cover
+3. Expensive by minute
+
+### Church - Opens on Sunday
+
+1. Sneak and Steal Money from Pews
+2. Donate in front of Priest to increase rep
 
 ![](/uploads/tasks.png "KanBan Board")
 
@@ -29,7 +88,6 @@ Engage in social rituals, earn local status, and uncover a deeper simulation of 
 ### Quests System
 
 * Implement **proximity-based triggers** (e.g. “Hey! Listen!”)
-
   * Example: character in the park offers a narrated introduction
 * Store quest data in structured JSON/YAML (by location or NPC)
 
@@ -37,6 +95,7 @@ Engage in social rituals, earn local status, and uncover a deeper simulation of 
 
 * Short skill-based or timing-based mechanics at known hotspots
 * Examples: dice at Bing’s, oyster eating competition
+* Pub Crawl
 
 ### Social Interactions
 
