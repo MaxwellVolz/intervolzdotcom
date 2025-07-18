@@ -1,37 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
-import { useState } from 'react';
 import styles from '../styles/Blog.module.css';
-import PostModal from '../components/PostModal';
-import { serialize } from 'next-mdx-remote/serialize';
-import type { MDXRemoteSerializeResult } from 'next-mdx-remote';
-
-import { visit } from 'unist-util-visit';
-import type { Plugin } from 'unified';
-import type { Root, Text } from 'mdast';
-
-const remarkSubstitutions: Plugin<[], Root> = () => {
-  return (tree) => {
-    visit(tree, 'text', (node: Text) => {
-      node.value = node.value
-        .replace(/->/g, '→')
-        .replace(/<-/g, '←')
-        .replace(/<3/g, '♥');
-    });
-  };
-};
-
-type Post = PostMeta & {
-  source: MDXRemoteSerializeResult;
-  frontmatter: {
-    title: string;
-    date: string;
-    cover?: string;
-    pinned?: boolean;
-    draft?: boolean;
-  };
-};
+import Link from 'next/link';
 
 type PostMeta = {
   slug: string;
@@ -43,94 +14,55 @@ type PostMeta = {
 };
 
 export async function getStaticProps() {
-
-
   const postsDir = path.join(process.cwd(), 'content/posts');
   const files = fs.readdirSync(postsDir);
 
-  const posts: Post[] = await Promise.all(files.map(async (file) => {
+  const posts: PostMeta[] = files.map((file) => {
     const slug = file.replace(/\.mdx?$/, '');
     const raw = fs.readFileSync(path.join(postsDir, file), 'utf8');
-    const { content, data } = matter(raw);
-
-    const mdxSource = await serialize(content, {
-      mdxOptions: {
-        remarkPlugins: [remarkSubstitutions],
-      },
-    });
-
-
-    const pinned = !!data.pinned;
-    const draft = !!data.draft;
+    const { data } = matter(raw);
 
     return {
       slug,
       title: data.title || slug,
       date: data.date ? new Date(data.date).toISOString() : '',
       cover: data.cover || null,
-      source: mdxSource,
-      pinned: pinned,
-      draft: draft,
-      frontmatter: {
-        title: data.title || slug,
-        date: data.date ? new Date(data.date).toISOString() : '',
-        cover: data.cover || null,
-        pinned: pinned,
-        draft: draft,
-      },
+      pinned: !!data.pinned,
+      draft: !!data.draft,
     };
-  }));
+  });
 
-
-  // Filter out drafts and sort by pinned first, then date
   const visiblePosts = posts
     .filter((post) => !post.draft)
-    .sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    .sort((a, b) => (b.pinned ? -1 : 0) - (a.pinned ? -1 : 0) || b.date.localeCompare(a.date));
 
-  const pinned = visiblePosts.filter((post) => post.pinned);
-  const unpinned = visiblePosts.filter((post) => !post.pinned);
-
-  const sortedPosts = [...pinned, ...unpinned];
-
-  return { props: { posts: sortedPosts } };
-
+  return { props: { posts: visiblePosts } };
 }
 
-export default function BlogIndex({ posts = [] }: { posts?: Post[] }) {
-
-  const [openPost, setOpenPost] = useState<Post | null>(null);
-
+export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
   return (
     <main style={{ padding: '2rem' }} className={styles.main}>
       <h1 className={styles.title}>InterVolz</h1>
       <ul className={styles.postList}>
         {posts.map((post) => (
           <li key={post.slug} className={styles.postItem}>
-            <button
-              className={styles.postButton}
-              onClick={() => setOpenPost(post)}
-              onMouseEnter={() => {/* optional: warm preload here */ }}
-            >
+            <Link href={`/${post.slug}`} className={styles.postButton}>
               {post.cover ? (
                 <img src={post.cover} alt={post.title} className={styles.coverImage} />
               ) : (
                 <>
-                  <h2>
-                    {post.pinned && '📌 '}
-                    {post.title}
-                  </h2>
-                  {post.pinned ? ('') : (
+                  <h2>{post.pinned && '📌 '}{post.title}</h2>
+                  {!post.pinned && (
                     <p className={styles.date}>
                       {new Date(post.date).toLocaleDateString()}
                     </p>
                   )}
                 </>
               )}
-            </button>
+            </Link>
           </li>
         ))}
       </ul>
-      <PostModal post={openPost} onClose={() => setOpenPost(null)} />
     </main>
   );
 }

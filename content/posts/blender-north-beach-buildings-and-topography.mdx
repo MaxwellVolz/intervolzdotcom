@@ -7,25 +7,26 @@ draft: false
 ---
 
 ![](/uploads/north_beach_render.png)- [North Beach](#north-beach)
-- [North Beach](#north-beach)
-- [Blosm Options](#blosm-options)
-- [Unity Import](#unity-import)
-- [Park](#park)
-  - [General Object](#general-object)
-  - [Benches](#benches)
-  - [Curbs](#curbs)
-  - [Edit Mode](#edit-mode)
+- [Low Poly North Beach](#low-poly-north-beach)
+  - [Blender: Importing Reference](#blender-importing-reference)
+    - [Blosm Options](#blosm-options)
+    - [Unity Import](#unity-import)
+  - [Park](#park)
+    - [Benches](#benches)
+    - [Curbs](#curbs)
+    - [Edit Mode](#edit-mode)
+  - [Gameplay Mechanics](#gameplay-mechanics)
 
-Goal: 
+
+# Low Poly North Beach
+
+## Blender: Importing Reference
 
 Combine the Blosm buildings with USGS topography data using geometry nodes to set them at the correct elevation.
 
-## North Beach
+North Beach Coords: -122.41471,37.79653,-122.40409,37.80388
 
-Coords: -122.41471,37.79653,-122.40409,37.80388
-
-
-## Blosm Options
+### Blosm Options
 
 import: buildings, roads and paths
 
@@ -33,7 +34,7 @@ Then import Terrain
 
 Then..........
 
-Use my script to face project all the buildings min-Z based on bounding box to the Terrain.
+Use this script to face project the buildings to the Terrain.
 
 ```py
 import bpy
@@ -91,7 +92,7 @@ Blosm -> Import Satellite Imagery with Mapbox API Key @ Terrain
 Scale increase: Z-axis 1.5x
 
 
-## Unity Import
+### Unity Import
 
 Position: X: -40   Y: -20    Z: 40
 
@@ -100,13 +101,8 @@ Paste this into the position: `Vector3(-40,-20,40)`
 Select Verticies of all buildings
 
 
+
 ## Park
-
-### General Object
-
-1. Make sure to set the origin
-1. Edit Mode -> `Shift - S` to Set Cursor
-2. Object Mode -> Object -> Set Origin to 3D Cursor
 
 ### Benches
 
@@ -128,3 +124,8 @@ Use `Alt - D` to use **Instancing**.
 Use Grid Fill or Loop Cuts instead of F (works best for more regular shapes):
 
 
+## Gameplay Mechanics
+
+1. Trigger Zone
+   1. Camera Zoom
+   2. Color Change
