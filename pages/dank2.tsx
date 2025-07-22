@@ -10,9 +10,12 @@ import { CCDIKSolver, CCDIKHelper } from 'three/examples/jsm/animation/CCDIKSolv
 import Stats from 'three/examples/jsm/libs/stats.module';
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
 import { AsciiEffect } from 'three/examples/jsm/effects/AsciiEffect';
+import { createMonitorBootCanvas } from '../pages/lib/bootSequence';
 
 export default function KiraScene() {
     const mountRef = useRef<HTMLDivElement>(null);
+
+    const orbitMaxDistance = 1.0
 
     useEffect(() => {
         if (!mountRef.current) return;
@@ -30,6 +33,27 @@ export default function KiraScene() {
             mirrorSphereCamera: THREE.CubeCamera;
 
         const OOI: any = {};
+
+        const canvas = document.createElement('canvas');
+        canvas.width = 512;
+        canvas.height = 512;
+        const ctx = canvas.getContext('2d')!;
+        
+        // Flip y
+        ctx.translate(0, canvas.height);
+        ctx.scale(-1, 1);
+
+        ctx.translate(0, 0);
+        
+        ctx.fillStyle = 'black';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'lime';
+        ctx.font = '16px monospace';
+        ctx.fillText('booting...', 50, 80);
+
+        const canvasTexture = new THREE.CanvasTexture(canvas);
+        canvasTexture.needsUpdate = true;
+
 
         init();
 
@@ -50,18 +74,68 @@ export default function KiraScene() {
             gltfLoader.setDRACOLoader(dracoLoader);
 
             const gltf = await gltfLoader.loadAsync('/models/gltf/room.glb');
+            
+            const bootDisplay = createMonitorBootCanvas(() => {
+                console.log('🟢 Boot complete. Desktop loaded.');
+            });
 
             gltf.scene.traverse(n => {
                 if (n.name === 'boule') OOI.sphere = n;
                 if (n.name === 'vertical_monitor') OOI.vertical_monitor = n;
                 if (n.name === 'main_monitor') OOI.main_monitor = n;
                 if (n.name === 'top_monitor') OOI.top_monitor = n;
+                if (n.name === 'monitor_small') OOI.monitor_small = n;
+                if (n.name === 'monitor_small_shelf') OOI.monitor_small_shelf = n;
             });
+
+            if (OOI.main_monitor && OOI.main_monitor.isMesh) {
+                console.log("painting main_monitor...")
+            
+                OOI.main_monitor.traverse(child => {
+                    if (child.isMesh) {
+                        child.material = new THREE.MeshBasicMaterial({
+                            map: bootDisplay.texture,
+                            side: THREE.DoubleSide,
+                            toneMapped: false
+                        });
+                    }
+                });
+            }
+
+            if (OOI.top_monitor && OOI.top_monitor.isMesh) {
+                console.log("painting top_monitor...")
+            
+                OOI.top_monitor.traverse(child => {
+                    if (child.isMesh) {
+                        child.material = new THREE.MeshBasicMaterial({
+                            map: bootDisplay.texture,
+                            side: THREE.DoubleSide,
+                            toneMapped: false
+                        });
+                    }
+                });
+            }
+
+            if (OOI.vertical_monitor && OOI.vertical_monitor.isMesh) {
+                console.log("painting vertical_monitor...")
+
+                OOI.vertical_monitor.traverse(child => {
+                    if (child.isMesh) {
+                        child.material = new THREE.MeshBasicMaterial({
+                            map: bootDisplay.texture,
+                            side: THREE.DoubleSide,
+                            toneMapped: false
+                        });
+                    }
+                });
+            }
+
+
 
             scene.add(gltf.scene);
 
             // camera position and lookat
-            const targetPosition = OOI.sphere.position.clone().add(new THREE.Vector3(0, 0, -.3));
+            const targetPosition = OOI.sphere.position.clone().add(new THREE.Vector3(0, .2, -.3));
             camera.position.copy(targetPosition.clone().add(new THREE.Vector3(-2, 2, -3)));
             camera.lookAt(targetPosition);
 
@@ -84,7 +158,7 @@ export default function KiraScene() {
             // orbit controls
             orbitControls = new OrbitControls(camera, renderer.domElement);
             orbitControls.minDistance = 0.2;
-            orbitControls.maxDistance = 1.2;
+            orbitControls.maxDistance = orbitMaxDistance;
             orbitControls.enableDamping = true;
             orbitControls.target.copy(targetPosition);
 
@@ -111,6 +185,10 @@ export default function KiraScene() {
                     toggleAsciiEffect();
                     break;
                 }
+                else if (intersect.object === OOI.monitor_small || OOI.monitor_small.children.includes(intersect.object)) {
+                    toggleAsciiEffect();
+                    break;
+                }
             }
         }
         
@@ -133,9 +211,9 @@ export default function KiraScene() {
                 orbitControls.dispose();
                 orbitControls = new OrbitControls(camera, asciiEffect.domElement);
                 orbitControls.minDistance = 0.4;
-                orbitControls.maxDistance = 2.0;
+                orbitControls.maxDistance = orbitMaxDistance;
                 orbitControls.enableDamping = true;
-                orbitControls.target.copy(OOI.sphere.position).add(new THREE.Vector3(0, 0, -.3));
+                orbitControls.target.copy(OOI.sphere.position).add(new THREE.Vector3(0, .2, -.3));
         
                 // Move event listener
                 asciiEffect.domElement.addEventListener('pointerdown', onPointerDown);
@@ -151,9 +229,9 @@ export default function KiraScene() {
                 orbitControls.dispose();
                 orbitControls = new OrbitControls(camera, renderer.domElement);
                 orbitControls.minDistance = 0.4;
-                orbitControls.maxDistance = 2.0;
+                orbitControls.maxDistance = orbitMaxDistance;
                 orbitControls.enableDamping = true;
-                orbitControls.target.copy(OOI.sphere.position).add(new THREE.Vector3(0, 0, -.3));
+                orbitControls.target.copy(OOI.sphere.position).add(new THREE.Vector3(0, .2, -.3));
 
         
                 renderer.domElement.addEventListener('pointerdown', onPointerDown);
@@ -175,11 +253,21 @@ export default function KiraScene() {
             orbitControls.update();
             stats.update();
 
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+            ctx.fillStyle = 'lime';
+            ctx.font = '14px monospace';
+            ctx.fillText(`Time: ${(Date.now() / 1000).toFixed(1)}s`, 50, 100);
+        
+            canvasTexture.needsUpdate = true;
+
             if (usingAscii && asciiEffect) {
                 asciiEffect.render(scene, camera);
             } else {
                 renderer.render(scene, camera);
             }
+
         }
 
         function onWindowResize() {
