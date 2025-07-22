@@ -7,7 +7,7 @@ export default function Navbar() {
     <div className="px-4 py-2 border-b border-gray-700 text-vscode-text border-vscode-border bg-vscode-bg">
       <PanelGroup direction="horizontal">
         <Panel defaultSize={30} minSize={20} className="flex items-center justify-start group relative text-gray-400">
-          <Link href="/" className="relative inline-block no-underline text-inherit h-full">
+          <Link href="/dank2" className="relative inline-block no-underline text-inherit h-full">
             <span className="block transition-transform duration-300 group-hover:-translate-y-full">
               File
             </span>
