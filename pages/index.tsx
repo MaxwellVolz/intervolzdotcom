@@ -1,8 +1,9 @@
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
-import styles from '../styles/Blog.module.css';
+// import styles from '../styles/Blog.module.css';
 import Link from 'next/link';
+import IDELayout from './layout/IDELayout';
 
 type PostMeta = {
   slug: string;
@@ -39,30 +40,36 @@ export async function getStaticProps() {
   return { props: { posts: visiblePosts } };
 }
 
-export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
-  return (
-    <main style={{ padding: '2rem' }} className={styles.main}>
-      <h1 className={styles.title}>InterVolz</h1>
-      <ul className={styles.postList}>
-        {posts.map((post) => (
-          <li key={post.slug} className={styles.postItem}>
-            <Link href={`/${post.slug}`} className={styles.postButton}>
-              {post.cover ? (
-                <img src={post.cover} alt={post.title} className={styles.coverImage} />
-              ) : (
-                <>
-                  <h2>{post.pinned && '📌 '}{post.title}</h2>
-                  {!post.pinned && (
-                    <p className={styles.date}>
-                      {new Date(post.date).toLocaleDateString()}
-                    </p>
-                  )}
-                </>
-              )}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </main>
-  );
+
+export default function HomePage() {
+
+  return <IDELayout />;
 }
+
+// export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
+//   return (
+//     <main style={{ padding: '2rem' }} className={styles.main}>
+//       <h1 className={styles.title}>InterVolz</h1>
+//       <ul className={styles.postList}>
+//         {posts.map((post) => (
+//           <li key={post.slug} className={styles.postItem}>
+//             <Link href={`/${post.slug}`} className={styles.postButton}>
+//               {post.cover ? (
+//                 <img src={post.cover} alt={post.title} className={styles.coverImage} />
+//               ) : (
+//                 <>
+//                   <h2>{post.pinned && '📌 '}{post.title}</h2>
+//                   {!post.pinned && (
+//                     <p className={styles.date}>
+//                       {new Date(post.date).toLocaleDateString()}
+//                     </p>
+//                   )}
+//                 </>
+//               )}
+//             </Link>
+//           </li>
+//         ))}
+//       </ul>
+//     </main>
+//   );
+// }

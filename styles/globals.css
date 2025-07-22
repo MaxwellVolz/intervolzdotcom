@@ -1,3 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =======================
+   🌗 Theme Colors
+   ======================= */
 :root {
   --bg: #ffffff;
   --fg: #222222;
@@ -14,16 +21,50 @@
   --pre-bg: #2a2a2a;
 }
 
+/* =======================
+   📐 Root Layout
+   ======================= */
+
+
+html,
 body {
+  height: 100dvh;
+  width: 100dvw;
   margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+#__next {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+
+body {
   font-family: system-ui, sans-serif;
   background-color: var(--bg);
   color: var(--fg);
-  transition:
-    background-color 0.3s,
-    color 0.3s;
+  transition: background-color 0.3s, color 0.3s;
 }
 
+.container-div {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+
+.darky {
+  background-color: #6ab0f3;
+  margin: 1em;
+}
+
+/* =======================
+   🔗 Links
+   ======================= */
 a {
   color: var(--link);
   text-decoration: underline;
@@ -33,16 +74,6 @@ a:hover {
   text-decoration: none;
 }
 
-pre {
-  background: var(--pre-bg);
-  padding: 1rem;
-  overflow: auto;
-  border-radius: 5px;
-}
-
-code {
-  background: var(--code-bg);
-  font-family: monospace;
-  padding: 0.2rem 0.4rem;
-  border-radius: 4px;
+.hundo-height {
+  height: 100%;
 }
