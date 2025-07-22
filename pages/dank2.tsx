@@ -10,7 +10,7 @@ import { CCDIKSolver, CCDIKHelper } from 'three/examples/jsm/animation/CCDIKSolv
 import Stats from 'three/examples/jsm/libs/stats.module';
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
 import { AsciiEffect } from 'three/examples/jsm/effects/AsciiEffect';
-import { createMonitorBootCanvas } from '../pages/lib/bootSequence';
+import createMonitorBootCanvas from '../pages/lib/bootSequence';
 
 export default function KiraScene() {
     const mountRef = useRef<HTMLDivElement>(null);

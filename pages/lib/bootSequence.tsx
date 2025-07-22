@@ -9,7 +9,7 @@ interface BootStep {
     post?: string;
 }
 
-export function createMonitorBootCanvas(onComplete?: () => void) {
+export default function createMonitorBootCanvas(onComplete?: () => void) {
     const canvas = document.createElement('canvas');
     canvas.width = 512;
     canvas.height = 512;
@@ -25,12 +25,12 @@ export function createMonitorBootCanvas(onComplete?: () => void) {
 
     const steps: BootStep[] = [
         { text: 'booting system', type: 'info' },
-        // { text: 'mounting /dev/data', post: 'mount successful', dots: 4 },
-        // { text: 'failure', type: 'error', post: 'mount successful' },
-        // { text: 'mounting /dev/data', dots: 3 },
-        // { text: 'mounting successful', type: 'success' },
-        // { text: 'loading modules', type: 'info', dots: 3 },
-        // { text: 'launching UI core', type: 'info', dots: 2 },
+        { text: 'mounting /dev/data', post: 'mount successful', dots: 4 },
+        { text: 'failure', type: 'error', post: 'mount successful' },
+        { text: 'mounting /dev/data', dots: 3 },
+        { text: 'mounting successful', type: 'success' },
+        { text: 'loading modules', type: 'info', dots: 3 },
+        { text: 'launching UI core', type: 'info', dots: 2 },
         { text: 'system initialized.', type: 'success' },
     ];
 
