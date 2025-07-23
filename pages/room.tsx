@@ -4,11 +4,11 @@ import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import Stats from 'three/examples/jsm/libs/stats.module';
-import initScene from '../pages/lib/initScene';
-import loadGLTFRoom from '../pages/lib/loadGLTFRoom';
-import MonitorDisplay from '../pages/lib/monitorDisplay';
-import HNtoCanvas from '../pages/lib/HNtoCanvas';
-import { RendererManager, RenderMode } from '../pages/lib/RendererManager';
+import initScene from '@/lib/initScene';
+import loadGLTFRoom from '@/lib/loadGLTFRoom';
+import MonitorDisplay from '@/lib/monitorDisplay';
+import HNtoCanvas from '@/lib/HNtoCanvas';
+import { RendererManager, RenderMode } from '@/lib/RendererManager';
 
 export default function RoomScene() {
   const mountRef = useRef<HTMLDivElement>(null);

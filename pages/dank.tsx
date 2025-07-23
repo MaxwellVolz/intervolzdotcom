@@ -128,7 +128,7 @@ export default function KiraScene() {
 
             renderer = new THREE.WebGLRenderer({ antialias: true });
 
-            renderer.outputEncoding = THREE.sRGBEncoding;
+            renderer.outputEncoding = THREE.SRGBColorSpace;
             renderer.physicallyCorrectLights = true;
             renderer.toneMapping = THREE.ACESFilmicToneMapping;
 

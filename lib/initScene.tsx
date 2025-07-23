@@ -14,7 +14,7 @@ export default function initScene(): {
   camera.position.set(1, 5, 5);
 
   const renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.outputEncoding = THREE.SRGBColorSpace;
   renderer.physicallyCorrectLights = true;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.setPixelRatio(window.devicePixelRatio);

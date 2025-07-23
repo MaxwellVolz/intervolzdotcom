@@ -4,7 +4,7 @@ import matter from 'gray-matter';
 import { serialize } from 'next-mdx-remote/serialize';
 import { MDXRemote } from 'next-mdx-remote';
 import type { GetStaticPaths, GetStaticProps } from 'next';
-import remarkSubstitutions from '../pages/lib/remarkSubstitutions';
+import remarkSubstitutions from '@/lib/remarkSubstitutions';
 
 export default function BlogPostPage({ source, frontmatter }: any) {
   return (

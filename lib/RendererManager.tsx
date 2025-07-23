@@ -7,7 +7,7 @@ import { StereoEffect } from 'three/examples/jsm/effects/StereoEffect';
 
 export type RenderMode = 'normal' | 'ascii' | 'anaglyph' | 'parallax' | 'stereo';
 
-export default class RendererManager {
+export class RendererManager {
   private renderer: THREE.WebGLRenderer;
   private currentMode: RenderMode = 'normal';
   private effect: any = null;
