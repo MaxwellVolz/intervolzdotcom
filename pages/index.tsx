@@ -3,7 +3,8 @@ import path from 'path';
 import matter from 'gray-matter';
 // import styles from '../styles/Blog.module.css';
 import Link from 'next/link';
-import IDELayout from './layout/IDELayout';
+// import IDELayout from './layout/IDELayout';
+import RoomScene from './room';
 
 type PostMeta = {
   slug: string;
@@ -43,7 +44,7 @@ export async function getStaticProps() {
 
 export default function HomePage() {
 
-  return <IDELayout />;
+  return <RoomScene />;
 }
 
 // export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {

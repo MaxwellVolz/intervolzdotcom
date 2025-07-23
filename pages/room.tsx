@@ -10,7 +10,7 @@ import MonitorDisplay from '../pages/lib/monitorDisplay';
 import HNtoCanvas from '../pages/lib/HNtoCanvas';
 import { RendererManager } from '../pages/lib/rendererManager';
 
-export default function KiraScene() {
+export default function RoomScene() {
   const mountRef = useRef<HTMLDivElement>(null);
   const orbitMaxDistance = 1.0;
 
