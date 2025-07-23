@@ -8,7 +8,7 @@ import initScene from '../pages/lib/initScene';
 import loadGLTFRoom from '../pages/lib/loadGLTFRoom';
 import MonitorDisplay from '../pages/lib/monitorDisplay';
 import HNtoCanvas from '../pages/lib/HNtoCanvas';
-import { RendererManager, RenderMode } from '../pages/lib/rendererManager';
+import { RendererManager, RenderMode } from '../pages/lib/RendererManager';
 
 export default function RoomScene() {
   const mountRef = useRef<HTMLDivElement>(null);
