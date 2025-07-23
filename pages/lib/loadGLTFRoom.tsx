@@ -15,11 +15,17 @@ export default async function loadGLTFRoom(path = '/models/gltf/room.glb') {
 
   gltf.scene.traverse((n) => {
     if (n.name === 'boule') OOI.sphere = n;
+    if (n.name === 'boule2') OOI.sphere2 = n;
     if (n.name === 'vertical_monitor') OOI.vertical_monitor = n;
     if (n.name === 'main_monitor') OOI.main_monitor = n;
     if (n.name === 'top_monitor') OOI.top_monitor = n;
     if (n.name === 'monitor_small') OOI.monitor_small = n;
     if (n.name === 'monitor_small_shelf') OOI.monitor_small_shelf = n;
+    if (n.name === 'render_button_1') OOI.render_button_1 = n;
+    if (n.name === 'render_button_2') OOI.render_button_2 = n;
+    if (n.name === 'render_button_3') OOI.render_button_3 = n;
+    if (n.name === 'render_button_4') OOI.render_button_4 = n;
+    if (n.name === 'resume_pdf') OOI.resume_pdf = n;
   });
 
   return { scene: gltf.scene, OOI, animations: gltf.animations };

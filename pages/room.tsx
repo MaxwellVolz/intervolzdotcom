@@ -3,252 +3,233 @@
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { AsciiEffect } from 'three/examples/jsm/effects/AsciiEffect';
 import Stats from 'three/examples/jsm/libs/stats.module';
 import initScene from '../pages/lib/initScene';
 import loadGLTFRoom from '../pages/lib/loadGLTFRoom';
 import MonitorDisplay from '../pages/lib/monitorDisplay';
 import HNtoCanvas from '../pages/lib/HNtoCanvas';
+import { RendererManager } from '../pages/lib/rendererManager';
 
 export default function KiraScene() {
-    const mountRef = useRef<HTMLDivElement>(null);
-    const orbitMaxDistance = 1.0;
+  const mountRef = useRef<HTMLDivElement>(null);
+  const orbitMaxDistance = 1.0;
 
-    useEffect(() => {
-        if (!mountRef.current) return;
+  useEffect(() => {
+    if (!mountRef.current) return;
 
-        let scene: THREE.Scene;
-        let camera: THREE.PerspectiveCamera;
-        let renderer: THREE.WebGLRenderer;
-        let orbitControls: OrbitControls;
-        let asciiEffect: AsciiEffect | null = null;
-        let usingAscii = false;
-        let stats: Stats;
-        let mirrorSphereCamera: THREE.CubeCamera;
-        const raycaster = new THREE.Raycaster();
-        const mouse = new THREE.Vector2();
-        const OOI: Record<string, THREE.Object3D> = {};
-        const monitorDisplays: Record<string, MonitorDisplay> = {};
-        const clock = new THREE.Clock();
+    let scene: THREE.Scene;
+    let camera: THREE.PerspectiveCamera;
+    let renderer: THREE.WebGLRenderer;
+    let orbitControls: OrbitControls;
+    let stats: Stats;
+    let mirrorSphereCamera: THREE.CubeCamera;
+    let mirrorSphereCamera2: THREE.CubeCamera;
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    const OOI: Record<string, THREE.Object3D> = {};
+    const monitorDisplays: Record<string, MonitorDisplay> = {};
+    const clock = new THREE.Clock();
+    let rendererManager: RendererManager;
+    const renderModeButtons: Record<string, RenderMode> = {
+      render_button_1: 'normal',
+      render_button_2: 'ascii',
+      render_button_3: 'anaglyph',
+      render_button_4: 'parallax', // or 'stereo'
+    };
+    
+    init();
 
-        init();
+    async function init() {
+      const result = initScene();
+      scene = result.scene;
+      camera = result.camera;
+      renderer = result.renderer;
+      rendererManager = new RendererManager(renderer);
 
-        async function init() {
-            const result = initScene();
-            scene = result.scene;
-            camera = result.camera;
-            renderer = result.renderer;
+      const { scene: roomScene, OOI: loadedOOI, animations } = await loadGLTFRoom();
+      Object.assign(OOI, loadedOOI);
 
-            const { scene: roomScene, OOI: loadedOOI, animations } = await loadGLTFRoom();
-            Object.assign(OOI, loadedOOI);
+      const monitorConfigs = [
+        { key: 'main_monitor', label: 'Main Monitor', desktop: '/textures/main.jpg', post_app: '/textures/main.jpg' },
+        { key: 'top_monitor', label: 'Top Monitor', desktop: '/textures/top.jpg', post_app: '/textures/discord.jpg' },
+        { key: 'vertical_monitor', label: 'Vertical Monitor', desktop: '/textures/vertical.jpg', post_app: '/textures/vertical.jpg' },
+      ];
 
-            const monitorConfigs = [
-                { key: 'main_monitor', label: 'Main Monitor', desktop: '/textures/main.jpg', post_app: '/textures/main.jpg'},
-                { key: 'top_monitor', label: 'Top Monitor', desktop: '/textures/top.jpg' , post_app: '/textures/discord.jpg'},
-                { key: 'vertical_monitor', label: 'Vertical Monitor', desktop: '/textures/vertical.jpg' , post_app: '/textures/vertical.jpg'},
-            ];
+      for (const { key, label, desktop, post_app } of monitorConfigs) {
+        const monitor = OOI[key];
+        if (!monitor || !monitor.isMesh) continue;
 
-            for (const { key, label, desktop, post_app } of monitorConfigs) {
-                const monitor = OOI[key];
-                if (!monitor || !monitor.isMesh) continue;
+        const steps = [`booting ${label}`, 'system initialized.'];
 
-                const steps = [
-                    `booting ${label}`,
-                    // 'mounting /dev/data',
-                    // 'loading modules',
-                    // 'launching UI core',
-                    'system initialized.',
-                ];
+        const display = new MonitorDisplay(steps, desktop, () => {
+          console.log(`🟢 ${label} boot complete`);
 
-                const display = new MonitorDisplay(steps, desktop, () => {
-                    console.log(`🟢 ${label} boot complete`);
+          const delay = 500 + Math.random() * 3000;
 
-                    const delay = 500 + Math.random() * 3000; // Between 1–5 seconds
+          if (key === 'vertical_monitor') {
+            const mesh = OOI[key] as THREE.Mesh;
+            const material = mesh.material as THREE.MeshBasicMaterial;
+            const canvas = (material.map as THREE.CanvasTexture).image as HTMLCanvasElement;
 
+            setTimeout(async () => {
+              await HNtoCanvas(display.canvas);
+              display.texture.needsUpdate = true;
+            }, 1000 + Math.random() * 2000);
+          } else {
+            setTimeout(() => {
+              display.setImage(post_app);
+              console.log(`🖼 ${label} loaded image: ${post_app}`);
+            }, delay);
+          }
+        });
 
-                    if (key === 'vertical_monitor') {
-                      const mesh = OOI[key] as THREE.Mesh;
-                      const material = mesh.material as THREE.MeshBasicMaterial;
-                      const canvas = (material.map as THREE.CanvasTexture).image as HTMLCanvasElement;
-                    
-                      setTimeout(async () => {
-                        await HNtoCanvas(display.canvas);
-                        display.texture.needsUpdate = true;
-                      }, 1000 + Math.random() * 2000);
-                    }
+        monitorDisplays[key] = display;
 
-                    else{
-                      setTimeout(() => {
-                        display.setImage(post_app);
-                        console.log(`🖼 ${label} loaded image: ${post_app}`);
-                      }, delay);
-                    }
+        monitor.traverse((child) => {
+          if ((child as THREE.Mesh).isMesh) {
+            (child as THREE.Mesh).material = new THREE.MeshBasicMaterial({
+              map: display.texture,
+              side: THREE.DoubleSide,
+              toneMapped: false,
+            });
+          }
+        });
+      }
 
-                });
+      monitorDisplays['main_monitor'].updateText('New message');
 
-                monitorDisplays[key] = display;
+      scene.add(roomScene);
 
-                monitor.traverse((child) => {
-                    if ((child as THREE.Mesh).isMesh) {
-                        (child as THREE.Mesh).material = new THREE.MeshBasicMaterial({
-                            map: display.texture,
-                            side: THREE.DoubleSide,
-                            toneMapped: false,
-                        });
-                    }
-                });
-            }
+      if (animations.length > 0) {
+        const mixer = new THREE.AnimationMixer(roomScene);
+        console.log('✅ animations:', animations.map((a) => a.name));
+        animations.forEach((clip) => mixer.clipAction(clip).play());
+        OOI.mixer = mixer;
+      }
 
-            monitorDisplays['main_monitor'].updateText('New message');
+      const targetPosition = OOI.sphere.position.clone().add(new THREE.Vector3(0, 0.2, -0.3));
+      camera.position.copy(targetPosition.clone().add(new THREE.Vector3(-2, 2, -3)));
+      camera.lookAt(targetPosition);
 
-            scene.add(roomScene);
+      const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(1024);
+      mirrorSphereCamera = new THREE.CubeCamera(0.05, 50, cubeRenderTarget);
+      scene.add(mirrorSphereCamera);
 
+      const cubeRenderTarget2 = new THREE.WebGLCubeRenderTarget(1024);
+      mirrorSphereCamera2 = new THREE.CubeCamera(0.05, 50, cubeRenderTarget2);
+      scene.add(mirrorSphereCamera2);
 
-                      
-            if (animations.length > 0) {
-              const mixer = new THREE.AnimationMixer(roomScene);
-              console.log('✅ animations:', animations.map(a => a.name));
-            
-              animations.forEach((clip) => {
-                const action = mixer.clipAction(clip);
-                action.play();
-              });
-            
-              // Save mixer to be updated per frame
-              OOI.mixer = mixer;
-            }
+      OOI.sphere.material = new THREE.MeshBasicMaterial({ envMap: cubeRenderTarget.texture });
+      OOI.sphere2.material = new THREE.MeshBasicMaterial({ envMap: cubeRenderTarget2.texture });
 
-            const targetPosition = OOI.sphere.position.clone().add(new THREE.Vector3(0, 0.2, -0.3));
-            camera.position.copy(targetPosition.clone().add(new THREE.Vector3(-2, 2, -3)));
-            camera.lookAt(targetPosition);
+      mountRef.current!.appendChild(rendererManager.domElement);
+      rendererManager.setSize(window.innerWidth, window.innerHeight);
+      renderer.setAnimationLoop(animate);
 
-            const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(1024);
-            mirrorSphereCamera = new THREE.CubeCamera(0.05, 50, cubeRenderTarget);
-            scene.add(mirrorSphereCamera);
-            OOI.sphere.material = new THREE.MeshBasicMaterial({ envMap: cubeRenderTarget.texture });
+      orbitControls = new OrbitControls(camera, rendererManager.domElement);
+      orbitControls.minDistance = 0.2;
+      orbitControls.maxDistance = orbitMaxDistance;
+      orbitControls.enableDamping = true;
+      orbitControls.target.copy(targetPosition);
 
-            mountRef.current!.appendChild(renderer.domElement);
-            renderer.setAnimationLoop(animate);
+      stats = new Stats();
+      mountRef.current!.appendChild(stats.dom);
 
-            orbitControls = new OrbitControls(camera, renderer.domElement);
-            orbitControls.minDistance = 0.2;
-            orbitControls.maxDistance = orbitMaxDistance;
-            orbitControls.enableDamping = true;
-            orbitControls.target.copy(targetPosition);
+      window.addEventListener('resize', onWindowResize);
+      rendererManager.domElement.addEventListener('pointerdown', onPointerDown);
+    }
 
-            stats = new Stats();
-            mountRef.current!.appendChild(stats.dom);
+    function onPointerDown(event: PointerEvent) {
+      const element = rendererManager.domElement;
+      const rect = element.getBoundingClientRect();
+      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 
-            window.addEventListener('resize', onWindowResize);
-            renderer.domElement.addEventListener('pointerdown', onPointerDown);
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(scene.children, true);
+
+      for (const intersect of intersects) {
+        for (const key in monitorDisplays) {
+          const monitor = OOI[key];
+          if (intersect.object === monitor || monitor.children.includes(intersect.object)) {
+            monitorDisplays[key].handleClick();
+            return;
+          }
         }
 
-        function onPointerDown(event: PointerEvent) {
-            const element = usingAscii ? asciiEffect!.domElement : renderer.domElement;
-            const rect = element.getBoundingClientRect();
-            mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-            mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-
-            raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObjects(scene.children, true);
-
-            for (const intersect of intersects) {
-                for (const key in monitorDisplays) {
-                    const monitor = OOI[key];
-                    if (intersect.object === monitor || monitor.children.includes(intersect.object)) {
-                        monitorDisplays[key].handleClick();
-                        return;
-                    }
-                }
-
-                if (
-                    intersect.object === OOI.sphere ||
-                    OOI.sphere.children.includes(intersect.object) ||
-                    intersect.object === OOI.monitor_small ||
-                    OOI.monitor_small.children.includes(intersect.object)
-                ) {
-                    toggleAsciiEffect();
-                    return;
-                }
-            }
+        if (intersect.object === OOI.resume_pdf) {
+          const confirmed = window.confirm('Open resume.pdf?');
+          if (confirmed) {
+            window.open('/downloads/mvolz_resume.pdf', '_blank');
+          }
+          return;
         }
 
-        function toggleAsciiEffect() {
-            if (!mountRef.current) return;
-
-            if (!usingAscii) {
-                asciiEffect = new AsciiEffect(renderer, ' .:-+*=%@#', { invert: true });
-                asciiEffect.setSize(window.innerWidth, window.innerHeight);
-                asciiEffect.domElement.style.position = 'absolute';
-                asciiEffect.domElement.style.top = '0';
-                asciiEffect.domElement.style.left = '0';
-                asciiEffect.domElement.style.color = 'white';
-                asciiEffect.domElement.style.backgroundColor = 'black';
-
-                mountRef.current.replaceChild(asciiEffect.domElement, renderer.domElement);
-
-                orbitControls.dispose();
-                orbitControls = new OrbitControls(camera, asciiEffect.domElement);
-                orbitControls.minDistance = 0.4;
-                orbitControls.maxDistance = orbitMaxDistance;
-                orbitControls.enableDamping = true;
-                orbitControls.target.copy(OOI.sphere.position).add(new THREE.Vector3(0, 0.2, -0.3));
-
-                asciiEffect.domElement.addEventListener('pointerdown', onPointerDown);
-                usingAscii = true;
-            } else {
-                if (asciiEffect) {
-                    asciiEffect.domElement.removeEventListener('pointerdown', onPointerDown);
-                    asciiEffect.domElement.parentElement?.replaceChild(renderer.domElement, asciiEffect.domElement);
-                    asciiEffect = null;
-                }
-
-                orbitControls.dispose();
-                orbitControls = new OrbitControls(camera, renderer.domElement);
-                orbitControls.minDistance = 0.4;
-                orbitControls.maxDistance = orbitMaxDistance;
-                orbitControls.enableDamping = true;
-                orbitControls.target.copy(OOI.sphere.position).add(new THREE.Vector3(0, 0.2, -0.3));
-
-                renderer.domElement.addEventListener('pointerdown', onPointerDown);
-                usingAscii = false;
+        for (const [buttonKey, mode] of Object.entries(renderModeButtons)) {
+          const button = OOI[buttonKey];
+          if (!button) continue;
+        
+          if (intersect.object === button || button.children.includes(intersect.object)) {
+            const oldEl = rendererManager.domElement;
+            rendererManager.switch(mode);
+            const newEl = rendererManager.domElement;
+        
+            if (oldEl !== newEl) {
+              mountRef.current!.replaceChild(newEl, oldEl);
+        
+              orbitControls.dispose();
+              orbitControls = new OrbitControls(camera, newEl);
+              orbitControls.minDistance = 0.4;
+              orbitControls.maxDistance = orbitMaxDistance;
+              orbitControls.enableDamping = true;
+              orbitControls.target.copy(OOI.sphere.position).add(new THREE.Vector3(0, 0.2, -0.3));
+              orbitControls.update();
+        
+              newEl.addEventListener('pointerdown', onPointerDown);
             }
+        
+            return;
+          }
         }
+      }
+    }
 
-        function animate() {
-            if (OOI.sphere && mirrorSphereCamera) {
-                OOI.sphere.visible = false;
-                OOI.sphere.getWorldPosition(mirrorSphereCamera.position);
-                mirrorSphereCamera.update(renderer, scene);
-                OOI.sphere.visible = true;
-            }
+    function animate() {
+      if (OOI.sphere && mirrorSphereCamera) {
+        OOI.sphere.visible = false;
+        OOI.sphere.getWorldPosition(mirrorSphereCamera.position);
+        mirrorSphereCamera.update(renderer, scene);
+        OOI.sphere.visible = true;
+      }
+      
+      if (OOI.sphere2 && mirrorSphereCamera2) {
+        OOI.sphere2.visible = false;
+        OOI.sphere2.getWorldPosition(mirrorSphereCamera2.position);
+        mirrorSphereCamera2.update(renderer, scene);
+        OOI.sphere2.visible = true;
+      }
 
-            orbitControls.update();
-            stats.update();
+      orbitControls.update();
+      stats.update();
 
-            const delta = clock.getDelta();
-            OOI.mixer?.update(delta);
+      const delta = clock.getDelta();
+      OOI.mixer?.update(delta);
 
-            if (usingAscii && asciiEffect) {
-                asciiEffect.render(scene, camera);
-            } else {
-                renderer.render(scene, camera);
-            }
-        }
+      rendererManager.render(scene, camera);
+    }
 
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            if (asciiEffect) asciiEffect.setSize(window.innerWidth, window.innerHeight);
-        }
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      rendererManager.setSize(window.innerWidth, window.innerHeight);
+    }
 
-        return () => {
-            renderer?.dispose();
-            window.removeEventListener('resize', onWindowResize);
-            renderer.domElement.removeEventListener('pointerdown', onPointerDown);
-        };
-    }, []);
+    return () => {
+      renderer?.dispose();
+      window.removeEventListener('resize', onWindowResize);
+      rendererManager.domElement.removeEventListener('pointerdown', onPointerDown);
+    };
+  }, []);
 
-    return <div ref={mountRef} style={{ width: '100vw', height: '100vh', overflow: 'hidden' }} />;
+  return <div ref={mountRef} style={{ width: '100vw', height: '100vh', overflow: 'hidden' }} />;
 }
