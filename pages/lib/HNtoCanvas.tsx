@@ -11,7 +11,7 @@ async function fetchTopStories(limit = 10) {
   );
 }
 
-export async function HNtoCanvas(canvas: HTMLCanvasElement) {
+export default async function HNtoCanvas(canvas: HTMLCanvasElement) {
   const ctx = canvas.getContext('2d')!;
   
   // Flip canvas to match MonitorDisplay orientation

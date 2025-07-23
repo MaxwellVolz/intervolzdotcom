@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export class MonitorDisplay {
+export default class MonitorDisplay {
   public canvas: HTMLCanvasElement;
   public ctx: CanvasRenderingContext2D;
   public texture: THREE.CanvasTexture;

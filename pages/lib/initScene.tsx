@@ -1,7 +1,7 @@
 // lib/initScene.ts
 import * as THREE from 'three';
 
-export function initScene(): {
+export default function initScene(): {
   scene: THREE.Scene;
   camera: THREE.PerspectiveCamera;
   renderer: THREE.WebGLRenderer;

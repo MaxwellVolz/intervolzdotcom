@@ -5,10 +5,10 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { AsciiEffect } from 'three/examples/jsm/effects/AsciiEffect';
 import Stats from 'three/examples/jsm/libs/stats.module';
-import { initScene } from '../pages/lib/initScene';
-import { loadGLTFRoom } from '../pages/lib/loadGLTFRoom';
-import { MonitorDisplay } from '../pages/lib/monitorDisplay';
-import { HNtoCanvas } from '../pages/lib/HNtoCanvas';
+import initScene from '../pages/lib/initScene';
+import loadGLTFRoom from '../pages/lib/loadGLTFRoom';
+import MonitorDisplay from '../pages/lib/monitorDisplay';
+import HNtoCanvas from '../pages/lib/HNtoCanvas';
 
 export default function KiraScene() {
     const mountRef = useRef<HTMLDivElement>(null);
