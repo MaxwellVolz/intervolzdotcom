@@ -50,7 +50,7 @@ export default function RoomScene() {
       Object.assign(OOI, loadedOOI);
 
       const monitorConfigs = [
-        { key: 'main_monitor', label: 'Main Monitor', desktop: '/textures/main.jpg', post_app: '/textures/main.jpg' },
+        { key: 'main_monitor', label: 'Main Monitor', desktop: '/textures/main.jpg', post_app: '/textures/desktop_dev.jpg' },
         { key: 'top_monitor', label: 'Top Monitor', desktop: '/textures/top.jpg', post_app: '/textures/discord.jpg' },
         { key: 'vertical_monitor', label: 'Vertical Monitor', desktop: '/textures/vertical.jpg', post_app: '/textures/vertical.jpg' },
       ];
