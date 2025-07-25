@@ -112,7 +112,7 @@ export default function RoomScene() {
 
           if (triggerNames.includes(clip.name)) {
             action.setLoop(THREE.LoopOnce);
-            action.clampWhenFinished = true;
+            // action.clampWhenFinished = true;
             action.stop();
             triggerActions.push(action);
           } else {
