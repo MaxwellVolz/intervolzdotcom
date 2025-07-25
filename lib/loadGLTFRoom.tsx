@@ -26,6 +26,8 @@ export default async function loadGLTFRoom(path = '/models/gltf/room.glb') {
     if (n.name === 'render_button_3') OOI.render_button_3 = n;
     if (n.name === 'render_button_4') OOI.render_button_4 = n;
     if (n.name === 'resume_pdf') OOI.resume_pdf = n;
+    if (n.name === 'paper_preball') OOI.paper_preball = n;
+    if (n.name === 'resume_armature') OOI.resume_armature = n;
   });
 
   return { scene: gltf.scene, OOI, animations: gltf.animations };

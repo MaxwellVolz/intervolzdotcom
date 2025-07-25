@@ -36,7 +36,7 @@ export default function RoomScene() {
       render_button_3: 'anaglyph',
       render_button_4: 'parallax', // or 'stereo'
     };
-    
+
     init();
 
     async function init() {
@@ -103,9 +103,27 @@ export default function RoomScene() {
       if (animations.length > 0) {
         const mixer = new THREE.AnimationMixer(roomScene);
         console.log('✅ animations:', animations.map((a) => a.name));
-        animations.forEach((clip) => mixer.clipAction(clip).play());
+
+        const triggerNames = ['top_paperAction', 'Icosphere.004Action'];
+        const triggerActions: THREE.AnimationAction[] = [];
+
+        animations.forEach((clip) => {
+          const action = mixer.clipAction(clip);
+
+          if (triggerNames.includes(clip.name)) {
+            action.setLoop(THREE.LoopOnce);
+            action.clampWhenFinished = true;
+            action.stop();
+            triggerActions.push(action);
+          } else {
+            action.setLoop(THREE.LoopRepeat);
+            action.play();
+          }
+        });
+
         OOI.mixer = mixer;
       }
+
 
       const targetPosition = OOI.sphere.position.clone().add(new THREE.Vector3(0, 0.2, -0.3));
       camera.position.copy(targetPosition.clone().add(new THREE.Vector3(-2, 2, -3)));
@@ -157,7 +175,21 @@ export default function RoomScene() {
           }
         }
 
-        if (intersect.object === OOI.resume_pdf) {
+        if (intersect.object === OOI.paper_preball) {
+          console.log('📝 paper_preball clicked — triggering animations');
+          const mixer = OOI.mixer as THREE.AnimationMixer;
+          if (mixer) {
+            mixer._actions?.forEach((action) => {
+              if (['top_paperAction', 'Icosphere.004Action'].includes(action._clip.name)) {
+                action.reset().play();
+              }
+            });
+          }
+          return;
+        }
+
+
+        if (intersect.object === OOI.resume_pdf || intersect.object === OOI.resume_armature) {
           const confirmed = window.confirm('Open resume.pdf?');
           if (confirmed) {
             window.open('/downloads/mvolz_resume.pdf', '_blank');
@@ -168,15 +200,15 @@ export default function RoomScene() {
         for (const [buttonKey, mode] of Object.entries(renderModeButtons)) {
           const button = OOI[buttonKey];
           if (!button) continue;
-        
+
           if (intersect.object === button || button.children.includes(intersect.object)) {
             const oldEl = rendererManager.domElement;
             rendererManager.switch(mode);
             const newEl = rendererManager.domElement;
-        
+
             if (oldEl !== newEl) {
               mountRef.current!.replaceChild(newEl, oldEl);
-        
+
               orbitControls.dispose();
               orbitControls = new OrbitControls(camera, newEl);
               orbitControls.minDistance = 0.4;
@@ -184,10 +216,10 @@ export default function RoomScene() {
               orbitControls.enableDamping = true;
               orbitControls.target.copy(OOI.sphere.position).add(new THREE.Vector3(0, 0.2, -0.3));
               orbitControls.update();
-        
+
               newEl.addEventListener('pointerdown', onPointerDown);
             }
-        
+
             return;
           }
         }
@@ -201,7 +233,7 @@ export default function RoomScene() {
         mirrorSphereCamera.update(renderer, scene);
         OOI.sphere.visible = true;
       }
-      
+
       if (OOI.sphere2 && mirrorSphereCamera2) {
         OOI.sphere2.visible = false;
         OOI.sphere2.getWorldPosition(mirrorSphereCamera2.position);
