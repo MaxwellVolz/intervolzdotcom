@@ -188,8 +188,7 @@ export default function RoomScene() {
           return;
         }
 
-
-        if (intersect.object === OOI.resume_pdf || intersect.object === OOI.resume_armature) {
+        if (intersect.object === OOI.resume_click) {
           const confirmed = window.confirm('Open resume.pdf?');
           if (confirmed) {
             window.open('/downloads/mvolz_resume.pdf', '_blank');
