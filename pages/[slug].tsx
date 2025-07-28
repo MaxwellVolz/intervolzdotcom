@@ -7,8 +7,31 @@ import type { GetStaticPaths, GetStaticProps } from 'next';
 import remarkSubstitutions from '@/lib/remarkSubstitutions';
 import remarkGfm from 'remark-gfm';
 import Link from 'next/link';
+import rehypePrettyCode from 'rehype-pretty-code';
+import { useEffect } from 'react';
 
 export default function BlogPostPage({ source, frontmatter }: any) {
+
+  useEffect(() => {
+    document.querySelectorAll('pre').forEach((pre) => {
+      if (pre.querySelector('.copy-button')) return;
+
+      const button = document.createElement('button');
+      button.innerText = 'Copy';
+      button.className = 'copy-button';
+
+      button.onclick = () => {
+        const code = pre.querySelector('code')?.textContent || '';
+        navigator.clipboard.writeText(code);
+        button.innerText = 'Copied!';
+        setTimeout(() => (button.innerText = 'Copy'), 2000);
+      };
+
+      pre.appendChild(button);
+    });
+  }, []);
+
+
   return (
     <main className="prose lg:prose-xl max-w-3xl mx-auto px-6 py-12">
       <h1 className="font-display text-4xl mb-2">{frontmatter.title}</h1>
@@ -46,6 +69,19 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   const mdxSource = await serialize(content, {
     mdxOptions: {
       remarkPlugins: [remarkSubstitutions, remarkGfm],
+      rehypePlugins: [
+        [rehypePrettyCode, {
+          theme: 'github-dark', // or 'nord', 'one-dark-pro', etc.
+          onVisitLine(node) {
+            if (node.children.length === 0) {
+              node.children = [{ type: 'text', value: ' ' }];
+            }
+          },
+          onVisitHighlightedLine(node) {
+            node.properties.className.push('highlighted');
+          },
+        }]
+      ],
     },
   });
 

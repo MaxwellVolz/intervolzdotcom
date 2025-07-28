@@ -10,18 +10,18 @@ Let’s explore how to build a fully interactive 3D scene on the web using React
 
 Whether you're creating a portfolio, game environment, or immersive brand experience, this guide walks you through modeling in Blender, exporting to GLTF, rendering in the browser, and hooking up custom interactivity with ReactJS.
 
-<iframe src="https://intervolz.com/room/" width="100%" height="400" frameborder="0" allowfullscreen></iframe>
-
-
----
 
 ### Tech Stack
 
 | Tech     | Description                  |
 | -------- | ---------------------------- |
 | Next.js  | React framework for the web  |
-| Three.js | WebGL-based 3D engine        |
+| Three.js | WebGL based 3D engine        |
 | Blender  | 3D modeling & animation tool |
+
+
+<iframe src="/room/" width="100%" height="400" frameBorder="0" allowFullScreen></iframe>
+
 
 ---
 
@@ -39,7 +39,7 @@ Whether you're creating a portfolio, game environment, or immersive brand experi
 ### Scaffold project folder with `npx` and `nextjs`
 
 ```bash
-npx create-next-app@latest three-demo --typescript
+npx create-next-app@latest three-demo
 cd three-demo
 ```
 
@@ -49,17 +49,19 @@ Install dependencies and make folders
 npm install three
 npm i --save-dev @types/three
 npm i --save-dev autoprefixer
-mkdir pages/scene
-touch pages/index.tsx pages/scene.tsx
+mkdir pages
+touch pages/scene.tsx
 ```
 
 Or...[clone the repo at this step]('/')
 
 ## 1. Building the 3D Scene with Three.js
 
-We’ll start by initializing a minimal scene with a camera, lights, and a simple environment using React.
+We’ll start by initializing a minimal scene with a simple environment, a camera, a rotating cube.
 
-`pages/index.tsx':
+<iframe src="/scenes/rotating-cube/" width="100%" height="400" frameBorder="0" allowFullScreen></iframe>
+
+**pages/index.tsx**
 ```tsx
 import Link from 'next/link';
 
@@ -73,7 +75,7 @@ export default function Home() {
 }
 ```
 
-`pages/scene.tsx`:
+**pages/scene.tsx**
 ```tsx
 // pages/scene.tsx
 import { useEffect, useRef } from 'react';
@@ -117,7 +119,7 @@ export default function ScenePage() {
 }
 ```
 
-<iframe src="https://intervolz.com/scenes/rotating-cube/" width="100%" height="400" frameborder="0" allowfullscreen></iframe>
+
 
 ---
 
@@ -125,35 +127,125 @@ export default function ScenePage() {
 
 Blender is our modeling + animation hub. We’ll use `.glb` format for exporting clean, optimized models with animation baked in.
 
-- Export settings: format, axis alignment, materials
-- Tools for checking polycount and texture usage
-- How to name animations and objects for clarity
-- *Video/GIF:* Exporting a model → loading it in the browser
-- Pro tip: Use empties or naming conventions for interactive elements
+<iframe src="/scenes/suzanne/" width="100%" height="400" frameBorder="0" allowFullScreen></iframe>
+
+For a Blender Export Test:
+
+1. Make a new file
+2. Remove everything from the scene `A` -> `X` -> "Delete"
+3. Make a Monkey! `Shift - A` -> `Mesh` -> `Monkey`
+4. Make it gold! Add a material
+    - Hex: `#FFD700FF`
+    - Metallic: `1`
+    - Roughness: `0.2`
+5. Export settings:
+    - Format: `.glb`
+    - Transform: `+Y Up`  **this should be checked**
+    - Name meshes in the `Outline` for referencing programmatically
+
+> Pro tip: Use empties or naming conventions for interactive elements
+
+```tsx
+// pages/scene.tsx
+'use client';
+
+import { useEffect, useRef } from 'react';
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { RendererManager, RenderMode } from '@/lib/RendererManager';
+
+export default function ScenePage() {
+    const mountRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (!mountRef.current) return;
+
+        let orbitControls: OrbitControls;
+
+        // Setup scene
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0xffffff);
+        const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.001, 5000);
+        camera.position.set(0, 1, 8);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        const rendererManager = new RendererManager(renderer);
+        renderer.outputEncoding = THREE.SRGBColorSpace;
+        renderer.physicallyCorrectLights = true;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        mountRef.current.appendChild(renderer.domElement);
+
+        // Load GLTF model
+        const dracoLoader = new DRACOLoader();
+        dracoLoader.setDecoderPath('/jsm/libs/draco/');
+        const gltfLoader = new GLTFLoader();
+        gltfLoader.setDRACOLoader(dracoLoader);
+        gltfLoader.load('/models/gltf/suzanne.glb', (gltf) => {
+            console.log("loading suzanne...")
+            scene.add(gltf.scene);
+        });
+
+        scene.background = new THREE.Color(0x222222); // not white
+
+        // Lights
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 5);
+        directionalLight.position.set(5, 10, 5);
+        directionalLight.castShadow = true;
+        scene.add(directionalLight);
+
+        // Debug
+        scene.add(new THREE.GridHelper(10, 10)); // size, divisions
+        scene.add(new THREE.AxesHelper(5)); // length of x/y/z axes
+
+        // Orbit Controls
+        orbitControls = new OrbitControls(camera, rendererManager.domElement);
+        orbitControls.minDistance = 2.0;
+        orbitControls.maxDistance = 10.0;
+        orbitControls.enableDamping = true;
+        orbitControls.target.copy(new THREE.Vector3(0, 0, 0));
+
+        // Animation loop
+        const animate = () => {
+            renderer.render(scene, camera);
+            requestAnimationFrame(animate);
+        };
+        animate();
+
+        return () => {
+            renderer.dispose();
+            if (mountRef.current?.firstChild) {
+                mountRef.current.removeChild(mountRef.current.firstChild);
+            }
+        };
+    }, []);
+
+
+    return <div ref={mountRef} style={{ width: '100vw', height: '100vh', overflow: 'hidden' }} />;
+}
+```
 
 ---
 
-## 3. Hooking Up Animations
 
-Time to make your scene come alive.
+## 3. 🖱 Making It Interactive
 
-- Keyframing animations in Blender (e.g. door open, object rotate)
+Now let’s give users something to do. We can add clickable areas to meshes with `raycasting` and `onPointerDown`
+
+<iframe src="/scenes/suzanne2/" width="100%" height="400" frameBorder="0" allowFullScreen></iframe>
+
+## 4. Hooking Up Blender Animations
+
+Time to make your scene really come alive.
+
+- Keyframing animations in Blender
 - Loading animation clips via `useAnimations`
 - Triggering them with React state and refs
-- *Video:* Create + preview a simple animation in Blender
-- *Live Demo:* A button that plays an animation on click
 
----
-
-## 4. 🖱 Making It Interactive
-
-Now let’s give users something to do.
-
-- Adding clickable areas with raycasting (e.g. `onPointerDown`)
-- Using groups/empties in Blender as interaction targets
-- Triggering animations, camera moves, or content reveals
-- Example: Click a lamp to turn it on, a door to open, a screen to play video
-- UX polish: Use hover feedback (glow, color shift)
 
 ---
 
