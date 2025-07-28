@@ -108,20 +108,20 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
         </div>
 
         <p className="text-lg lg:text-[2vw] px-3 lg:px-[2vw] max-w-[30em] mr-auto sm:ml-10 md:ml-20 lg:ml-[15vw] leading-snug mt-[2em] font-sans">
-          I <em className="font-semibold italic">design, develop, and deliver</em> interactive data visualizations,
-          AI powered automation pipelines, and full-stack solutions.
+          I <em className="font-semibold">design, develop, and deliver</em><span className="italic"> interactive data visualizations,
+            AI powered automation pipelines</span>, and <span className="italic">full-stack solutions</span>.
         </p>
-        <p className="text-lg lg:text-[2vw] px-3 lg:px-[2vw] max-w-[30em] mr-auto sm:ml-10 md:ml-20 lg:ml-[15vw] leading-snug mt-[2em]  font-sans">
+        <p className="text-lg lg:text-[2vw] px-3 lg:px-[2vw] max-w-[30em] mr-auto sm:ml-10 md:ml-20 lg:ml-[15vw] leading-snug mt-[1em]  font-sans">
           I’m currently exploring <em className="italic font-medium">novel interfaces</em> and <em className="italic font-medium">local LLM automation</em>.
         </p>
       </div>
 
-      <div className="py-20 max-w-[80em] mx-auto px-6">
-        <div className="px-6 py-20 text-slate-900">
+      <div className="py-20 max-w-[80em] mx-auto px-4">
+        <div className="px-4 py-20 text-slate-900">
           <h3 className="font-mono">I'M THINKING ABOUT...</h3>
           <ul>
             {posts.filter((post) => post.pinned).map((post) => (
-              <li key={post.slug} className="text-xl lg:text-[2vw] px-3 lg:px-[2vw] max-w-[30em] mr-auto leading-snug mt-[2em] font-sans">
+              <li key={post.slug} className="text-xl lg:text-[2vw] lg:px-[2vw] max-w-[30em] mr-auto leading-snug mt-[2em] font-sans">
                 <Link href={`/${post.slug}`}>
                   {post.title}
                 </Link>
@@ -147,12 +147,12 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
         </div>
       </div>
 
-      <div className="py-20 max-w-[80em] mx-auto px-6">
-        <div className="px-6 py-20 text-slate-900">
+      <div className="py-20 max-w-[80em] mx-auto px-4">
+        <div className="px-4 py-20 text-slate-900">
           <h2 className="font-mono">PREVIOUS ARTICLES</h2>
           <ul>
             {posts.filter((post) => !post.pinned).map((post) => (
-              <li key={post.slug} className="text-xl lg:text-[2vw] px-3 lg:px-[2vw] max-w-[30em] mr-auto leading-snug mt-[2em] font-sans">
+              <li key={post.slug} className="text-xl lg:text-[2vw] lg:px-[2vw] max-w-[30em] mr-auto leading-snug mt-[2em] font-sans">
                 <Link href={`/${post.slug}`}>
                   {post.title}
                 </Link>
@@ -178,8 +178,8 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
         </div>
       </div>
 
-      <div className="py-20 max-w-[80em] mx-auto px-6">
-        <div className="px-6 py-20 text-slate-900 ">
+      <div className="py-20 max-w-[80em] mx-auto px-4">
+        <div className="px-4 py-20 text-slate-900 ">
           <h2 className="font-mono tracking-wide mb-6">CURRENT TINKERINGS</h2>
 
           <ul className="space-y-8">
@@ -191,7 +191,7 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
                 {['web', 'threeJS', 'blender'].map((tag) => (
                   <span
                     key={tag}
-                    className={`text-xs px-3 py-1 rounded-full font-mono tracking-tight transition-all duration-300 transform hover:scale-105 hover:brightness-110 ${tagColors[tag] || 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-white'
+                    className={`text-xs py-1 rounded-full font-mono tracking-tight transition-all duration-300 transform hover:scale-105 hover:brightness-110 ${tagColors[tag] || 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-white'
                       }`}
                   >
                     {tag}
