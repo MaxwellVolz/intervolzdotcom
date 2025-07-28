@@ -1,0 +1,76 @@
+---
+title: "From Blender to Browser: Building Interactive 3D Web Experiences"
+date: 2025-07-28T12:15:00.000-07:00
+pinned: true
+draft: false
+tags: react web blender
+---
+
+
+* Brief story of wanting more than a flat website.
+* Why Blender + Three.js + React
+* What readers will learn (and a preview of the end result).
+
+---
+
+#### 1. Building the 3D Scene with Three.js
+
+* Setting up a basic Three.js scene with lighting and camera.
+* Using React Three Fiber to abstract away boilerplate.
+* ✨ *Code snippet:* Minimal working scene using `@react-three/fiber`
+* 🖼️ *Image or GIF:* Screenshot or recording of the working room.
+
+---
+
+#### 2. The Blender → Browser Pipeline
+
+* Exporting GLB/GLTF models from Blender.
+* Considerations for polycount, materials, baked animations.
+* Using `@react-three/drei`’s `useGLTF()` to load models in the scene.
+* 🎥 *Video/GIF:* Export in Blender → model appears in browser.
+* 🔧 Tips: How to structure scenes/layers in Blender for export clarity.
+
+---
+
+#### **3. Hooking Up Animations**
+
+* Creating and naming animations in Blender.
+* Triggering animations in Three.js using `useAnimations` and refs.
+* 🧪 *Live example:* A button that triggers an animation like a door opening.
+* 🎥 *Video:* Creating a quick animation in Blender.
+
+---
+
+#### **4. Making It Interactive**
+
+* Adding hotspots or clickable objects in the scene.
+* Using raycasting or event handlers from R3F to trigger actions.
+* Example: Click on a book to open it / turn on a lamp / teleport.
+* ✨ Extra polish: Add subtle hover glow or animations to guide interaction.
+
+---
+
+#### **5. UX Tips for 3D Web Design**
+
+* Keep it performant: decimate, compress, lazy load.
+* Keep it accessible: fallback for non-WebGL or mobile users.
+* Avoid motion overload: when to animate and when to pause.
+* Add camera guides or control constraints (e.g. orbit limits).
+
+---
+
+#### **6. Final Touches**
+
+* How to structure the project for reusability.
+* How to integrate CMS or content slots into the scene.
+
+---
+
+#### **Conclusion**
+
+* Link to demo / GitHub / code sandbox.
+
+> Try making your own interactive scene!
+
+
+
