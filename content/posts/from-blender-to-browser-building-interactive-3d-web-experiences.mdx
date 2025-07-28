@@ -6,71 +6,109 @@ draft: false
 tags: react web blender
 ---
 
+Let’s explore how to build a fully interactive 3D scene on the web using React, Three.js, and Blender.
 
-* Brief story of wanting more than a flat website.
-* Why Blender + Three.js + React
-* What readers will learn (and a preview of the end result).
-
----
-
-#### 1. Building the 3D Scene with Three.js
-
-* Setting up a basic Three.js scene with lighting and camera.
-* Using React Three Fiber to abstract away boilerplate.
-* ✨ *Code snippet:* Minimal working scene using `@react-three/fiber`
-* 🖼️ *Image or GIF:* Screenshot or recording of the working room.
+Whether you're creating a portfolio, game environment, or immersive brand experience, this guide walks you through modeling in Blender, exporting to GLTF, rendering in the browser, and hooking up custom interactivity with React Three Fiber.
 
 ---
 
-#### 2. The Blender → Browser Pipeline
+### Tech Stack
 
-* Exporting GLB/GLTF models from Blender.
-* Considerations for polycount, materials, baked animations.
-* Using `@react-three/drei`’s `useGLTF()` to load models in the scene.
-* 🎥 *Video/GIF:* Export in Blender → model appears in browser.
-* 🔧 Tips: How to structure scenes/layers in Blender for export clarity.
-
----
-
-#### **3. Hooking Up Animations**
-
-* Creating and naming animations in Blender.
-* Triggering animations in Three.js using `useAnimations` and refs.
-* 🧪 *Live example:* A button that triggers an animation like a door opening.
-* 🎥 *Video:* Creating a quick animation in Blender.
+| Tech     | Description                   |
+| -------- | ----------------------------- |
+| Next.js  | React framework for the web   |
+| Three.js | WebGL-based 3D engine         |
+| R3F      | React Three Fiber abstraction |
+| Blender  | 3D modeling & animation tool  |
 
 ---
 
-#### **4. Making It Interactive**
+### What You'll Learn
 
-* Adding hotspots or clickable objects in the scene.
-* Using raycasting or event handlers from R3F to trigger actions.
-* Example: Click on a book to open it / turn on a lamp / teleport.
-* ✨ Extra polish: Add subtle hover glow or animations to guide interaction.
-
----
-
-#### **5. UX Tips for 3D Web Design**
-
-* Keep it performant: decimate, compress, lazy load.
-* Keep it accessible: fallback for non-WebGL or mobile users.
-* Avoid motion overload: when to animate and when to pause.
-* Add camera guides or control constraints (e.g. orbit limits).
+- How to set up a basic 3D scene in the browser using Three.js and React
+- How to export animated models from Blender and load them with R3F
+- How to trigger animations and build interactive experiences with event handling
+- Tips for keeping performance sharp and UX smooth on 3D websites
 
 ---
 
-#### **6. Final Touches**
+## 1. 🛠 Building the 3D Scene with Three.js
 
-* How to structure the project for reusability.
-* How to integrate CMS or content slots into the scene.
+We’ll start by initializing a scene with a camera, lights, and a simple environment using React Three Fiber.
+
+- Structure of a minimal R3F scene
+- ✨ *Optional:* Add lighting and shadows for depth
+- 🖼️ *Include Screenshot/GIF:* Room rendering preview
 
 ---
 
-#### **Conclusion**
+## 2. 🔄 The Blender → Browser Pipeline
 
-* Link to demo / GitHub / code sandbox.
+Blender is our modeling + animation hub. We’ll use `.glb` format for exporting clean, optimized models with animation baked in.
 
-> Try making your own interactive scene!
+- Export settings: format, axis alignment, materials
+- Tools for checking polycount and texture usage
+- How to name animations and objects for clarity
+- 🎥 *Video/GIF:* Exporting a model → loading it in the browser
+- 🔧 Pro tip: Use empties or naming conventions for interactive elements
 
+---
 
+## 3. 🎬 Hooking Up Animations
 
+Time to make your scene come alive.
+
+- Keyframing animations in Blender (e.g. door open, object rotate)
+- Loading animation clips via `useAnimations`
+- Triggering them with React state and refs
+- 🎥 *Video:* Create + preview a simple animation in Blender
+- ✨ *Live Demo:* A button that plays an animation on click
+
+---
+
+## 4. 🖱 Making It Interactive
+
+Now let’s give users something to do.
+
+- Adding clickable areas with raycasting (e.g. `onPointerDown`)
+- Using groups/empties in Blender as interaction targets
+- Triggering animations, camera moves, or content reveals
+- Example: Click a lamp to turn it on, a door to open, a screen to play video
+- ✨ UX polish: Use hover feedback (glow, color shift)
+
+---
+
+## 5. 🧩 UX Tips for 3D Web Design
+
+3D is powerful—but easy to overdo. Here's how to keep it usable.
+
+- 🔄 Performance: reduce poly count, compress textures, lazy load
+- 📱 Accessibility: fallback for touch devices, no-WebGL
+- 🧠 UX: don’t animate everything; focus user attention
+- 🎯 Camera limits: orbit controls should feel intentional
+
+---
+
+## 6. 🧱 Final Touches
+
+Structure matters for scale and maintenance.
+
+- Organizing GLTF assets and code modules
+- Decoupling scene logic from UI state
+- Optional: Dynamically load content (CMS, config file, or JSON)
+- Tips for exporting as a static site with Next.js
+
+---
+
+## ✅ Conclusion
+
+You now have the tools to create rich, animated, and interactive 3D web scenes.
+
+> 🧪 [Link to Live Demo](http://intervolz.com/room)
+> 💾 [GitHub Repo Coming Soon]()
+
+---
+
+### 🧪 Try It Yourself
+
+DM me if you build something cool, I'd love to see it.

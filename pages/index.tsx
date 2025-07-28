@@ -142,10 +142,10 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
           <ul>
             {posts.filter((post) => post.pinned).map((post) => (
               <li key={post.slug} className="text-xl lg:text-[2vw] max-w-[30em] mr-auto leading-snug mt-[2em] font-sans">
-                <Link href={`/ ${post.slug} `}>
+                <Link href={`/${post.slug} `}>
                   {post.title}
                 </Link>
-                <div className="mt-2 px-4 flex flex-wrap gap-2">
+                <div className="mt-2 flex flex-wrap gap-2">
                   {post.tags ? (
                     post.tags?.map((tag) => (
                       <span
@@ -173,7 +173,7 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
           <ul>
             {posts.filter((post) => !post.pinned).map((post) => (
               <li key={post.slug} className="text-xl lg:text-[2vw] max-w-[30em] mr-auto leading-snug mt-[2em] font-sans">
-                <Link href={`/ ${post.slug} `}>
+                <Link href={`/${post.slug} `}>
                   {post.title}
                 </Link>
                 <div className="mt-2 flex flex-wrap gap-2">

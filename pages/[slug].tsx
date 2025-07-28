@@ -6,6 +6,7 @@ import { MDXRemote } from 'next-mdx-remote';
 import type { GetStaticPaths, GetStaticProps } from 'next';
 import remarkSubstitutions from '@/lib/remarkSubstitutions';
 import remarkGfm from 'remark-gfm';
+import Link from 'next/link';
 
 export default function BlogPostPage({ source, frontmatter }: any) {
   return (
@@ -15,6 +16,10 @@ export default function BlogPostPage({ source, frontmatter }: any) {
       <article className="prose lg:prose-xl">
         <MDXRemote {...source} />
       </article>
+      <div className="mt-4">
+        <hr />
+        <Link href={`/ `}>Home</Link>
+      </div>
     </main>
   );
 }
