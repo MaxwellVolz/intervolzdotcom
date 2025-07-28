@@ -141,16 +141,16 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
           <h3 className="font-mono">I'M THINKING ABOUT...</h3>
           <ul>
             {posts.filter((post) => post.pinned).map((post) => (
-              <li key={post.slug} className="text-xl lg:text-[2vw] lg:px-[2vw] max-w-[30em] mr-auto leading-snug mt-[2em] font-sans">
+              <li key={post.slug} className="text-xl lg:text-[2vw] max-w-[30em] mr-auto leading-snug mt-[2em] font-sans">
                 <Link href={`/ ${post.slug} `}>
                   {post.title}
                 </Link>
-                <div className="mt-2 flex flex-wrap gap-2">
+                <div className="mt-2 px-4 flex flex-wrap gap-2">
                   {post.tags ? (
                     post.tags?.map((tag) => (
                       <span
                         key={tag}
-                        className={`text - xs px - 3 py - 1 rounded - full font - mono tracking - tight transition - all duration - 300 transform hover: scale - 105 hover: brightness - 110 ${tagColors[tag] || 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-white'
+                        className={`text-xs px-3 py-1 rounded-full font-mono tracking-tight transition-all duration-300 transform hover:scale-105 hover:brightness-110 ${tagColors[tag] || 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-white'
                           } `}
                       >
                         {tag}
@@ -172,7 +172,7 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
           <h2 className="font-mono">PREVIOUS ARTICLES</h2>
           <ul>
             {posts.filter((post) => !post.pinned).map((post) => (
-              <li key={post.slug} className="text-xl lg:text-[2vw] lg:px-[2vw] max-w-[30em] mr-auto leading-snug mt-[2em] font-sans">
+              <li key={post.slug} className="text-xl lg:text-[2vw] max-w-[30em] mr-auto leading-snug mt-[2em] font-sans">
                 <Link href={`/ ${post.slug} `}>
                   {post.title}
                 </Link>
@@ -181,7 +181,7 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
                     post.tags?.map((tag) => (
                       <span
                         key={tag}
-                        className={`text - xs px - 3 py - 1 rounded - full font - mono tracking - tight transition - all duration - 300 transform hover: scale - 105 hover: brightness - 110 ${tagColors[tag] || 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-white'
+                        className={`text-xs px-3 py-1 rounded-full font-mono tracking-tight transition-all duration-300 transform hover:scale-105 hover:brightness-110 ${tagColors[tag] || 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-white'
                           } `}
                       >
                         {tag}
@@ -211,7 +211,7 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
                 {['web', 'threeJS', 'blender'].map((tag) => (
                   <span
                     key={tag}
-                    className={`text - xs px - 3 py - 1 rounded - full font - mono tracking - tight transition - all duration - 300 transform hover: scale - 105 hover: brightness - 110 ${tagColors[tag] || 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-white'
+                    className={`text-xs px-3 py-1 rounded-full font-mono tracking-tight transition-all duration-300 transform hover:scale-105 hover:brightness-110 ${tagColors[tag] || 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-white'
                       } `}
                   >
                     {tag}
@@ -228,7 +228,7 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
                 {['n8n', 'automation', 'ai', 'llm', 'stable_diffusion',].map((tag) => (
                   <span
                     key={tag}
-                    className={`text - xs px - 3 py - 1 rounded - full font - mono tracking - tight transition - all duration - 300 transform hover: scale - 105 hover: brightness - 110 ${tagColors[tag] || 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-white'
+                    className={`text-xs px-3 py-1 rounded-full font-mono tracking-tight transition-all duration-300 transform hover:scale-105 hover:brightness-110 ${tagColors[tag] || 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-white'
                       } `}
                   >
                     {tag}
@@ -245,7 +245,7 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
                 {['unity', 'blender'].map((tag) => (
                   <span
                     key={tag}
-                    className={`text - xs px - 3 py - 1 rounded - full font - mono tracking - tight transition - all duration - 300 transform hover: scale - 105 hover: brightness - 110 ${tagColors[tag] || 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-white'
+                    className={`text-xs px-3 py-1 rounded-full font-mono tracking-tight transition-all duration-300 transform hover:scale-105 hover:brightness-110 ${tagColors[tag] || 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-white'
                       } `}
                   >
                     {tag}
