@@ -8,61 +8,140 @@ tags: react web blender
 
 Let’s explore how to build a fully interactive 3D scene on the web using React, Three.js, and Blender.
 
-Whether you're creating a portfolio, game environment, or immersive brand experience, this guide walks you through modeling in Blender, exporting to GLTF, rendering in the browser, and hooking up custom interactivity with React Three Fiber.
+Whether you're creating a portfolio, game environment, or immersive brand experience, this guide walks you through modeling in Blender, exporting to GLTF, rendering in the browser, and hooking up custom interactivity with ReactJS.
+
+<iframe src="https://intervolz.com/room" width="100%" height="400" frameborder="0" allowfullscreen></iframe>
+
 
 ---
 
 ### Tech Stack
 
-| Tech     | Description                   |
-| -------- | ----------------------------- |
-| Next.js  | React framework for the web   |
-| Three.js | WebGL-based 3D engine         |
-| R3F      | React Three Fiber abstraction |
-| Blender  | 3D modeling & animation tool  |
+| Tech     | Description                  |
+| -------- | ---------------------------- |
+| Next.js  | React framework for the web  |
+| Three.js | WebGL-based 3D engine        |
+| Blender  | 3D modeling & animation tool |
 
 ---
 
 ### What You'll Learn
 
 - How to set up a basic 3D scene in the browser using Three.js and React
-- How to export animated models from Blender and load them with R3F
+- How to export models from Blender
 - How to trigger animations and build interactive experiences with event handling
 - Tips for keeping performance sharp and UX smooth on 3D websites
 
 ---
 
-## 1. 🛠 Building the 3D Scene with Three.js
+## 0. Project Setup
 
-We’ll start by initializing a scene with a camera, lights, and a simple environment using React Three Fiber.
+### Scaffold project folder with `npx` and `nextjs`
 
-- Structure of a minimal R3F scene
-- ✨ *Optional:* Add lighting and shadows for depth
-- 🖼️ *Include Screenshot/GIF:* Room rendering preview
+```bash
+npx create-next-app@latest three-demo --typescript
+cd three-demo
+```
+
+Install dependencies and make folders
+
+```sh
+npm install three
+npm i --save-dev @types/three
+npm i --save-dev autoprefixer
+mkdir pages/scene
+touch pages/index.tsx pages/scene.tsx
+```
+
+Or...[clone the repo at this step]('/')
+
+## 1. Building the 3D Scene with Three.js
+
+We’ll start by initializing a minimal scene with a camera, lights, and a simple environment using React.
+
+`pages/index.tsx':
+```tsx
+import Link from 'next/link';
+
+export default function Home() {
+    return (
+        <main style={{ padding: '2rem' }}>
+            <h1>Welcome to the 3D Demo</h1>
+            <Link href="/scene">Go to Scene</Link>
+        </main>
+    );
+}
+```
+
+`pages/scene.tsx`:
+```tsx
+// pages/scene.tsx
+import { useEffect, useRef } from 'react';
+import * as THREE from 'three';
+
+export default function ScenePage() {
+    const mountRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const width = mountRef.current?.clientWidth ?? window.innerWidth;
+        const height = mountRef.current?.clientHeight ?? window.innerHeight;
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+        camera.position.z = 2;
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(width, height);
+        mountRef.current?.appendChild(renderer.domElement);
+
+        const geometry = new THREE.BoxGeometry();
+        const material = new THREE.MeshNormalMaterial();
+        const cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
+
+        function animate() {
+            cube.rotation.x += 0.01;
+            cube.rotation.y += 0.01;
+            renderer.render(scene, camera);
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        return () => {
+            renderer.dispose();
+            mountRef.current?.removeChild(renderer.domElement);
+        };
+    }, []);
+
+    return <div ref={mountRef} style={{ width: '100%', height: '99vh' }} />;
+}
+```
+
+<iframe src="https://intervolz.com/rotating-cube" width="100%" height="400" frameborder="0" allowfullscreen></iframe>
 
 ---
 
-## 2. 🔄 The Blender → Browser Pipeline
+## 2. The Blender → Browser Pipeline
 
 Blender is our modeling + animation hub. We’ll use `.glb` format for exporting clean, optimized models with animation baked in.
 
 - Export settings: format, axis alignment, materials
 - Tools for checking polycount and texture usage
 - How to name animations and objects for clarity
-- 🎥 *Video/GIF:* Exporting a model → loading it in the browser
-- 🔧 Pro tip: Use empties or naming conventions for interactive elements
+- *Video/GIF:* Exporting a model → loading it in the browser
+- Pro tip: Use empties or naming conventions for interactive elements
 
 ---
 
-## 3. 🎬 Hooking Up Animations
+## 3. Hooking Up Animations
 
 Time to make your scene come alive.
 
 - Keyframing animations in Blender (e.g. door open, object rotate)
 - Loading animation clips via `useAnimations`
 - Triggering them with React state and refs
-- 🎥 *Video:* Create + preview a simple animation in Blender
-- ✨ *Live Demo:* A button that plays an animation on click
+- *Video:* Create + preview a simple animation in Blender
+- *Live Demo:* A button that plays an animation on click
 
 ---
 
@@ -74,22 +153,22 @@ Now let’s give users something to do.
 - Using groups/empties in Blender as interaction targets
 - Triggering animations, camera moves, or content reveals
 - Example: Click a lamp to turn it on, a door to open, a screen to play video
-- ✨ UX polish: Use hover feedback (glow, color shift)
+- UX polish: Use hover feedback (glow, color shift)
 
 ---
 
-## 5. 🧩 UX Tips for 3D Web Design
+## 5. UX Tips for 3D Web Design
 
 3D is powerful—but easy to overdo. Here's how to keep it usable.
 
-- 🔄 Performance: reduce poly count, compress textures, lazy load
-- 📱 Accessibility: fallback for touch devices, no-WebGL
-- 🧠 UX: don’t animate everything; focus user attention
-- 🎯 Camera limits: orbit controls should feel intentional
+- Performance: reduce poly count, compress textures, lazy load
+- Accessibility: fallback for touch devices, no-WebGL
+- UX: don’t animate everything; focus user attention
+- Camera limits: orbit controls should feel intentional
 
 ---
 
-## 6. 🧱 Final Touches
+## 6. Final Touches
 
 Structure matters for scale and maintenance.
 
@@ -100,7 +179,7 @@ Structure matters for scale and maintenance.
 
 ---
 
-## ✅ Conclusion
+## Conclusion
 
 You now have the tools to create rich, animated, and interactive 3D web scenes.
 
