@@ -1,6 +1,17 @@
 // next.config.js
-module.exports = {
-    output: 'export', // Ensure we are exporting a static site
-    
-};
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+    output: 'export',
+  
+    webpack(config) {
+      config.module.rules.push({
+        test: /\.svg$/,
+        issuer: /\.[jt]sx?$/,
+        use: ['@svgr/webpack'],
+      });
+      return config;
+    },
+  };
+  
+  module.exports = nextConfig;
   

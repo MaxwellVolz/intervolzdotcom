@@ -27,14 +27,7 @@
 
 
 html,
-body {
-  height: 100dvh;
-  width: 100dvw;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-}
-
+body,
 #__next {
   height: 100%;
   width: 100%;
@@ -50,30 +43,53 @@ body {
   transition: background-color 0.3s, color 0.3s;
 }
 
-.container-div {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
+@layer base {
+  @font-face {
+    font-family: 'Inter';
+    src: url('/fonts/Inter-Variable.ttf') format('truetype');
+    font-weight: 100 900;
+    font-display: swap;
+  }
 
+  @font-face {
+    font-family: 'Orbitron';
+    src: url('/fonts/Orbitron-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-display: swap;
+  }
 
-.darky {
-  background-color: #6ab0f3;
-  margin: 1em;
-}
+  @font-face {
+    font-family: 'Orbitron';
+    src: url('/fonts/Orbitron-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-display: swap;
+  }
 
-/* =======================
-   🔗 Links
-   ======================= */
-a {
-  color: var(--link);
-  text-decoration: underline;
-}
+  @font-face {
+    font-family: 'Orbitron';
+    src: url('/fonts/Orbitron-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-display: swap;
+  }
 
-a:hover {
-  text-decoration: none;
-}
+  @font-face {
+    font-family: 'Roboto Mono';
+    src: url('/fonts/RobotoMono-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-display: swap;
+  }
 
-.hundo-height {
-  height: 100%;
+  @font-face {
+    font-family: 'Roboto Mono';
+    src: url('/fonts/RobotoMono-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Roboto Mono';
+    src: url('/fonts/RobotoMono-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-display: swap;
+  }
 }

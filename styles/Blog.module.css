@@ -1,70 +1,21 @@
-.wrapper {
-  position: relative;
-  min-height: 100vh;
-  background: var(--bg);
-}
-
-.main {
-  padding: 0 2rem;
-  max-width: 720px;
-  margin: 0 auto;
-}
-
-.postList {
-  list-style: none;
-  padding: 0;
-}
-
-.postItem {
-  margin-bottom: 2rem;
-}
-
-.postButton {
-  all: unset;
-  cursor: pointer;
-  display: block;
-  width: 100%;
-}
-
 .coverImage {
   width: 100%;
   height: auto;
   border-radius: 8px;
 }
 
-.date {
-  font-size: 0.875rem;
-  color: var(--fg);
-  opacity: 0.6;
-}
-
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(10px);
-  z-index: 999;
-  padding: 2rem;
-  overflow-y: auto;
-}
-
-.closeButton {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  font-size: 1.5rem;
-  background: none;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
 .article {
   background: var(--bg);
   color: var(--fg);
   max-width: 720px;
-  margin: 4rem auto;
+  /* margin: 4rem auto; */
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+
+.postItem>a {
+  font-size: larger;
+  font-weight: bold;
 }

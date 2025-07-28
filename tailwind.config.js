@@ -16,7 +16,12 @@ module.exports = {
           text: '#d4d4d4',
         },
       },
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+        display: ['Orbitron', 'sans-serif'],
+        mono: ['Roboto Mono', 'monospace'],
+      },
     },
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/typography')],
 };
