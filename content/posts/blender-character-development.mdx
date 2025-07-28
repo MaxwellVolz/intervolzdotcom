@@ -1,16 +1,17 @@
 ---
-title: Blender - Character Development
+title: Game Character Development using MXFB
 date: 2025-07-02T21:15:00.000Z
 cover: /uploads/char_dev.png
+tags: blender
 ---
+* [Making Models in Blender](#making-models-in-blender)
+* [Exporting Baked textures with Blender scripts](#exporting-baked-textures-with-blender-scripts)
+* [Unity material hookup phase](#unity-material-hookup-phase)
 
-- [Making Models in Blender](#making-models-in-blender)
-- [Exporting Baked textures with Blender scripts](#exporting-baked-textures-with-blender-scripts)
-- [Unity material hookup phase](#unity-material-hookup-phase)
-  - [Overview](#overview)
-  - [1. Extract Materials from the FBX](#1-extract-materials-from-the-fbx)
-  - [2. Assign the Correct Baked Textures](#2-assign-the-correct-baked-textures)
-  - [3. Preview the Model](#3-preview-the-model)
+  * [Overview](#overview)
+  * [1. Extract Materials from the FBX](#1-extract-materials-from-the-fbx)
+  * [2. Assign the Correct Baked Textures](#2-assign-the-correct-baked-textures)
+  * [3. Preview the Model](#3-preview-the-model)
 
 ## Making Models in Blender
 
@@ -109,8 +110,7 @@ print("All bakes completed and saved.")
 https://www.youtube.com/watch?v=s6XjmNweE_
 Now, the **Unity material hookup phase**.
 
-
----
+- - -
 
 ## Unity material hookup phase
 
@@ -122,7 +122,6 @@ Now, the **Unity material hookup phase**.
 
 Reassign the Unity materials for each mesh in the Mixamo rig to use the **corresponding baked image textures**.
 
-
 ### 1. Extract Materials from the FBX
 
 1. Select your `.fbx` file in the **Project** panel.
@@ -130,13 +129,15 @@ Reassign the Unity materials for each mesh in the Mixamo rig to use the **corres
 3. Click **“Extract Materials”** and choose a folder (e.g., `Assets/Materials`)
 4. Unity creates `.mat` files — one per mesh/material in the FBX.
 
----
+- - -
 
 ### 2. Assign the Correct Baked Textures
 
 1. For each `.mat` file in the extracted folder:
+
    * Select it.
    * In the **Inspector**:
+
      * Drag the corresponding `baked_*.png` texture into the **Albedo / Base Map** slot.
 
 Example:
@@ -145,7 +146,7 @@ Example:
 * Material `Human.body.mat` → assign `baked_Human.body.png`
 * etc.
 
----
+- - -
 
 ### 3. Preview the Model
 
