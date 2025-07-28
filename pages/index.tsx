@@ -6,6 +6,7 @@ import Link from 'next/link';
 // import IDELayout from './layout/IDELayout';
 import RoomScene from './room';
 import MVolzLogo from '@/public/imgs/mvolz2.svg';
+import { useEffect } from 'react';
 
 
 const tagColors: Record<string, string> = {
@@ -73,6 +74,24 @@ export async function getStaticProps() {
 // }
 
 export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
+  useEffect(() => {
+    const grad = document.querySelector('#grad');
+
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const offset = Math.sin(scrollY * 0.002); // Smooth oscillation effect
+      if (grad) {
+        grad.setAttribute('x1', `${offset}`);
+        grad.setAttribute('x2', `${1 - offset}`);
+        grad.setAttribute('y1', `${offset} `);
+        grad.setAttribute('y2', `${1 - offset} `);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <div style={{ display: 'content' }}>
       <div className="w-full pt-[13vh] min-h-screen flex flex-col items-center justify-center">
@@ -81,10 +100,11 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
         <div className="relative w-[90%]">
           <svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 197.41016 62.72485">
             <defs>
-              <linearGradient id="grad" gradientTransform="rotate(45)">
+              <linearGradient id="grad" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
                 <stop offset="0%" stopColor="#00FFAA" />
                 <stop offset="100%" stopColor="#5500FF" />
               </linearGradient>
+
 
               <clipPath id="clip">
                 <path d="M5.92139.15771l11.13184,8.72412L28.18506.15771l5.52637,28.65869H.39502L5.92139.15771Z" style={{ fill: "#231f20" }} />
@@ -122,7 +142,7 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
           <ul>
             {posts.filter((post) => post.pinned).map((post) => (
               <li key={post.slug} className="text-xl lg:text-[2vw] lg:px-[2vw] max-w-[30em] mr-auto leading-snug mt-[2em] font-sans">
-                <Link href={`/${post.slug}`}>
+                <Link href={`/ ${post.slug} `}>
                   {post.title}
                 </Link>
                 <div className="mt-2 flex flex-wrap gap-2">
@@ -130,8 +150,8 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
                     post.tags?.map((tag) => (
                       <span
                         key={tag}
-                        className={`text-xs px-3 py-1 rounded-full font-mono tracking-tight transition-all duration-300 transform hover:scale-105 hover:brightness-110 ${tagColors[tag] || 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-white'
-                          }`}
+                        className={`text - xs px - 3 py - 1 rounded - full font - mono tracking - tight transition - all duration - 300 transform hover: scale - 105 hover: brightness - 110 ${tagColors[tag] || 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-white'
+                          } `}
                       >
                         {tag}
                       </span>
@@ -153,7 +173,7 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
           <ul>
             {posts.filter((post) => !post.pinned).map((post) => (
               <li key={post.slug} className="text-xl lg:text-[2vw] lg:px-[2vw] max-w-[30em] mr-auto leading-snug mt-[2em] font-sans">
-                <Link href={`/${post.slug}`}>
+                <Link href={`/ ${post.slug} `}>
                   {post.title}
                 </Link>
                 <div className="mt-2 flex flex-wrap gap-2">
@@ -161,8 +181,8 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
                     post.tags?.map((tag) => (
                       <span
                         key={tag}
-                        className={`text-xs px-3 py-1 rounded-full font-mono tracking-tight transition-all duration-300 transform hover:scale-105 hover:brightness-110 ${tagColors[tag] || 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-white'
-                          }`}
+                        className={`text - xs px - 3 py - 1 rounded - full font - mono tracking - tight transition - all duration - 300 transform hover: scale - 105 hover: brightness - 110 ${tagColors[tag] || 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-white'
+                          } `}
                       >
                         {tag}
                       </span>
@@ -191,8 +211,8 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
                 {['web', 'threeJS', 'blender'].map((tag) => (
                   <span
                     key={tag}
-                    className={`text-xs py-1 rounded-full font-mono tracking-tight transition-all duration-300 transform hover:scale-105 hover:brightness-110 ${tagColors[tag] || 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-white'
-                      }`}
+                    className={`text - xs px - 3 py - 1 rounded - full font - mono tracking - tight transition - all duration - 300 transform hover: scale - 105 hover: brightness - 110 ${tagColors[tag] || 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-white'
+                      } `}
                   >
                     {tag}
                   </span>
@@ -208,8 +228,8 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
                 {['n8n', 'automation', 'ai', 'llm', 'stable_diffusion',].map((tag) => (
                   <span
                     key={tag}
-                    className={`text-xs px-3 py-1 rounded-full font-mono tracking-tight transition-all duration-300 transform hover:scale-105 hover:brightness-110 ${tagColors[tag] || 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-white'
-                      }`}
+                    className={`text - xs px - 3 py - 1 rounded - full font - mono tracking - tight transition - all duration - 300 transform hover: scale - 105 hover: brightness - 110 ${tagColors[tag] || 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-white'
+                      } `}
                   >
                     {tag}
                   </span>
@@ -225,8 +245,8 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
                 {['unity', 'blender'].map((tag) => (
                   <span
                     key={tag}
-                    className={`text-xs px-3 py-1 rounded-full font-mono tracking-tight transition-all duration-300 transform hover:scale-105 hover:brightness-110 ${tagColors[tag] || 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-white'
-                      }`}
+                    className={`text - xs px - 3 py - 1 rounded - full font - mono tracking - tight transition - all duration - 300 transform hover: scale - 105 hover: brightness - 110 ${tagColors[tag] || 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-white'
+                      } `}
                   >
                     {tag}
                   </span>
