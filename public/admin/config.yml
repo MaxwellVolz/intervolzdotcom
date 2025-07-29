@@ -26,6 +26,7 @@ collections:
 
       - { name: 'pinned', label: 'Pinned', widget: 'boolean', default: false, required: false }
       - { name: 'draft', label: 'Draft', widget: 'boolean', default: false, required: false }
+      - { name: 'work', label: 'Work', widget: 'boolean', default: false, required: false }
       - { label: 'Tags',name: 'tags',widget: 'string' }
 
       - { name: 'body', label: 'Body', widget: 'markdown' }

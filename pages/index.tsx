@@ -31,6 +31,7 @@ type PostMeta = {
   date: string;
   cover?: string;
   pinned?: boolean;
+  work?: boolean;
   draft?: boolean;
   tags?: string[];
 };
@@ -50,6 +51,7 @@ export async function getStaticProps() {
       date: data.date ? new Date(data.date).toISOString() : '',
       cover: data.cover || null,
       pinned: !!data.pinned,
+      work: !!data.work,
       draft: !!data.draft,
       tags: typeof data.tags === 'string'
         ? data.tags.trim().split(/\s+/)
@@ -94,7 +96,7 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
 
   return (
     <div style={{ display: 'content' }}>
-      <div className="w-full pt-[13vh] min-h-screen flex flex-col items-center justify-center">
+      <div className="w-full pt-[8vh] min-h-screen flex flex-col items-center justify-center">
         <p className="text-[3vw] max-w-[30em] mr-auto ml-[12.1vw] transform rotate-[-10deg] leading-tight font-sans">Hello, I’m</p>
 
         <div className="relative w-[90%]">
@@ -168,6 +170,37 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
 
       <div className="py-20 max-w-[80em] mx-auto px-4">
         <div className="px-4 py-20 text-slate-900">
+          <h2 className="font-mono">PROFESSIONAL WORK</h2>
+          <ul>
+            {posts.filter((post) => post.work).map((post) => (
+              <li key={post.slug} className="text-xl lg:text-[2vw] max-w-[30em] mr-auto leading-snug mt-[2em] font-sans">
+                <Link href={`/${post.slug} `}>
+                  {post.title}
+                </Link>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {post.tags ? (
+                    post.tags?.map((tag) => (
+                      <span
+                        key={tag}
+                        className={`text-xs px-3 py-1 rounded-full font-mono tracking-tight transition-all duration-300 transform hover:scale-105 hover:brightness-110 ${tagColors[tag] || 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-white'
+                          } `}
+                      >
+                        {tag}
+                      </span>
+                    ))
+                  ) : (
+                    <></>
+                  )
+                  }
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      <div className="py-20 max-w-[80em] mx-auto px-4">
+        <div className="px-4 py-20 text-slate-900">
           <h2 className="font-mono">PREVIOUS ARTICLES</h2>
           <ul>
             {posts.filter((post) => !post.pinned).map((post) => (
@@ -196,66 +229,6 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
           </ul>
         </div>
       </div>
-
-      <div className="py-20 max-w-[80em] mx-auto px-4">
-        <div className="px-4 py-20 text-slate-900 ">
-          <h2 className="font-mono tracking-wide mb-6">CURRENT TINKERINGS</h2>
-
-          <ul className="space-y-8">
-            <li className="text-xl lg:text-[2vw] font-sans leading-snug">
-              <Link href="/room" className="hover:underline hover:text-blue-500 transition">
-                The Room
-              </Link>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {['web', 'threeJS', 'blender'].map((tag) => (
-                  <span
-                    key={tag}
-                    className={`text-xs px-3 py-1 rounded-full font-mono tracking-tight transition-all duration-300 transform hover:scale-105 hover:brightness-110 ${tagColors[tag] || 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-white'
-                      } `}
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </li>
-
-            <li className="text-xl lg:text-[2vw] font-sans leading-snug">
-              <Link href="/room" className="hover:underline hover:text-blue-500 transition">
-                Content Generation using n8 + local LLMs in Docker
-              </Link>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {['n8n', 'automation', 'ai', 'llm', 'stable_diffusion',].map((tag) => (
-                  <span
-                    key={tag}
-                    className={`text-xs px-3 py-1 rounded-full font-mono tracking-tight transition-all duration-300 transform hover:scale-105 hover:brightness-110 ${tagColors[tag] || 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-white'
-                      } `}
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </li>
-
-            <li className="text-xl lg:text-[2vw] font-sans leading-snug">
-              <Link href="/" className="hover:underline hover:text-blue-500 transition">
-                Localz - Unity Game Development
-              </Link>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {['unity', 'blender'].map((tag) => (
-                  <span
-                    key={tag}
-                    className={`text-xs px-3 py-1 rounded-full font-mono tracking-tight transition-all duration-300 transform hover:scale-105 hover:brightness-110 ${tagColors[tag] || 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-white'
-                      } `}
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </li>
-          </ul>
-        </div>
-      </div>
-
     </div>
   );
 }
