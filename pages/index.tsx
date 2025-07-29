@@ -22,6 +22,8 @@ const tagColors: Record<string, string> = {
   docker: 'bg-blue-50 text-blue-600 dark:bg-blue-700 dark:text-blue-100',
   rant: 'bg-red-200 text-red-800 dark:bg-red-800 dark:text-red-100',
   python: 'bg-blue-700 text-yellow-300 dark:bg-yellow-300 dark:text-blue-800',
+  react: 'bg-cyan-200 text-cyan-800 dark:bg-cyan-800 dark:text-cyan-100',
+  javascript: 'bg-amber-100 text-amber-700 dark:bg-amber-600 dark:text-amber-100',
 };
 
 
@@ -142,7 +144,7 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
           <h3 className="font-mono">I'M THINKING ABOUT...</h3>
           <ul>
             {posts.filter((post) => post.pinned).map((post) => (
-              <li key={post.slug} className="text-xl lg:text-[2vw] max-w-[30em] mr-auto leading-snug mt-[2em] font-sans">
+              <li key={post.slug} className="text-xl lg:text-[2vw] max-w-[30em] mr-auto leading-snug mt-[1em] font-sans">
                 <Link href={`/${post.slug} `}>
                   {post.title}
                 </Link>
@@ -173,7 +175,7 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
           <h2 className="font-mono">PROFESSIONAL WORK</h2>
           <ul>
             {posts.filter((post) => post.work).map((post) => (
-              <li key={post.slug} className="text-xl lg:text-[2vw] max-w-[30em] mr-auto leading-snug mt-[2em] font-sans">
+              <li key={post.slug} className="text-xl lg:text-[2vw] max-w-[30em] mr-auto leading-snug mt-[1em] font-sans">
                 <Link href={`/${post.slug} `}>
                   {post.title}
                 </Link>
@@ -204,7 +206,7 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
           <h2 className="font-mono">PREVIOUS ARTICLES</h2>
           <ul>
             {posts.filter((post) => !post.pinned).map((post) => (
-              <li key={post.slug} className="text-xl lg:text-[2vw] max-w-[30em] mr-auto leading-snug mt-[2em] font-sans">
+              <li key={post.slug} className="text-xl lg:text-[2vw] max-w-[30em] mr-auto leading-snug mt-[1em] font-sans">
                 <Link href={`/${post.slug} `}>
                   {post.title}
                 </Link>
