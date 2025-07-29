@@ -16,26 +16,32 @@ Role: *Principal Engineer, AR/VR Automation*
 
 ### 2. The Product: Ray‑Ban Meta Smart Glasses
 
-Second‑generation smart glasses launched September 27, 2023, featuring 12 MP camera, Qualcomm Snapdragon AR1 Gen 1, integrated Meta AI voice assistant and livestreaming capabilities ([Wikipedia](https://en.wikipedia.org/wiki/Ray-Ban_Meta?utm_source=chatgpt.com "Ray-Ban Meta")). 
+The *Second‑generation* of smart glasses launched September 27, 2023. Featuring a 12 MP camera, Qualcomm Snapdragon AR1 Gen 1, integrated Meta AI voice assistant and livestreaming capabilities ([Wikipedia](https://en.wikipedia.org/wiki/Ray-Ban_Meta?utm_source=chatgpt.com "Ray-Ban Meta")). 
 
 Positioned at the intersection of fashion and consumer AI, blending minimalist Ray‑Ban design with advanced voice and camera tech ([Vogue Business](https://www.voguebusiness.com/story/technology/metas-far-sighted-fashion-moment?utm_source=chatgpt.com "Meta's far-sighted fashion moment"), [Wikipedia](https://en.wikipedia.org/wiki/Ray-Ban_Meta?utm_source=chatgpt.com "Ray-Ban Meta")).
 
-In **the lab**, we are working on **prototypes of the next generations**.
+In the **state-of-the-art lab** at Sunnyvale, I led testing development on **prototypes of the next generation of wearable devices**.
 
-### 3. Challenge: Testing a low-powered AI Device
+### 3. Challenge: Testing a low-powered AI Devices
 
-* The unique constraints: wearable form factor, multiple development boards, real‑time voice and camera integration, battery limits, and cross‑team collaboration with hardware engineers.
-* Goal: **automate end‑to‑end testing** of capture, streaming, voice commands, and Meta AI responses under real‑world conditions and day-of-use.
-  
+Unique challenges included multiple versions of wearable form factors and development boards, real‑time voice and camera integrations, power consumption limitations, and cross‑team collaboration with hardware engineers.
+
+The end goal being **automation of end‑to‑end testing** for image and video capture, streaming, voice commands, and Meta AI responses under real‑world conditions and **day-of-use**.
+
+Providing data visualizations as performance feedback in a timely and reliably manner was key to the success of collaborating in a cutting edge environment.
+
 ### 4. The Framework: Automation That Bridged Software & Hardware
 
-* Led design of a **Python‑based test harness** that used serial and socket interfaces to interact with prototype hardware over RF and sensor interfaces.
-* Devised real‑time performance monitoring pipelines using kernel‑level tracing with **Perfetto**, capturing CPU/GPU events tied to system resource consumption ([Wikipedia](https://en.wikipedia.org/wiki/Ray-Ban_Meta?utm_source=chatgpt.com "Ray-Ban Meta")).
-* Handled aggregation from multiple endpoints using Python’s `threading` and `queue` modules to cut time to visualization dramatically.
+I led design of a **Python‑based test harness** that used serial and socket interfaces to interact with prototype hardware over RF and sensor interfaces.
+
+We devised real‑time performance monitoring pipelines using kernel‑level tracing with **Perfetto**, capturing CPU/GPU events tied to system resource consumption ([Wikipedia](https://en.wikipedia.org/wiki/Ray-Ban_Meta?utm_source=chatgpt.com "Ray-Ban Meta")).
+
+Our system gracefully handled aggregation from multiple endpoints using **Python multi-threading techniques** to cut measurement and visualization time dramatically.
 
 ### 5. Real Moments: Tweaking Data for Real‑World Use
 
-* Implemented **edge detection algorithms** for precise event triggers—like the exact millisecond a user taps the touchpad or says "Hey Meta".* Enabled robust synchronization between video capture, audio command response, and live streaming to Instagram/Facebook SDKs.
+* Implemented **edge detection algorithms** for precise event triggers—like the exact millisecond a user taps the touchpad or says "Hey Meta".
+* Enabled robust synchronization between video capture, audio command response, and live streaming to Internal SDKs.
 * The result: **consistent, reliable test results** replicable across teams.
   
 ### 6. From Old to New: Modernizing Legacy Tooling
