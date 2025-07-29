@@ -84,7 +84,7 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
         grad.setAttribute('x1', `${offset}`);
         grad.setAttribute('x2', `${1 - offset}`);
         grad.setAttribute('y1', `${offset} `);
-        grad.setAttribute('y2', `${1 - offset} `);
+        grad.setAttribute('y2', `${1 + offset} `);
       }
     };
 
@@ -95,7 +95,7 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
   return (
     <div style={{ display: 'content' }}>
       <div className="w-full pt-[13vh] min-h-screen flex flex-col items-center justify-center">
-        <p className="text-[2vw] px-[2vw] max-w-[30em] mr-auto ml-[12.1vw] transform rotate-[-10deg] leading-tight font-sans">Hello, I’m</p>
+        <p className="text-[3vw] max-w-[30em] mr-auto ml-[12.1vw] transform rotate-[-10deg] leading-tight font-sans">Hello, I’m</p>
 
         <div className="relative w-[90%]">
           <svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 197.41016 62.72485">
@@ -128,11 +128,10 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
         </div>
 
         <p className="text-lg lg:text-[2vw] px-3 lg:px-[2vw] max-w-[30em] mr-auto sm:ml-10 md:ml-20 lg:ml-[15vw] leading-snug mt-[2em] font-sans">
-          I <em className="font-semibold">design, develop, and deliver</em><span className="italic"> interactive data visualizations,
-            AI powered automation pipelines</span>, and <span className="italic">full-stack solutions</span>.
+          I <em className="font-semibold">design, develop, and deliver</em><span className="italic"> full-stack solutions, interactive data visualizations,</span> and <span className="italic">AI powered automation pipelines</span>.
         </p>
         <p className="text-lg lg:text-[2vw] px-3 lg:px-[2vw] max-w-[30em] mr-auto sm:ml-10 md:ml-20 lg:ml-[15vw] leading-snug mt-[1em]  font-sans">
-          I’m currently exploring <em className="italic font-medium">novel interfaces</em> and <em className="italic font-medium">local LLM automation</em>.
+          I’m currently applying my <em className="italic font-medium">hackers mindset</em> and <em className="italic font-medium">creative problem solving</em> to explore modern solutions with cutting edge system architectures.
         </p>
       </div>
 

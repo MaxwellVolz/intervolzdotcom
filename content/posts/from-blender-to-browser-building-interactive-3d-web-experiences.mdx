@@ -49,6 +49,7 @@ touch pages/scene.tsx
 
 # Install dependencies
 npm install three
+npm i --save-dev @types/three
 ```
 
 Or...[clone this repo](https://github.com/MaxwellVolz/threejs-demo).
@@ -123,15 +124,15 @@ export default function ScenePage() {
 
 ## 2. The Blender → Browser Pipeline
 
-Blender is our modeling + animation hub. We’ll use `.glb` format for exporting clean, optimized models with animation baked in.
+Blender is our modeling and animation hub. We’ll use `.glb` format for exporting clean, optimized models with animation baked in.
 
 <iframe src="/scenes/suzanne/" width="100%" height="400" frameBorder="0" allowFullScreen></iframe>
 
 For a Blender Export Test:
 
 1. Make a new file
-2. Remove everything from the scene `A` -> `X` -> "Delete"
-3. Make a Monkey! `Shift - A` -> `Mesh` -> `Monkey`
+2. Remove everything from the scene with ::A:: -> ::X:: -> "Delete"
+3. Make a Monkey! ::Shift + A:: -> `Mesh` -> `Monkey`
 4. Make it gold! Add a material
 
    * Hex: `#FFD700FF`

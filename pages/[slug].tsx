@@ -9,6 +9,7 @@ import remarkGfm from 'remark-gfm';
 import Link from 'next/link';
 import rehypePrettyCode from 'rehype-pretty-code';
 import { useEffect } from 'react';
+import { Kbd } from '@/components/Kbd';
 
 export default function BlogPostPage({ source, frontmatter }: any) {
 
@@ -37,7 +38,7 @@ export default function BlogPostPage({ source, frontmatter }: any) {
       <h1 className="font-display text-4xl mb-2">{frontmatter.title}</h1>
       <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">{new Date(frontmatter.date).toLocaleDateString()}</p>
       <article className="prose lg:prose-xl">
-        <MDXRemote {...source} />
+        <MDXRemote {...source} components={{ Kbd }} />
       </article>
       <div className="mt-4">
         <hr />

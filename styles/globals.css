@@ -128,3 +128,12 @@ pre code {
   font-size: 0.875rem;
   font-size: .6em !important;
 }
+
+p img {
+  border-radius: 0.5rem;
+}
+
+/* global.css or tailwind layer */
+.kbd {
+  @apply bg-zinc-800 text-white px-2 py-0.5 rounded font-mono text-sm;
+}
