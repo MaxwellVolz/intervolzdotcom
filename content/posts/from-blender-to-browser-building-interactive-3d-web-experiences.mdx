@@ -52,7 +52,6 @@ npm install three
 npm i --save-dev @types/three
 ```
 
-Or...[clone this repo](https://github.com/MaxwellVolz/threejs-demo).
 
 ## 1. Building the 3D Scene with Three.js
 
@@ -120,7 +119,9 @@ export default function ScenePage() {
 }
 ```
 
-- - -
+Or...clone this repo at branch: [01-init](https://github.com/MaxwellVolz/threejs-demo/tree/01-init)
+
+---
 
 ## 2. The Blender → Browser Pipeline
 
@@ -134,109 +135,80 @@ For a Blender Export Test:
 2. Remove everything from the scene with ::A:: -> ::X:: -> "Delete"
 3. Make a Monkey! ::Shift + A:: -> `Mesh` -> `Monkey`
 4. Make it gold! Add a material
-
    * Hex: `#FFD700FF`
    * Metallic: `1`
    * Roughness: `0.2`
 5. Export settings:
-
    * Format: `.glb`
    * Transform: `+Y Up`  **this should be checked**
    * Name meshes in the `Outline` for referencing programmatically
 
-> Pro tip: Use empties or naming conventions for interactive elements
+Copy [Draco Decoder Binaries](https://github.com/mrdoob/three.js/tree/dev/examples/jsm/libs/draco) -> **public/jsm/libs/draco/**
+
 
 ```tsx
-// pages/scene.tsx
-'use client';
+// Load GLTF model
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath('/jsm/libs/draco/');
+const gltfLoader = new GLTFLoader();
+gltfLoader.setDRACOLoader(dracoLoader);
+gltfLoader.load('/models/suzanne.glb', (gltf) => {
+    console.log("loading suzanne...")
+    scene.add(gltf.scene);
+});
 
-import { useEffect, useRef } from 'react';
-import * as THREE from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { RendererManager, RenderMode } from '@/lib/RendererManager';
+// Debug
+scene.add(new THREE.GridHelper(10, 10)); // size, divisions
+scene.add(new THREE.AxesHelper(5)); // length of x/y/z axes
 
-export default function ScenePage() {
-    const mountRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        if (!mountRef.current) return;
-
-        let orbitControls: OrbitControls;
-
-        // Setup scene
-        const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0xffffff);
-        const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.001, 5000);
-        camera.position.set(0, 1, 8);
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        const rendererManager = new RendererManager(renderer);
-        renderer.outputEncoding = THREE.SRGBColorSpace;
-        renderer.physicallyCorrectLights = true;
-        renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        renderer.setPixelRatio(window.devicePixelRatio);
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        mountRef.current.appendChild(renderer.domElement);
-
-        // Load GLTF model
-        const dracoLoader = new DRACOLoader();
-        dracoLoader.setDecoderPath('/jsm/libs/draco/');
-        const gltfLoader = new GLTFLoader();
-        gltfLoader.setDRACOLoader(dracoLoader);
-        gltfLoader.load('/models/gltf/suzanne.glb', (gltf) => {
-            console.log("loading suzanne...")
-            scene.add(gltf.scene);
-        });
-
-        scene.background = new THREE.Color(0x222222); // not white
-
-        // Lights
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-        scene.add(ambientLight);
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 5);
-        directionalLight.position.set(5, 10, 5);
-        directionalLight.castShadow = true;
-        scene.add(directionalLight);
-
-        // Debug
-        scene.add(new THREE.GridHelper(10, 10)); // size, divisions
-        scene.add(new THREE.AxesHelper(5)); // length of x/y/z axes
-
-        // Orbit Controls
-        orbitControls = new OrbitControls(camera, rendererManager.domElement);
-        orbitControls.minDistance = 2.0;
-        orbitControls.maxDistance = 10.0;
-        orbitControls.enableDamping = true;
-        orbitControls.target.copy(new THREE.Vector3(0, 0, 0));
-
-        // Animation loop
-        const animate = () => {
-            renderer.render(scene, camera);
-            requestAnimationFrame(animate);
-        };
-        animate();
-
-        return () => {
-            renderer.dispose();
-            if (mountRef.current?.firstChild) {
-                mountRef.current.removeChild(mountRef.current.firstChild);
-            }
-        };
-    }, []);
-
-
-    return <div ref={mountRef} style={{ width: '100vw', height: '100vh', overflow: 'hidden' }} />;
-}
+// Orbit Controls
+orbitControls = new OrbitControls(camera, rendererManager.domElement);
+orbitControls.minDistance = 2.0;
+orbitControls.maxDistance = 10.0;
+orbitControls.enableDamping = true;
+orbitControls.target.copy(new THREE.Vector3(0, 0, 0));
 ```
 
-- - -
+Or...clone this repo at branch: [02-glb-import](https://github.com/MaxwellVolz/threejs-demo/tree/02-glb-import).
+
+
+---
 
 ## 3. Making It Interactive
 
 Now let’s give users something to do. We can add clickable areas to meshes with `raycasting` and `onPointerDown`
 
 <iframe src="/scenes/suzanne2/" width="100%" height="400" frameBorder="0" allowFullScreen></iframe>
+
+
+
+```tsx
+// Raycasting
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
+// Click Interaction
+const onPointerDown = (event: PointerEvent) => {
+    const rect = renderer.domElement.getBoundingClientRect();
+    mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(scene.children, true);
+
+    const suzanneHit = intersects.find((hit) => hit.object.name === 'Suzanne');
+    if (suzanneHit && suzanneMesh) {
+        isSpinning = !isSpinning;
+        if (isSpinning) {
+            spinTarget = suzanneMesh.rotation.y + Math.PI * 2 * 5; // one full spin
+            spinProgress = 0;
+        }
+        console.log(`🌀 Suzanne ${isSpinning ? 'started' : 'stopped'} spinning`);
+    }
+};
+```
+Or...clone this repo at branch: [03-interactivity](https://github.com/MaxwellVolz/threejs-demo/tree/02-interactivity).
+
 
 ## 4. Hooking Up Blender Animations
 
@@ -248,7 +220,48 @@ Time to make your scene really come alive.
 
 <iframe src="/scenes/suzanne3/" width="100%" height="400" frameBorder="0" allowFullScreen></iframe>
 
-- - -
+When loading the **.glb** import the animations to the mixer so can loop over them onClick to play.
+```tsx
+
+gltfLoader.load('/models/suzanne2.glb', (gltf) => {
+    gltf.scene.traverse((child) => {
+        if ((child as THREE.Mesh).isMesh && child.name === 'Suzanne') {
+            suzanneMesh = child;
+            console.log('✅ Suzanne mesh found');
+        }
+    });
+    scene.add(gltf.scene);
+
+    // Load animations to mixer
+    if (gltf.animations.length > 0) {
+        mixer = new THREE.AnimationMixer(gltf.scene);
+        animationActions = gltf.animations.map((clip) => {
+            const action = mixer.clipAction(clip);
+            action.setLoop(THREE.LoopOnce, 1);
+            action.clampWhenFinished = true;
+            return action;
+        });
+
+        console.log('✅ Animations loaded:', gltf.animations.map((a) => a.name));
+    }
+});
+
+// Animate
+const animate = () => {
+    requestAnimationFrame(animate);
+
+    if (mixer) mixer.update(0.016); // or use delta time with THREE.Clock
+
+    orbitControls.update();
+    renderer.render(scene, camera);
+};
+
+animate();
+```
+
+Or...clone this repo at branch: [04-animations](https://github.com/MaxwellVolz/threejs-demo/tree/04-animations).
+
+---
 
 ## 5. UX Tips for 3D Web Design
 
@@ -257,7 +270,7 @@ Time to make your scene really come alive.
 * Don’t animate everything; focus user attention
 * Camera limits: orbit controls should feel intentional
 
-- - -
+---
 
 ## 6. Final Touches
 
@@ -268,7 +281,7 @@ Structure matters for scale and maintenance.
 * Accessibility: fallback for touch devices, no-WebGL
 * Decoupling scene logic from UI state
 
-- - -
+--
 
 ## Conclusion
 
