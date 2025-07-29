@@ -15,10 +15,9 @@ export default function ScenePage() {
 
         let orbitControls: OrbitControls;
         let suzanneMesh: THREE.Object3D | null = null;
-        let isSpinning = false;
-        let spinTarget = 0;
-        let spinProgress = 0;
-
+        let mixer: THREE.AnimationMixer;
+        let animationActions: THREE.AnimationAction[] = [];
+        let activeActionIndex = 0;
 
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x222222);
@@ -67,16 +66,23 @@ export default function ScenePage() {
 
             const suzanneHit = intersects.find((hit) => hit.object.name === 'Suzanne');
             if (suzanneHit && suzanneMesh) {
-                isSpinning = !isSpinning;
-                if (isSpinning) {
-                    spinTarget = suzanneMesh.rotation.y + Math.PI * 2 * 5; // one full spin
-                    spinProgress = 0;
+
+                console.log("animationActions")
+                console.log(animationActions)
+
+                if (animationActions.length > 0) {
+                    // Stop all other actions
+                    animationActions.forEach((a) => a.stop());
+
+                    // Play current action
+                    const action = animationActions[activeActionIndex];
+                    action.reset().play();
+
+                    // Increment index (wrap around)
+                    activeActionIndex = (activeActionIndex + 1) % animationActions.length;
                 }
-                console.log(`🌀 Suzanne ${isSpinning ? 'started' : 'stopped'} spinning`);
             }
         };
-
-
 
         renderer.domElement.addEventListener('pointerdown', onPointerDown);
 
@@ -94,50 +100,30 @@ export default function ScenePage() {
                 }
             });
             scene.add(gltf.scene);
-        });
 
-        if (scene.animations.length > 0) {
-            const mixer = new THREE.AnimationMixer(scene);
-            console.log('✅ animations:', scene.map((a) => a.name));
-
-            const triggerNames = ['top_paperAction', 'Icosphere.004Action'];
-            const triggerActions: THREE.AnimationAction[] = [];
-
-            scene.animations.forEach((clip) => {
-                const action = mixer.clipAction(clip);
-
-                if (triggerNames.includes(clip.name)) {
+            if (gltf.animations.length > 0) {
+                mixer = new THREE.AnimationMixer(gltf.scene);
+                animationActions = gltf.animations.map((clip) => {
+                    const action = mixer.clipAction(clip);
                     action.setLoop(THREE.LoopOnce);
-                    // action.clampWhenFinished = true;
-                    action.stop();
-                    triggerActions.push(action);
-                } else {
-                    action.setLoop(THREE.LoopRepeat);
-                    action.play();
-                }
-            });
-        }
+                    action.clampWhenFinished = true;
+                    return action;
+                });
+
+                console.log('✅ Animations loaded:', gltf.animations.map((a) => a.name));
+            }
+        });
 
         // Animate
         const animate = () => {
             requestAnimationFrame(animate);
 
-            if (isSpinning && suzanneMesh) {
-                const current = suzanneMesh.rotation.y;
-                const delta = spinTarget - current;
-
-                if (Math.abs(delta) > 0.001) {
-                    suzanneMesh.rotation.y += delta * 0.01; // <-- lerp factor
-                } else {
-                    suzanneMesh.rotation.y = spinTarget;
-                    isSpinning = false;
-                    console.log('✅ Spin complete');
-                }
-            }
+            if (mixer) mixer.update(0.016); // or use delta time with THREE.Clock
 
             orbitControls.update();
             renderer.render(scene, camera);
         };
+
 
         animate();
 
