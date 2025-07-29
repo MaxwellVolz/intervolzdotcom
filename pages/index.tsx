@@ -78,23 +78,6 @@ export async function getStaticProps() {
 // }
 
 export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
-  useEffect(() => {
-    const grad = document.querySelector('#grad');
-
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-      const offset = Math.sin(scrollY * 0.002); // Smooth oscillation effect
-      if (grad) {
-        grad.setAttribute('x1', `${offset}`);
-        grad.setAttribute('x2', `${1 - offset}`);
-        grad.setAttribute('y1', `${offset} `);
-        grad.setAttribute('y2', `${1 + offset} `);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   return (
     <div style={{ display: 'content' }}>
@@ -104,9 +87,18 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
         <div className="relative w-[90%]">
           <svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 197.41016 62.72485">
             <defs>
-              <linearGradient id="grad" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
-                <stop offset="0%" stopColor="#00FFAA" />
-                <stop offset="100%" stopColor="#5500FF" />
+              <linearGradient id="grad" x1="0.3" y1="0.3" x2="0.7" y2="0.7" gradientUnits="objectBoundingBox">
+                <stop offset="0%" stop-color="#00FFAA">
+                  <animate attributeName="stop-color" values="#00FFAA;#00FFFF;#00FFAA" dur="6s" repeatCount="indefinite" />
+                </stop>
+                <stop offset="100%" stop-color="#5500FF">
+                  <animate attributeName="stop-color" values="#5500FF;#AA00FF;#5500FF" dur="6s" repeatCount="indefinite" />
+                </stop>
+
+                <animate attributeName="x1" values="0.3;0.1;0.3" dur="5s" repeatCount="indefinite" />
+                <animate attributeName="y1" values="0.3;0.1;0.3" dur="5s" repeatCount="indefinite" />
+                <animate attributeName="x2" values="0.6;0.8;0.6" dur="5s" repeatCount="indefinite" />
+                <animate attributeName="y2" values="0.6;0.8;0.6" dur="5s" repeatCount="indefinite" />
               </linearGradient>
 
 
@@ -205,7 +197,7 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
         <div className="px-4 py-20 text-slate-900">
           <h2 className="font-mono">PREVIOUS ARTICLES</h2>
           <ul>
-            {posts.filter((post) => !post.pinned).map((post) => (
+            {posts.filter((post) => !post.pinned && !post.work).map((post) => (
               <li key={post.slug} className="text-xl lg:text-[2vw] max-w-[30em] mr-auto leading-snug mt-[1em] font-sans">
                 <Link href={`/${post.slug} `}>
                   {post.title}
