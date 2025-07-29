@@ -41,7 +41,7 @@ const remarkSubstitutions: Plugin<[], Root> = () => {
         }
       });
 
-      parent.children.splice(index, 1, ...children);
+      (parent.children as any[]).splice(index, 1, ...children);
     });
   };
 };
