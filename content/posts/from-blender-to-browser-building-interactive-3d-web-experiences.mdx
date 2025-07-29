@@ -5,11 +5,9 @@ pinned: true
 draft: false
 tags: react web blender
 ---
-
 Let’s explore how to build a fully interactive 3D scene on the web using React, Three.js, and Blender.
 
 Whether you're creating a portfolio, game environment, or immersive brand experience, this guide walks you through modeling in Blender, exporting to GLTF, rendering in the browser, and hooking up custom interactivity with ReactJS.
-
 
 ### Tech Stack
 
@@ -19,25 +17,25 @@ Whether you're creating a portfolio, game environment, or immersive brand experi
 | Three.js | WebGL based 3D engine        |
 | Blender  | 3D modeling & animation tool |
 
-
 ### Example Scene
 
 <iframe src="/room/" width="100%" height="400" frameBorder="0" allowFullScreen></iframe>
 
-
----
+- - -
 
 ### What You'll Learn
 
-- How to set up a basic 3D scene in the browser using Three.js and React
-- How to export models from Blender
-- How to trigger animations and build interactive experiences with event handling
+* How to set up a basic 3D scene in the browser using Three.js and React
+* How to export models from Blender
+* How to trigger animations and build interactive experiences with event handling
 
----
+- - -
 
 ## 0. Project Setup
 
 ### Scaffold project folder with `npx` and `nextjs`
+
+![](/uploads/three_init.gif "three_init CLI")
 
 ```bash
 npx create-next-app@latest three-demo
@@ -61,6 +59,7 @@ We’ll start by initializing a minimal scene with a simple environment, a camer
 <iframe src="/scenes/rotating-cube/" width="100%" height="400" frameBorder="0" allowFullScreen></iframe>
 
 **pages/index.tsx**
+
 ```tsx
 import Link from 'next/link';
 
@@ -75,6 +74,7 @@ export default function Home() {
 ```
 
 **pages/scene.tsx**
+
 ```tsx
 // pages/scene.tsx
 import { useEffect, useRef } from 'react';
@@ -118,9 +118,7 @@ export default function ScenePage() {
 }
 ```
 
-
-
----
+- - -
 
 ## 2. The Blender → Browser Pipeline
 
@@ -134,13 +132,15 @@ For a Blender Export Test:
 2. Remove everything from the scene `A` -> `X` -> "Delete"
 3. Make a Monkey! `Shift - A` -> `Mesh` -> `Monkey`
 4. Make it gold! Add a material
-    - Hex: `#FFD700FF`
-    - Metallic: `1`
-    - Roughness: `0.2`
+
+   * Hex: `#FFD700FF`
+   * Metallic: `1`
+   * Roughness: `0.2`
 5. Export settings:
-    - Format: `.glb`
-    - Transform: `+Y Up`  **this should be checked**
-    - Name meshes in the `Outline` for referencing programmatically
+
+   * Format: `.glb`
+   * Transform: `+Y Up`  **this should be checked**
+   * Name meshes in the `Outline` for referencing programmatically
 
 > Pro tip: Use empties or naming conventions for interactive elements
 
@@ -228,8 +228,7 @@ export default function ScenePage() {
 }
 ```
 
----
-
+- - -
 
 ## 3. Making It Interactive
 
@@ -241,33 +240,33 @@ Now let’s give users something to do. We can add clickable areas to meshes wit
 
 Time to make your scene really come alive.
 
-- Keyframing animations in Blender
-- Loading animation clips via `useAnimations`
-- Triggering them with React state and refs
+* Keyframing animations in Blender
+* Loading animation clips via `useAnimations`
+* Triggering them with React state and refs
 
 <iframe src="/scenes/suzanne3/" width="100%" height="400" frameBorder="0" allowFullScreen></iframe>
 
----
+- - -
 
 ## 5. UX Tips for 3D Web Design
 
 3D is powerful, but easy to overdo. Here's how to keep it usable.
 
-- Don’t animate everything; focus user attention
-- Camera limits: orbit controls should feel intentional
+* Don’t animate everything; focus user attention
+* Camera limits: orbit controls should feel intentional
 
----
+- - -
 
 ## 6. Final Touches
 
 Structure matters for scale and maintenance.
 
-- Organizing GLTF assets and code modules
-- Performance: reduce poly count, compress textures
-- Accessibility: fallback for touch devices, no-WebGL
-- Decoupling scene logic from UI state
+* Organizing GLTF assets and code modules
+* Performance: reduce poly count, compress textures
+* Accessibility: fallback for touch devices, no-WebGL
+* Decoupling scene logic from UI state
 
----
+- - -
 
 ## Conclusion
 
@@ -275,7 +274,7 @@ You now have the tools to create rich, animated, and interactive 3D web scenes.
 
 [Link to Live Demo](http://intervolz.com/room)
 
----
+- - -
 
 ### Try It Yourself
 
