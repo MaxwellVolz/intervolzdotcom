@@ -23,10 +23,18 @@ export default function EarthScene() {
     const OOI: Record<string, THREE.Object3D> = {};
     const clock = new THREE.Clock();
     let rendererManager: RendererManager;
+    let beam: THREE.Mesh;
+
+    const earthRadius = 63.71; // with scale
 
     const debugSettings = {
         chaseSatellite: false,
-    }
+        orbiting: true,
+        orbitRadius: 421.57,
+        orbitInclination: 0,
+        coneYawOffset: 0,
+        conePitchOffset: 0,
+    };
 
     useEffect(() => {
         if (!mountRef.current) return;
@@ -41,12 +49,13 @@ export default function EarthScene() {
             rendererManager = new RendererManager(renderer);
 
             // Earth
-            const earthRadius = 63.71; // 6371 km
+            const earthRadius = 63.71;
             const earthGeo = new THREE.SphereGeometry(earthRadius, 64, 32);
             const earthMat = new THREE.MeshStandardMaterial({ color: 0x2244dd, roughness: 1 });
             const earth = new THREE.Mesh(earthGeo, earthMat);
             scene.add(earth);
             OOI.earth = earth;
+
             // === Satellite Orbit Pivot ===
             const satellitePivot = new THREE.Object3D();
             scene.add(satellitePivot);
@@ -56,52 +65,46 @@ export default function EarthScene() {
                 new THREE.BoxGeometry(1, 1, 1),
                 new THREE.MeshStandardMaterial({ color: 0xff2222 })
             );
-            satellite.position.set(421.57, 0, 0); // 42157 km = GEO
             satellitePivot.add(satellite);
 
-            // === Beam (Cone) ===
-            const beamHeight = 421.57;
-            const beamRadius = 10;
-            const beamGeo = new THREE.ConeGeometry(beamRadius, beamHeight, 32, 1, true);
+            function updateOrbit() {
+                satellite.position.set(debugSettings.orbitRadius + earthRadius, 0, 0);
+                updateBeam();
+            }
 
-            // Translate base of cone to origin — this is key!
-            beamGeo.translate(0, -beamHeight / 2, 0);
 
-            // Beam material
-            const beamMat = new THREE.MeshStandardMaterial({
-                color: 0x22ffee,
-                transparent: true,
-                opacity: 0.5
-            });
-            const beam = new THREE.Mesh(beamGeo, beamMat);
+            function updateBeam() {
+                if (beam) {
+                    scene.remove(beam);
+                    beam.geometry.dispose();
+                    beam.material.dispose();
+                }
 
-            // 1. Place beam at satellite world position
-            beam.position.copy(satellite.getWorldPosition(new THREE.Vector3()));
+                const beamHeight = debugSettings.orbitRadius + earthRadius;
+                const beamRadius = 10;
+                const beamGeo = new THREE.ConeGeometry(beamRadius, beamHeight, 32, 1, true);
+                beamGeo.translate(0, -beamHeight / 2, 0);
 
-            // 2. Calculate direction from satellite to Earth
-            const target = new THREE.Vector3(0, 0, 0); // Earth
-            const dir = new THREE.Vector3().subVectors(target, beam.position).normalize();
+                const beamMat = new THREE.MeshStandardMaterial({
+                    color: 0x22ffee,
+                    transparent: true,
+                    opacity: 0.5,
+                });
 
-            // 3. Set rotation using quaternion that rotates cone from +Y → dir
-            const up = new THREE.Vector3(0, -1, 0); // default cone direction
-            beam.quaternion.setFromUnitVectors(up, dir);
+                beam = new THREE.Mesh(beamGeo, beamMat);
+                scene.add(beam);
+            }
 
-            // 4. Add beam to scene
-            scene.add(beam);
 
-            // Create a line from satellite to origin
+            updateOrbit();
+
+
+            // === Debug Line ===
             const lineMaterial = new THREE.LineBasicMaterial({ color: 0xffff00 });
-            const points = [
-                satellite.getWorldPosition(new THREE.Vector3()), // start at satellite
-                new THREE.Vector3(0, 0, 0)                       // end at origin
-            ];
-            const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
+            const lineGeometry = new THREE.BufferGeometry();
             const debugLine = new THREE.Line(lineGeometry, lineMaterial);
-
             scene.add(debugLine);
             OOI.debugLine = debugLine;
-
-
 
             // Camera
             camera.position.set(0, 0, 250);
@@ -115,29 +118,33 @@ export default function EarthScene() {
             orbitControls.enableDamping = true;
             orbitControls.dampingFactor = 0.05;
 
-            // Add renderer canvas to the DOM
+            // Add renderer canvas to DOM
             mountRef.current!.appendChild(renderer.domElement);
 
             // Render loop
             renderer.setAnimationLoop(() => {
-                const p1 = satellite.getWorldPosition(new THREE.Vector3());
-                OOI.debugLine.geometry.setFromPoints([p1, new THREE.Vector3(0, 0, 0)]);
-                satellitePivot.rotation.y += 0.001;
-
-                // === Beam follow logic ===
-                beam.position.copy(p1);
-
-                const earthPos = new THREE.Vector3(0, 0, 0);
-                const dir = new THREE.Vector3().subVectors(earthPos, p1).normalize();
-
-                const up = new THREE.Vector3(0, -1, 0); // match your original cone orientation
-                beam.quaternion.setFromUnitVectors(up, dir);
-
-                if (debugSettings.chaseSatellite) {
-                    const satPos = satellite.getWorldPosition(new THREE.Vector3());
-                    orbitControls.target.copy(satPos);
+                if (debugSettings.orbiting) {
+                    satellitePivot.rotation.y += 0.001;
                 }
 
+                const satPos = satellite.getWorldPosition(new THREE.Vector3());
+                debugLine.geometry.setFromPoints([satPos, new THREE.Vector3(0, 0, 0)]);
+
+                // Beam logic
+                beam.position.copy(satPos);
+                const dir = new THREE.Vector3().subVectors(new THREE.Vector3(0, 0, 0), satPos).normalize();
+                const up = new THREE.Vector3(0, -1, 0);
+                beam.quaternion.setFromUnitVectors(up, dir);
+
+                // Apply offsets
+                const yaw = THREE.MathUtils.degToRad(debugSettings.coneYawOffset);
+                const pitch = THREE.MathUtils.degToRad(debugSettings.conePitchOffset);
+                const offsetQuat = new THREE.Quaternion().setFromEuler(new THREE.Euler(pitch, yaw, 0, 'YXZ'));
+                beam.quaternion.multiply(offsetQuat);
+
+                if (debugSettings.chaseSatellite) {
+                    orbitControls.target.copy(satPos);
+                }
 
                 orbitControls?.update();
                 renderer.render(scene, camera);
@@ -148,16 +155,17 @@ export default function EarthScene() {
             stats = new Stats();
             mountRef.current!.appendChild(stats.dom);
 
+            // GUI
             gui = new GUI();
-            gui.add(debugSettings, 'chaseSatellite').name('Follow Satellite').onChange((value: boolean) => {
-                if (value) {
-                    const satPos = satellite.getWorldPosition(new THREE.Vector3());
-                    orbitControls.target.copy(satPos);
-                } else {
-                    orbitControls.target.set(0, 0, 0); // Earth
-                }
+            gui.add(debugSettings, 'chaseSatellite').name('Follow Satellite').onChange(() => {
+                orbitControls.target.set(0, 0, 0);
                 orbitControls.update();
             });
+            gui.add(debugSettings, 'orbiting').name('Orbit Enabled');
+            gui.add(debugSettings, 'orbitRadius', 100, 600).name('Orbit Radius (1000 km)').onChange(updateOrbit);
+            // gui.add(debugSettings, 'orbitInclination', -90, 90).name('Inclination (°)').onChange(updateOrbit);
+            gui.add(debugSettings, 'coneYawOffset', -45, 45).name('Cone Yaw (°)');
+            gui.add(debugSettings, 'conePitchOffset', -45, 45).name('Cone Pitch (°)');
 
             // Events
             window.addEventListener('resize', onWindowResize);
@@ -169,13 +177,10 @@ export default function EarthScene() {
             const rect = element.getBoundingClientRect();
             mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
             mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-
             raycaster.setFromCamera(mouse, camera);
             const intersects = raycaster.intersectObjects(scene.children, true);
-
             for (const intersect of intersects) {
                 console.log(`intersect ${intersect}`);
-
             }
         }
 
