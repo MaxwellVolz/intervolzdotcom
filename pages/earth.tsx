@@ -7,6 +7,8 @@ import Stats from 'three/examples/jsm/libs/stats.module';
 import initEarth from '@/lib/initEarth';
 import { RendererManager } from '@/lib/RendererManager';
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
+import ChartPanel from '@/components/ChartPanel';
+
 
 export default function EarthScene() {
     const mountRef = useRef<HTMLDivElement>(null);
@@ -25,21 +27,43 @@ export default function EarthScene() {
     let rendererManager: RendererManager;
     let beam: THREE.Mesh;
 
+
+    const startTimeRef = useRef(performance.now());
+    const lastTelemetryTimeRef = useRef(0);
+    const telemetryInterval = 1; // seconds
+
+
     const earthRadius = 63.71; // with scale
+
+    const telemetry: {
+        time: number[];
+        alt: number[];
+        lat: number[];
+        lon: number[];
+    } = {
+        time: [],
+        alt: [],
+        lat: [],
+        lon: [],
+    };
+
+    const maxDurationSeconds = 60;
 
     const debugSettings = {
         chaseSatellite: false,
         orbiting: true,
         orbitRadius: 421.57,
         orbitInclination: 0,
-        coneAzimuthOffset: 0,     // Degrees
-        coneElevationOffset: 0,   // Degrees (0 = nadir, +90 = pointing away from Earth)
+        coneAzimuthOffset: 0,
+        coneElevationOffset: 0,
     };
+
 
     useEffect(() => {
         if (!mountRef.current) return;
 
         init();
+
 
         async function init() {
             const result = initEarth();
@@ -117,6 +141,8 @@ export default function EarthScene() {
             scene.add(debugLine);
             OOI.debugLine = debugLine;
 
+
+
             // Camera
             camera.position.set(0, 0, 250);
             camera.lookAt(0, 0, 0);
@@ -139,6 +165,38 @@ export default function EarthScene() {
                 }
 
                 const satPos = satellite.getWorldPosition(new THREE.Vector3());
+
+                const gps = toLatLonAlt(satPos, earthRadius);
+                console.log(gps)
+
+                // Live-update debug GUI fields
+                // debugSettings.targetLatitude = gps.latitude;
+                // debugSettings.targetLongitude = gps.longitude;
+
+                // const now = Math.floor(performance.now() / 1000);
+
+                OOI.debugLine.geometry.setFromPoints([satPos, new THREE.Vector3(0, 0, 0)]);
+
+                const now = (performance.now() - startTimeRef.current) / 1000; // seconds since page load
+
+                if (now - lastTelemetryTimeRef.current >= telemetryInterval) {
+                    telemetry.time.push(now);
+                    telemetry.alt.push(gps.altitude);
+                    telemetry.lat.push(gps.latitude);
+                    telemetry.lon.push(gps.longitude);
+                    lastTelemetryTimeRef.current = now;
+
+                    // Trim arrays based on max seconds of data
+                    while (telemetry.time.length > 0 && (now - telemetry.time[0]) > maxDurationSeconds) {
+                        telemetry.time.shift();
+                        telemetry.alt.shift();
+                        telemetry.lat.shift();
+                        telemetry.lon.shift();
+                    }
+                }
+
+                console.log(telemetry)
+
                 debugLine.geometry.setFromPoints([satPos, new THREE.Vector3(0, 0, 0)]);
 
                 // Beam logic
@@ -189,7 +247,6 @@ export default function EarthScene() {
             gui.add(debugSettings, 'coneAzimuthOffset', -180, 180).name('Cone Azimuth (°)');
             gui.add(debugSettings, 'coneElevationOffset', -90, 90).name('Cone Elevation (°)');
 
-
             // Events
             window.addEventListener('resize', onWindowResize);
             rendererManager.domElement.addEventListener('pointerdown', onPointerDown);
@@ -213,6 +270,25 @@ export default function EarthScene() {
             rendererManager.setSize(window.innerWidth, window.innerHeight);
         }
 
+
+        function toLatLonAlt(pos: THREE.Vector3, earthRadius: number) {
+            const x = pos.x;
+            const y = pos.y;
+            const z = pos.z;
+
+            const r = Math.sqrt(x * x + y * y + z * z);
+            const lat = Math.asin(y / r);                  // radians
+            const lon = Math.atan2(z, x);                  // radians
+            const alt = r - earthRadius;
+
+            return {
+                latitude: THREE.MathUtils.radToDeg(lat),
+                longitude: THREE.MathUtils.radToDeg(lon),
+                altitude: alt,
+            };
+        }
+
+
         return () => {
             renderer?.dispose();
             window.removeEventListener('resize', onWindowResize);
@@ -220,5 +296,48 @@ export default function EarthScene() {
         };
     }, []);
 
-    return <div ref={mountRef} style={{ width: '100vw', height: '100vh', overflow: 'hidden' }} />;
+    return (
+        <>
+            <div ref={mountRef} style={{ width: '100vw', height: '100vh', overflow: 'hidden' }} />
+            {/* <ChartPanel
+                title="Satellite Altitude"
+                seriesName="Altitude (km)"
+                getData={() => ({ x: telemetry.time, y: telemetry.alt })}
+                style={{ top: 10, right: 10 }}
+            /> */}
+            <ChartPanel
+                title="Latitude & Longitude"
+                getData={() => {
+                    const now = (performance.now() - startTimeRef.current) / 1000;
+
+                    const x = telemetry.time.map(t => now - t); // seconds ago
+                    const lat = telemetry.lat.slice();
+                    const lon = telemetry.lon.slice();
+
+                    return [
+                        {
+                            x,
+                            y: lat,
+                            type: 'scatter',
+                            mode: 'lines',
+                            name: 'Latitude',
+                            line: { color: '#33ffcc' },
+                        },
+                        {
+                            x,
+                            y: lon,
+                            type: 'scatter',
+                            mode: 'lines',
+                            name: 'Longitude',
+                            line: { color: '#ff3366' },
+                        },
+                    ];
+                }}
+                style={{ top: 120, left: 10 }}
+            />
+
+
+        </>
+
+    )
 }
