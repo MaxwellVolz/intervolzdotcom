@@ -189,6 +189,17 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
                 </div>
               </li>
             ))}
+
+            {/* Resume download link */}
+            <li className="text-xl lg:text-[2vw] max-w-[30em] mr-auto leading-snug mt-[1em] font-sans">
+              <a
+                href="/downloads/mvolz_resume.pdf"
+                download
+                className="underline hover:no-underline transition-all duration-300 text-blue-600 dark:text-blue-400"
+              >
+                Click here to Download my CV (PDF)
+              </a>
+            </li>
           </ul>
         </div>
       </div>
