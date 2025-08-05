@@ -32,8 +32,8 @@ export default function EarthScene() {
         orbiting: true,
         orbitRadius: 421.57,
         orbitInclination: 0,
-        coneYawOffset: 0,
-        conePitchOffset: 0,
+        coneAzimuthOffset: 0,     // Degrees
+        coneElevationOffset: 0,   // Degrees (0 = nadir, +90 = pointing away from Earth)
     };
 
     useEffect(() => {
@@ -51,10 +51,21 @@ export default function EarthScene() {
             // Earth
             const earthRadius = 63.71;
             const earthGeo = new THREE.SphereGeometry(earthRadius, 64, 32);
-            const earthMat = new THREE.MeshStandardMaterial({ color: 0x2244dd, roughness: 1 });
+
+            // Earth Material
+            // const earthMat = new THREE.MeshStandardMaterial({ color: 0x2244dd, roughness: 1 });
+
+            const textureLoader = new THREE.TextureLoader();
+            const earthTexture = await textureLoader.loadAsync('/textures/bluemarble.jpg');
+            const earthMat = new THREE.MeshStandardMaterial({
+                map: earthTexture,
+                roughness: 1,
+            });
+
             const earth = new THREE.Mesh(earthGeo, earthMat);
             scene.add(earth);
             OOI.earth = earth;
+
 
             // === Satellite Orbit Pivot ===
             const satellitePivot = new THREE.Object3D();
@@ -132,15 +143,25 @@ export default function EarthScene() {
 
                 // Beam logic
                 beam.position.copy(satPos);
-                const dir = new THREE.Vector3().subVectors(new THREE.Vector3(0, 0, 0), satPos).normalize();
-                const up = new THREE.Vector3(0, -1, 0);
-                beam.quaternion.setFromUnitVectors(up, dir);
 
-                // Apply offsets
-                const yaw = THREE.MathUtils.degToRad(debugSettings.coneYawOffset);
-                const pitch = THREE.MathUtils.degToRad(debugSettings.conePitchOffset);
-                const offsetQuat = new THREE.Quaternion().setFromEuler(new THREE.Euler(pitch, yaw, 0, 'YXZ'));
-                beam.quaternion.multiply(offsetQuat);
+                // Beam points directly at Earth (nadir) initially
+                const dir = new THREE.Vector3().subVectors(new THREE.Vector3(0, 0, 0), satPos).normalize();
+
+                // Define local satellite coordinate frame
+                const beamQuat = new THREE.Quaternion();
+                const up = new THREE.Vector3(0, -1, 0); // beam default direction in geometry
+                beamQuat.setFromUnitVectors(up, dir);
+
+                // Apply az/el offset from local satellite frame
+                const az = THREE.MathUtils.degToRad(debugSettings.coneAzimuthOffset);     // horizontal spin
+                const el = THREE.MathUtils.degToRad(debugSettings.coneElevationOffset);   // vertical tilt
+
+                // Azimuth: rotate around satellite local Y
+                // Elevation: rotate around satellite local X after azimuth
+                const azElQuat = new THREE.Quaternion().setFromEuler(new THREE.Euler(-el, az, 0, 'YXZ')); // negative el to go *down* from nadir
+
+                // Final beam orientation = nadir + offset
+                beam.quaternion.copy(beamQuat).multiply(azElQuat);
 
                 if (debugSettings.chaseSatellite) {
                     orbitControls.target.copy(satPos);
@@ -164,8 +185,10 @@ export default function EarthScene() {
             gui.add(debugSettings, 'orbiting').name('Orbit Enabled');
             gui.add(debugSettings, 'orbitRadius', 100, 600).name('Orbit Radius (1000 km)').onChange(updateOrbit);
             // gui.add(debugSettings, 'orbitInclination', -90, 90).name('Inclination (°)').onChange(updateOrbit);
-            gui.add(debugSettings, 'coneYawOffset', -45, 45).name('Cone Yaw (°)');
-            gui.add(debugSettings, 'conePitchOffset', -45, 45).name('Cone Pitch (°)');
+
+            gui.add(debugSettings, 'coneAzimuthOffset', -180, 180).name('Cone Azimuth (°)');
+            gui.add(debugSettings, 'coneElevationOffset', -90, 90).name('Cone Elevation (°)');
+
 
             // Events
             window.addEventListener('resize', onWindowResize);
