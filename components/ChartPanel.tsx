@@ -1,21 +1,25 @@
-// components/ChartPanel.tsx
 'use client';
 
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
-import Draggable from 'react-draggable'; // Optional: for movable UI
+import Draggable from 'react-draggable';
+import type { Data, Layout, Config } from 'plotly.js';
 
-const Plot = dynamic(() => import('react-plotly.js'), { ssr: false });
+const Plot = dynamic(() => import('react-plotly.js'), { ssr: false }) as React.ComponentType<{
+    data: Data[];
+    layout: Partial<Layout>;
+    config?: Partial<Config>;
+    style?: React.CSSProperties;
+}>;
 
 type ChartPanelProps = {
     title: string;
-    seriesName: string;
-    getData: () => Plotly.Data[];
+    getData: () => Data[];
     style?: React.CSSProperties;
 };
 
-export default function ChartPanel({ title, seriesName, getData, style }: ChartPanelProps) {
-    const [plotData, setPlotData] = useState<{ x: number[]; y: number[] }>({ x: [], y: [] });
+export default function ChartPanel({ title, getData, style }: ChartPanelProps) {
+    const [plotData, setPlotData] = useState<Data[]>([]);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -31,8 +35,6 @@ export default function ChartPanel({ title, seriesName, getData, style }: ChartP
                 className="handle"
                 style={{
                     position: 'absolute',
-                    top: 10,
-                    right: 10,
                     background: '#111',
                     color: '#fff',
                     border: '1px solid #444',
@@ -45,43 +47,38 @@ export default function ChartPanel({ title, seriesName, getData, style }: ChartP
             >
                 <h3 style={{ margin: 0, paddingBottom: 5 }}>{title}</h3>
                 <Plot
-                    data={getData()}
+                    data={plotData}
                     layout={{
                         autosize: true,
-                        margin: { t: 10, b: 40, l: 50, r: 10 },
+                        margin: { t: 10, b: 40, l: 60, r: 10 },
                         paper_bgcolor: '#111',
                         plot_bgcolor: '#111',
                         font: { color: '#fff' },
                         showlegend: false,
                         xaxis: {
                             title: {
-                                text: 'seconds ago',
-                                font: { color: '#888' },
+                                text: 'Seconds Ago',
+                                font: { color: '#fff' },
                             },
-                            autorange: 'reversed',        // ✅ right-to-left timeline
-                            fixedrange: true,             // ❌ disables zoom/pan
-                            tickfont: { color: '#888' },
-
+                            autorange: 'reversed',
+                            fixedrange: true,
+                            tickfont: { color: '#fff' },
                         },
                         yaxis: {
                             title: {
-                                text: 'deg',
-                                font: { color: '#888' },
+                                text: 'Degrees',
+                                font: { color: '#fff' },
                             },
                             fixedrange: true,
-                            tickfont: { color: '#888' },
-
+                            tickfont: { color: '#fff' },
                         },
                     }}
                     config={{
-                        // displayModeBar: false,
+                        displayModeBar: false,
                         staticPlot: true,
                     }}
                     style={{ width: '100%', height: 200 }}
                 />
-
-
-
             </div>
         </Draggable>
     );

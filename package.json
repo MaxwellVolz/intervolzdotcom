@@ -32,6 +32,7 @@
     "@tailwindcss/language-server": "^0.14.25",
     "@tailwindcss/typography": "^0.5.16",
     "@types/node": "^20.17.52",
+    "@types/plotly.js": "^3.0.3",
     "@types/react": "^18.2.41",
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.6",
