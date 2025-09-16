@@ -6,4 +6,108 @@ draft: false
 work: false
 tags: art blender
 ---
-Placeholder for working document about an art project.
+
+Developing a 1:63,360 scale model of San Francisco (1 mile = 1 inch) using 3D printing to fabricate molds for casting quick-set cement.
+
+
+## Materials
+
+Discount Builder Supply SF
+
+- [CRC Heavy Duty Silicone Lubricant](https://www.discountbuilderssupplysf.com/p/crc-heavy-duty-silicone-lubricant/27904435)
+- [Fast-Setting Quikrete](https://www.discountbuilderssupplysf.com/p/quikrete-fast-setting-concrete-mix-50-lb/61050035)
+
+> Concrete should have **Fine aggregate or minimal aggregate** to preserve mold detail.
+
+
+
+
+## Blender Model with BLOSM
+
+NorCal OpenStreetMapData: [norcal-latest.osm.pbf](https://download.geofabrik.de/north-america/us/california/norcal.html)
+
+Lat Long for all of SF
+
+Bounding box San Francisco (-122.52005,37.70786,-122.35525,37.81399):
+
+```
+West:  -122.52005
+East:  -122.35525
+South:  37.70786
+North:  37.81399
+```
+
+Split it into a **3×3 grid** → 9 equal sections.
+
+---
+
+### Grid Sections
+
+Each section = `[West, South, East, North]`.
+
+**Row 1 (South row)**
+
+1. `[-122.52005, 37.70786, -122.46512, 37.74324]`
+2. `[-122.46512, 37.70786, -122.41018, 37.74324]`
+3. `[-122.41018, 37.70786, -122.35525, 37.74324]`
+
+**Row 2 (Middle row)**
+4. `[-122.52005, 37.74324, -122.46512, 37.77862]`
+5. `[-122.46512, 37.74324, -122.41018, 37.77862]`
+6. `[-122.41018, 37.74324, -122.35525, 37.77862]`
+
+**Row 3 (North row)**
+7. `[-122.52005, 37.77862, -122.46512, 37.81399]`
+8. `[-122.46512, 37.77862, -122.41018, 37.81399]`
+9. `[-122.41018, 37.77862, -122.35525, 37.81399]`
+
+---
+
+### Chopping OSM Data with [osmconvert64](https://wiki.openstreetmap.org/wiki/Osmconvert#Windows)
+
+```powershell
+# Tile 1 (SW)
+.\osmconvert64-0.8.8p.exe "<FULL_PATH>\norcal-250914.osm.pbf" -b="-122.52005,37.70786,-122.46512,37.74324" -o="<FULL_PATH>\sf_tile_1.osm"
+
+# Tile 2 (South Center)
+.\osmconvert64-0.8.8p.exe "<FULL_PATH>\norcal-250914.osm.pbf" -b="-122.46512,37.70786,-122.41018,37.74324" -o="<FULL_PATH>\sf_tile_2.osm"
+
+# Tile 3 (SE)
+.\osmconvert64-0.8.8p.exe "<FULL_PATH>\norcal-250914.osm.pbf" -b="-122.41018,37.70786,-122.35525,37.74324" -o="<FULL_PATH>\sf_tile_3.osm"
+
+# Tile 4 (Middle West)
+.\osmconvert64-0.8.8p.exe "<FULL_PATH>\norcal-250914.osm.pbf" -b="-122.52005,37.74324,-122.46512,37.77862" -o="<FULL_PATH>\sf_tile_4.osm"
+
+# Tile 5 (Middle Center)
+.\osmconvert64-0.8.8p.exe "<FULL_PATH>\norcal-250914.osm.pbf" -b="-122.46512,37.74324,-122.41018,37.77862" -o="<FULL_PATH>\sf_tile_5.osm"
+
+# Tile 6 (Middle East)
+.\osmconvert64-0.8.8p.exe "<FULL_PATH>\norcal-250914.osm.pbf" -b="-122.41018,37.74324,-122.35525,37.77862" -o="<FULL_PATH>\sf_tile_6.osm"
+
+# Tile 7 (NW)
+.\osmconvert64-0.8.8p.exe "<FULL_PATH>\norcal-250914.osm.pbf" -b="-122.52005,37.77862,-122.46512,37.81399" -o="<FULL_PATH>\sf_tile_7.osm"
+
+# Tile 8 (North Center)
+.\osmconvert64-0.8.8p.exe "<FULL_PATH>\norcal-250914.osm.pbf" -b="-122.46512,37.77862,-122.41018,37.81399" -o="<FULL_PATH>\sf_tile_8.osm"
+
+# Tile 9 (NE)
+.\osmconvert64-0.8.8p.exe "<FULL_PATH>\norcal-250914.osm.pbf" -b="-122.41018,37.77862,-122.35525,37.81399" -o="<FULL_PATH>\sf_tile_9.osm"
+```
+
+## Step 3: How to use in BLOSM
+
+* In BLOSM panel, paste coordinates into the **Bounding Box** fields.
+* Import one tile at a time (terrain optional, buildings essential).
+* Save each as `sf_tile_1.blend`, etc.
+
+## Scaling
+
+1. Select all objects (terrain + buildings).
+2. `Ctrl + A` → Apply Scale/Rotation (to reset before scaling).
+3. Press `S` to scale.
+4. Type: 0.01578
+
+> `Ctrl + A` → Apply Scale again, so the new dimensions are “baked in”.
+
+
+---
