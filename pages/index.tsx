@@ -6,25 +6,26 @@ import Link from 'next/link';
 // import IDELayout from './layout/IDELayout';
 import RoomScene from './room';
 import MVolzLogo from '@/public/imgs/mvolz2.svg';
-import { useEffect } from 'react';
+import { useState } from 'react';
 
-
+// Modern muted color palette inspired by YC startup design systems
 const tagColors: Record<string, string> = {
-  web: 'bg-blue-200 text-blue-800 dark:bg-blue-800 dark:text-blue-100',
-  threeJS: 'bg-purple-200 text-purple-800 dark:bg-purple-800 dark:text-purple-100',
-  blender: 'bg-pink-200 text-pink-800 dark:bg-pink-800 dark:text-pink-100',
-  unity: 'bg-green-200 text-green-800 dark:bg-green-800 dark:text-green-100',
-  ai: 'bg-yellow-200 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100',
-  n8n: 'bg-orange-200 text-orange-800 dark:bg-orange-800 dark:text-orange-100',
-  llm: 'bg-teal-200 text-teal-800 dark:bg-teal-800 dark:text-teal-100',
-  automation: 'bg-gray-200 text-gray-800 dark:bg-gray-800 dark:text-gray-100',
-  stable_diffusion: 'bg-green-100 text-green-500 dark:bg-green-500 dark:text-green-50',
-  docker: 'bg-blue-50 text-blue-600 dark:bg-blue-700 dark:text-blue-100',
-  rant: 'bg-red-200 text-red-800 dark:bg-red-800 dark:text-red-100',
-  python: 'bg-blue-700 text-yellow-300 dark:bg-yellow-300 dark:text-blue-800',
-  react: 'bg-cyan-200 text-cyan-800 dark:bg-cyan-800 dark:text-cyan-100',
-  javascript: 'bg-amber-100 text-amber-700 dark:bg-amber-600 dark:text-amber-100',
+  web: 'bg-slate-100 text-slate-700 border border-slate-200',
+  threeJS: 'bg-violet-50 text-violet-700 border border-violet-200',
+  blender: 'bg-rose-50 text-rose-700 border border-rose-200',
+  unity: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
+  ai: 'bg-amber-50 text-amber-700 border border-amber-200',
+  n8n: 'bg-orange-50 text-orange-700 border border-orange-200',
+  llm: 'bg-cyan-50 text-cyan-700 border border-cyan-200',
+  automation: 'bg-neutral-100 text-neutral-700 border border-neutral-200',
+  stable_diffusion: 'bg-lime-50 text-lime-700 border border-lime-200',
+  docker: 'bg-blue-50 text-blue-700 border border-blue-200',
+  rant: 'bg-red-50 text-red-700 border border-red-200',
+  python: 'bg-yellow-50 text-yellow-700 border border-yellow-200',
+  react: 'bg-sky-50 text-sky-700 border border-sky-200',
+  javascript: 'bg-stone-100 text-stone-700 border border-stone-200',
 };
+
 
 
 type PostMeta = {
@@ -78,162 +79,216 @@ export async function getStaticProps() {
 // }
 
 export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
+  const [hoveredTag, setHoveredTag] = useState<string | null>(null);
+
+  const handleTagHover = (tag: string) => {
+    setHoveredTag(tag);
+  };
+
+  const handleTagLeave = () => {
+    setHoveredTag(null);
+  };
+
+  const getTagClassName = (tag: string, baseSize: 'sm' | 'xs') => {
+    const baseClasses = baseSize === 'sm'
+      ? 'px-3 py-1 text-sm font-mono rounded-md transition-all duration-200 cursor-pointer'
+      : 'px-2 py-1 text-xs font-mono rounded transition-all duration-200 cursor-pointer';
+
+    const colorClasses = tagColors[tag] || 'bg-gray-50 text-gray-700 border border-gray-200';
+
+    const isHighlighted = hoveredTag === tag;
+    const isOtherTagHovered = hoveredTag !== null && hoveredTag !== tag;
+
+    const interactionClasses = isHighlighted
+      ? 'scale-110 shadow-md ring-2 ring-gray-300'
+      : isOtherTagHovered
+        ? 'opacity-50 scale-95'
+        : 'hover:shadow-sm hover:scale-105';
+
+    return `${baseClasses} ${colorClasses} ${interactionClasses}`;
+  };
 
   return (
-    <div style={{ display: 'content' }}>
-      <div className="w-full pt-[8vh] min-h-screen flex flex-col items-center justify-center">
-        <p className="text-[3vw] max-w-[30em] mr-auto ml-[12.1vw] transform rotate-[-10deg] leading-tight font-sans">Hello, I’m</p>
+    <div className="min-h-screen bg-white relative">
+      {/* Hero Section */}
+      <div className="max-w-4xl mx-auto px-6 py-24 relative z-10">
+        <div className="space-y-8">
+          <h1 className="text-6xl md:text-8xl font-bold text-black tracking-tight">
+            MVOLZ
+          </h1>
 
-        <div className="relative w-[90%]">
-          <svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 197.41016 62.72485">
-            <defs>
-              <linearGradient id="grad" x1="0.3" y1="0.3" x2="0.7" y2="0.7" gradientUnits="objectBoundingBox">
-                <stop offset="0%" stop-color="#00FFAA">
-                  <animate attributeName="stop-color" values="#00FFAA;#00FFFF;#00FFAA" dur="6s" repeatCount="indefinite" />
-                </stop>
-                <stop offset="100%" stop-color="#5500FF">
-                  <animate attributeName="stop-color" values="#5500FF;#AA00FF;#5500FF" dur="6s" repeatCount="indefinite" />
-                </stop>
+          <div className="max-w-2xl">
+            <p className="text-2xl md:text-3xl text-gray-900 leading-relaxed font-light">
+              I build products that matter. Full-stack engineer shipping
+              <span className="font-medium text-blue-600"> AI-powered solutions</span> and
+              <span className="font-medium text-emerald-600"> data visualizations</span> that solve real problems.
+            </p>
+          </div>
 
-                <animate attributeName="x1" values="0.3;0.1;0.3" dur="5s" repeatCount="indefinite" />
-                <animate attributeName="y1" values="0.3;0.1;0.3" dur="5s" repeatCount="indefinite" />
-                <animate attributeName="x2" values="0.6;0.8;0.6" dur="5s" repeatCount="indefinite" />
-                <animate attributeName="y2" values="0.6;0.8;0.6" dur="5s" repeatCount="indefinite" />
-              </linearGradient>
-
-
-              <clipPath id="clip">
-                <path d="M5.92139.15771l11.13184,8.72412L28.18506.15771l5.52637,28.65869H.39502L5.92139.15771Z" style={{ fill: "#231f20" }} />
-                <path d="M49.14551,0l14.64502,28.81641h-29.29004L49.14551,0Z" style={{ fill: "#231f20" }} />
-                <path d="M72.75098,13.5791l-7.4209-12.39502h25.89551l-7.4209,12.39502,7.73633,15.2373h-26.52637l7.73633-15.2373Z" style={{ fill: "#231f20" }} />
-                <path d="M92.29004,1.18408h33.86914l-9.47363,28.85596-7.46094-11.68457-7.46094,11.68457L92.29004,1.18408Z" style={{ fill: "#231f20" }} />
-                <path d="M128.92188,1.18408h21.11914v9.71094h-11.4082v3.11865h9.27637v1.81543h-9.27637v3.27637h11.4082v9.71094h-21.11914V1.18408Z" style={{ fill: "#231f20" }} />
-                <path d="M154.34375,1.18408h9.86914v17.92139h9.94727v9.71094h-19.81641V1.18408Z" style={{ fill: "#231f20" }} />
-                <path d="M177.59375,1.18408h9.86914v17.92139h9.94727v9.71094h-19.81641V1.18408Z" style={{ fill: "#231f20" }} />
-                <path d="M29.29004,33.90796l-14.64502,28.81689L0,33.90796h29.29004Z" style={{ fill: "#231f20" }} />
-                <path d="M28.10596,47.68481c0-8.21094,6.03955-14.25049,14.3291-14.25049,8.21094,0,14.25049,6.03955,14.25049,14.25049,0,8.28955-6.03955,14.3291-14.21094,14.3291-8.3291,0-14.36865-6.03955-14.36865-14.3291Z" style={{ fill: "#231f20" }} />
-                <path d="M60.04053,33.90796h9.86865v17.92139h9.94727v9.71094h-19.81592v-27.63232Z" style={{ fill: "#231f20" }} />
-                <path d="M90.90918,43.6189h-7.61914v-9.71094h23.09277l-8.72363,17.92139h7.77637v9.71094h-23.33008l8.80371-17.92139Z" style={{ fill: "#231f20" }} />
-              </clipPath>
-            </defs>
-
-            <rect width="100%" height="100%" fill="url(#grad)" clipPath="url(#clip)" />
-
-          </svg>
-
+          <div className="max-w-xl">
+            <p className="text-lg text-gray-600 leading-relaxed">
+              Currently exploring modern solutions at the intersections of AI, engineering, and art.
+              Always shipping, always iterating.
+            </p>
+          </div>
         </div>
-
-        <p className="text-lg lg:text-[2vw] px-3 lg:px-[2vw] max-w-[30em] mr-auto sm:ml-10 md:ml-20 lg:ml-[15vw] leading-snug mt-[2em] font-sans">
-          I <em className="font-semibold">design, develop, and deliver</em><span className="italic"> full-stack solutions, interactive data visualizations,</span> and <span className="italic">AI powered automation pipelines</span>.
-        </p>
-        <p className="text-lg lg:text-[2vw] px-3 lg:px-[2vw] max-w-[30em] mr-auto sm:ml-10 md:ml-20 lg:ml-[15vw] leading-snug mt-[1em]  font-sans">
-          I’m currently applying my <em className="italic font-medium">hackers mindset</em> and <em className="italic font-medium">creative problem solving</em> to explore modern solutions with cutting edge system architectures.
-        </p>
       </div>
 
-      <div className="py-20 max-w-[80em] mx-auto px-4">
-        <div className="px-4 py-20 text-slate-900">
-          <h3 className="font-mono">I'M THINKING ABOUT...</h3>
-          <ul>
+      {/* What I'm Building Section */}
+      <div className="max-w-4xl mx-auto px-6 py-16 border-t border-gray-100">
+        <div className="space-y-12">
+          <h2 className="text-xl font-bold text-black uppercase tracking-wider">
+            WHAT I'M BUILDING
+          </h2>
+
+          <div className="space-y-8">
             {posts.filter((post) => post.pinned).map((post) => (
-              <li key={post.slug} className="text-xl lg:text-[2vw] max-w-[30em] mr-auto leading-snug mt-[1em] font-sans">
-                <Link href={`/${post.slug} `}>
-                  {post.title}
+              <article key={post.slug} className="group">
+                <Link href={`/${post.slug}`} className="block">
+                  <h3 className="text-2xl md:text-3xl font-medium text-black group-hover:text-gray-600 transition-colors duration-200 mb-3">
+                    {post.title}
+                  </h3>
                 </Link>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {post.tags ? (
-                    post.tags?.map((tag) => (
+                {post.tags && (
+                  <div className="flex flex-wrap gap-2">
+                    {post.tags.map((tag) => (
                       <span
                         key={tag}
-                        className={`text-xs px-3 py-1 rounded-full font-mono tracking-tight transition-all duration-300 transform hover:scale-105 hover:brightness-110 ${tagColors[tag] || 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-white'
-                          } `}
+                        className={getTagClassName(tag, 'sm')}
+                        onMouseEnter={() => handleTagHover(tag)}
+                        onMouseLeave={handleTagLeave}
                       >
                         {tag}
                       </span>
-                    ))
-                  ) : (
-                    <></>
-                  )
-                  }
-                </div>
-              </li>
+                    ))}
+                  </div>
+                )}
+              </article>
             ))}
-          </ul>
+          </div>
         </div>
       </div>
 
-      <div className="py-20 max-w-[80em] mx-auto px-4">
-        <div className="px-4 py-20 text-slate-900">
-          <h2 className="font-mono">PROFESSIONAL WORK</h2>
-          <ul>
+      {/* Things I've Shipped Section */}
+      <div className="max-w-4xl mx-auto px-6 py-16 border-t border-gray-100">
+        <div className="space-y-12">
+          <h2 className="text-xl font-bold text-black uppercase tracking-wider">
+            THINGS I'VE SHIPPED
+          </h2>
+
+          <div className="space-y-8">
             {posts.filter((post) => post.work).map((post) => (
-              <li key={post.slug} className="text-xl lg:text-[2vw] max-w-[30em] mr-auto leading-snug mt-[1em] font-sans">
-                <Link href={`/${post.slug} `}>
-                  {post.title}
+              <article key={post.slug} className="group">
+                <Link href={`/${post.slug}`} className="block">
+                  <h3 className="text-2xl md:text-3xl font-medium text-black group-hover:text-gray-600 transition-colors duration-200 mb-3">
+                    {post.title}
+                  </h3>
                 </Link>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {post.tags ? (
-                    post.tags?.map((tag) => (
+                {post.tags && (
+                  <div className="flex flex-wrap gap-2">
+                    {post.tags.map((tag) => (
                       <span
                         key={tag}
-                        className={`text-xs px-3 py-1 rounded-full font-mono tracking-tight transition-all duration-300 transform hover:scale-105 hover:brightness-110 ${tagColors[tag] || 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-white'
-                          } `}
+                        className={getTagClassName(tag, 'sm')}
+                        onMouseEnter={() => handleTagHover(tag)}
+                        onMouseLeave={handleTagLeave}
                       >
                         {tag}
                       </span>
-                    ))
-                  ) : (
-                    <></>
-                  )
-                  }
-                </div>
-              </li>
+                    ))}
+                  </div>
+                )}
+              </article>
             ))}
 
-            {/* Resume download link */}
-            <li className="text-xl lg:text-[2vw] max-w-[30em] mr-auto leading-snug mt-[1em] font-sans">
-              <a
-                href="/downloads/mvolz_resume.pdf"
-                download
-                className="underline hover:no-underline transition-all duration-300 text-blue-600 dark:text-blue-400"
-              >
-                Click here to Download my CV (PDF)
-              </a>
-            </li>
-          </ul>
+          </div>
         </div>
       </div>
 
-      <div className="py-20 max-w-[80em] mx-auto px-4">
-        <div className="px-4 py-20 text-slate-900">
-          <h2 className="font-mono">PREVIOUS ARTICLES</h2>
-          <ul>
+      {/* Previous Articles Section */}
+      <div className="max-w-4xl mx-auto px-6 py-16 border-t border-gray-100">
+        <div className="space-y-12">
+          <h2 className="text-xl font-bold text-black uppercase tracking-wider">
+            PREVIOUS ARTICLES
+          </h2>
+
+          <div className="grid gap-8 md:grid-cols-2">
             {posts.filter((post) => !post.pinned && !post.work).map((post) => (
-              <li key={post.slug} className="text-xl lg:text-[2vw] max-w-[30em] mr-auto leading-snug mt-[1em] font-sans">
-                <Link href={`/${post.slug} `}>
-                  {post.title}
+              <article key={post.slug} className="group">
+                <Link href={`/${post.slug}`} className="block">
+                  <h3 className="text-xl font-medium text-black group-hover:text-gray-600 transition-colors duration-200 mb-3">
+                    {post.title}
+                  </h3>
                 </Link>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {post.tags ? (
-                    post.tags?.map((tag) => (
+                {post.tags && (
+                  <div className="flex flex-wrap gap-2">
+                    {post.tags.map((tag) => (
                       <span
                         key={tag}
-                        className={`text-xs px-3 py-1 rounded-full font-mono tracking-tight transition-all duration-300 transform hover:scale-105 hover:brightness-110 ${tagColors[tag] || 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-white'
-                          } `}
+                        className={getTagClassName(tag, 'xs')}
+                        onMouseEnter={() => handleTagHover(tag)}
+                        onMouseLeave={handleTagLeave}
                       >
                         {tag}
                       </span>
-                    ))
-                  ) : (
-                    <></>
-                  )
-                  }
-                </div>
-              </li>
+                    ))}
+                  </div>
+                )}
+              </article>
             ))}
-          </ul>
+          </div>
         </div>
       </div>
+
+      {/* Footer */}
+      <footer className="border-t border-gray-200 mt-16">
+        <div className="max-w-4xl mx-auto px-6 py-6">
+          <div className="flex justify-between items-center">
+            <a
+              href="/downloads/mvolz_resume.pdf"
+              download
+              className="inline-flex items-center px-4 py-2 bg-black text-white text-sm font-medium rounded hover:bg-gray-800 transition-colors duration-200"
+            >
+              Resume
+            </a>
+            <div className="flex items-center space-x-4">
+              <a
+                href="https://linkedin.com/in/maxwellvolz"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-600 hover:text-black transition-colors"
+                aria-label="LinkedIn"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                </svg>
+              </a>
+              <a
+                href="https://instagram.com/maxwellwhatever"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-600 hover:text-black transition-colors"
+                aria-label="Instagram"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                </svg>
+              </a>
+              <a
+                href="https://x.com/maxxxvolz"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-600 hover:text-black transition-colors"
+                aria-label="X (Twitter)"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
