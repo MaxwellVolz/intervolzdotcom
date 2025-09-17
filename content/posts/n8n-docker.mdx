@@ -2,7 +2,7 @@
 title: "Automation Workflows with AI"
 date: 2025-07-08T20:57:00.000Z
 pinned: true
-tags: n8n automation stable_diffusion docker
+tags: n8n automation docker
 ---
 
 Automated viral video pipeline using n8n and DeepSeek 3.1 with free TTS, captions, music, and publishing.
@@ -268,21 +268,6 @@ To **automate posting to YouTube using n8n**, you need to use the **YouTube node
 * Enable **YouTube Data API v3**
 * Go to **APIs & Services → Credentials**
 
-
-Thanks — that screenshot confirms you're using an **OAuth Client for “Desktop App”**, not for “Web App”.
-
-### 🔥 Problem:
-
-**Desktop App clients do not support redirect URI configuration** — that’s why you don’t see that option.
-
-### 🔧 Fix:
-
-You need to create a **new OAuth 2.0 Client ID of type “Web Application”**, which allows setting redirect URIs.
-
----
-
-## ✅ Correct Steps:
-
 1. In **Google Cloud → Credentials**
 2. Click **Create Credentials → OAuth Client ID**
 3. Choose:
@@ -296,18 +281,17 @@ You need to create a **new OAuth 2.0 Client ID of type “Web Application”**, 
    ```
    http://localhost:5678/rest/oauth2-credential/callback
    ```
-6. Save. You’ll get a new **Client ID** and **Client Secret**.
+6. Save new **Client ID** and **Client Secret**.
 
 ---
 
-## 🔁 Then in n8n:
+## n8n credentials
 
 1. Go to **Credentials → New → YouTube OAuth2**
 2. Use the new Web Client ID + Secret
 3. It will now **redirect correctly** and allow you to sign in
 
 ---
-
 
 
 ## Stable Diffusion Locally
@@ -318,7 +302,6 @@ You need to create a **new OAuth 2.0 Client ID of type “Web Application”**, 
 ```sh
 mkdir models outputs
 ```
-
 
 ### 
 
