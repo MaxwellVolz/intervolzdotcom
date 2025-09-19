@@ -26,7 +26,7 @@ A modern blog setup with Git-backed content, visual editing, automated Jenkins d
 | Next.js + MDX | static site generation                     |
 | Decap         | CMS at `/admin` for visual editing         |
 | Git           | as the content store (no DB)               |
-| Github Auth   | Consider: Netlify Identity or Git Gateway  |
+| Github Auth   | Auth for CMS (via token or OAuth)          |
 | Jenkins       | Pipeline for CI/CD on push                 |
 | NGINX         | to serve static assets                     |
 | Cloudflare    | Tunnel to expose port 80 without public IP |
