@@ -1,0 +1,55 @@
+{
+    "levels": [
+      {
+        "name": "Mind",
+        "nodes": [
+          { "id": "thought", "label": "thought" },
+          { "id": "form", "label": "form" },
+          { "id": "mind", "label": "mind" },
+          { "id": "body", "label": "body" }
+        ]
+      },
+      {
+        "name": "Idea",
+        "nodes": [
+          { "id": "idea", "label": "idea" },
+          { "id": "lightbulb", "label": "lightbulb" },
+          { "id": "electricity", "label": "electricity" },
+          { "id": "lightning", "label": "lightning" },
+          { "id": "rain", "label": "rain" },
+          { "id": "earth", "label": "earth" }
+        ]
+      },
+      {
+        "name": "Earth",
+        "nodes": [
+          { "id": "water", "label": "water" },
+          { "id": "tree", "label": "tree" },
+          { "id": "stream", "label": "stream" },
+          { "id": "branches", "label": "branches" },
+          { "id": "leaves", "label": "leaves" }
+        ]
+      },
+      {
+        "name": "Sky",
+        "nodes": [
+          { "id": "sky", "label": "sky" },
+          { "id": "heaven", "label": "heaven" },
+          { "id": "angels", "label": "angels" },
+          { "id": "devils", "label": "devils" },
+          { "id": "hell", "label": "hell" }
+        ]
+      },
+      {
+        "name": "Screams",
+        "nodes": [
+          { "id": "screams", "label": "screams" },
+          { "id": "songs", "label": "songs" },
+          { "id": "moans", "label": "moans" },
+          { "id": "pain", "label": "pain" },
+          { "id": "pleasure", "label": "pleasure" }
+        ]
+      }
+    ]
+  }
+  
