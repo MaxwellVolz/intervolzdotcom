@@ -1,55 +1,94 @@
 {
-    "levels": [
-      {
-        "name": "Mind",
-        "nodes": [
-          { "id": "thought", "label": "thought" },
-          { "id": "form", "label": "form" },
-          { "id": "mind", "label": "mind" },
-          { "id": "body", "label": "body" }
-        ]
-      },
-      {
-        "name": "Idea",
-        "nodes": [
-          { "id": "idea", "label": "idea" },
-          { "id": "lightbulb", "label": "lightbulb" },
-          { "id": "electricity", "label": "electricity" },
-          { "id": "lightning", "label": "lightning" },
-          { "id": "rain", "label": "rain" },
-          { "id": "earth", "label": "earth" }
-        ]
-      },
-      {
-        "name": "Earth",
-        "nodes": [
-          { "id": "water", "label": "water" },
-          { "id": "tree", "label": "tree" },
-          { "id": "stream", "label": "stream" },
-          { "id": "branches", "label": "branches" },
-          { "id": "leaves", "label": "leaves" }
-        ]
-      },
-      {
-        "name": "Sky",
-        "nodes": [
-          { "id": "sky", "label": "sky" },
-          { "id": "heaven", "label": "heaven" },
-          { "id": "angels", "label": "angels" },
-          { "id": "devils", "label": "devils" },
-          { "id": "hell", "label": "hell" }
-        ]
-      },
-      {
-        "name": "Screams",
-        "nodes": [
-          { "id": "screams", "label": "screams" },
-          { "id": "songs", "label": "songs" },
-          { "id": "moans", "label": "moans" },
-          { "id": "pain", "label": "pain" },
-          { "id": "pleasure", "label": "pleasure" }
-        ]
-      }
-    ]
-  }
-  
+  "levels": [
+    {
+      "name": "Mind",
+      "nodes": [
+        { "id": "thought", "label": "thought" },
+        { "id": "form", "label": "form" },
+        { "id": "mind", "label": "mind" },
+        { "id": "body", "label": "body" }
+      ],
+      "connections": [
+        { "from": "thought", "to": "form" },
+        { "from": "thought", "to": "mind" },
+        { "from": "form", "to": "body" },
+        { "from": "mind", "to": "body" }
+      ]
+    },
+    {
+      "name": "Idea",
+      "nodes": [
+        { "id": "idea", "label": "idea" },
+        { "id": "lightbulb", "label": "lightbulb" },
+        { "id": "electricity", "label": "electricity" },
+        { "id": "lightning", "label": "lightning" },
+        { "id": "rain", "label": "rain" },
+        { "id": "earth", "label": "earth" }
+      ],
+      "connections": [
+        { "from": "idea", "to": "lightbulb" },
+        { "from": "lightbulb", "to": "electricity" },
+        { "from": "electricity", "to": "lightning" },
+        { "from": "lightning", "to": "rain" },
+        { "from": "lightning", "to": "earth" },
+        { "from": "rain", "to": "earth" }
+      ]
+    },
+    {
+      "name": "Earth",
+      "nodes": [
+        { "id": "water", "label": "water" },
+        { "id": "tree", "label": "tree" },
+        { "id": "stream", "label": "stream" },
+        { "id": "branches", "label": "branches" },
+        { "id": "leaves", "label": "leaves" }
+      ],
+      "connections": [
+        { "from": "water", "to": "tree" },
+        { "from": "water", "to": "stream" },
+        { "from": "tree", "to": "branches" },
+        { "from": "branches", "to": "leaves" }
+      ]
+    },
+    {
+      "name": "Sky",
+      "nodes": [
+        { "id": "sky", "label": "sky" },
+        { "id": "heaven", "label": "heaven" },
+        { "id": "angels", "label": "angels" },
+        { "id": "devils", "label": "devils" },
+        { "id": "hell", "label": "hell" }
+      ],
+      "connections": [
+        { "from": "sky", "to": "heaven" },
+        { "from": "sky", "to": "hell" },
+        { "from": "heaven", "to": "angels" },
+        { "from": "hell", "to": "devils" }
+      ]
+    },
+    {
+      "name": "Screams",
+      "nodes": [
+        { "id": "screams", "label": "screams" },
+        { "id": "songs", "label": "songs" },
+        { "id": "moans", "label": "moans" },
+        { "id": "pain", "label": "pain" },
+        { "id": "pleasure", "label": "pleasure" }
+      ],
+      "connections": [
+        { "from": "screams", "to": "moans" },
+        { "from": "screams", "to": "pain" },
+        { "from": "songs", "to": "pleasure" },
+        { "from": "moans", "to": "pain" },
+        { "from": "moans", "to": "pleasure" }
+      ]
+    }
+  ],
+  "interLevelConnections": [
+    { "from": "body", "to": "idea" },
+    { "from": "earth", "to": "water" },
+    { "from": "leaves", "to": "sky" },
+    { "from": "devils", "to": "screams" },
+    { "from": "angels", "to": "songs" }
+  ]
+}
