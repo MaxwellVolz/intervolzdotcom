@@ -1,0 +1,146 @@
+---
+title: Axis Mundi
+date: 2025-10-13T20:00:00.000-07:00
+pinned: true
+draft: false
+work: false
+tags: web react javascript
+---
+
+
+# Building Axis Mundi: A Journey Through 3D Mind-Mapping
+
+## The Vision
+
+What if knowledge could be explored not as a flat diagram, but as a three-dimensional journey through consciousness itself? This question sparked the creation of **Axis Mundi**, a 3D mind-map application that transforms hierarchical thinking into an immersive spatial experience.
+
+> The name comes from the ancient concept of the "world axis". 
+
+Axis Mundi is a **modern technical realization of Charles Trapolin’s original work** on visualizing knowledge structures and mapping consciousness. This project brings his vision into a contemporary digital form. An interactive, contemplative space where users can traverse interconnected layers of thought and experience knowledge as a navigatable system.
+
+## The Development
+
+The entire foundation of this project came together in just three days of focused development, progressing through distinct phases:
+
+### Phase 1: Foundations (`art project init`)
+
+The journey began with project scaffolding and the core Three.js setup. The first challenge was architecting how to represent a mind-map in 3D space. The solution: a JSON-based "atlas" structure that defines levels and nodes:
+
+```json
+{
+  "levels": [
+    {
+      "name": "Mind",
+      "nodes": [
+        { "id": "thought", "label": "Thought" },
+        { "id": "memory", "label": "Memory" }
+      ]
+    }
+  ]
+}
+```
+
+This data-driven approach means the entire visualization is configurable by editting a single JSON.
+
+### Phase 2: The Core System (`data loader, level system, improved connections`)
+
+With the structure defined, phase two focused on bringing it to life. The atlas data loader fetches and parses the JSON, then distributes nodes across Z-space to create depth. Each level represents a different plane of thought, receding into the distance.
+
+The connection system was also implemented—animated lines that draw between related nodes, creating a web of relationships that reveals itself progressively. This isn't just decoration; the connections represent the associative links that make a mind-map meaningful.
+
+### Phase 3: Animation & Polish (`animations for camera and nodes, animation controls exposed`)
+
+The third phase introduced movement and time. Static 3D is impressive, but the real magic happens when the camera glides between levels and nodes reveal themselves sequentially. 
+
+The animation system includes:
+
+- **Camera transitions** that smoothly travel through depth
+- **Sequential node appearance** where each thought emerges after its connections are drawn
+- **Level transitions** where previous layers fade and blur as new ones come into focus
+- **UI controls** that let users navigate forward, backward, or start the journey
+
+### Phase 4-5: Refinement (`linted, more nodes, visual improvements` and `multiple connections per node`)
+
+The final commits focused on polish and flexibility. Code linting ensured quality. The node system was expanded with richer content. Visual improvements enhanced the atmosphere. Most significantly, the connection architecture was refactored to support multiple connections per node, allowing for more complex relationship mapping.
+
+The JSON structure evolution reflects this maturity—the system can now handle intricate webs of associations, not just simple linear progressions.
+
+## The Design Philosophy
+
+Beyond the code, Axis Mundi embodies specific design principles:
+
+### Contemplative Atmosphere
+
+The goal is to create a space for reflection, not distraction. Edge fading into darkness, blue atmospheric lighting, and depth-of-field blur all contribute to focus and immersion.
+
+### Sequential Revelation
+
+Rather than overwhelming users with all information at once, the experience unfolds gradually. Each node appears only after you've seen its connections to previous thoughts, mimicking how we naturally build understanding.
+
+### Spatial Metaphor
+
+Depth in Z-space isn't just visual—it represents conceptual depth. Moving through levels is like diving deeper into a subject or ascending to higher abstractions.
+
+## Current State and Future Vision
+
+After this initial sprint, the project has completed its first three phases:
+
+- Foundation: Project structure and 3D setup
+- Core Features: Data loading, node rendering, level system
+- Animation & Interaction: Sequential reveals, transitions, controls
+
+Phase 4 is currently underway, focusing on visual polish: vignette effects, atmospheric lighting improvements, depth-of-field blur, and post-processing effects that will elevate the experience from functional to transcendent.
+
+Future phases envision sound design (imagine subtle tones as nodes appear), mobile responsiveness, and performance optimization for complex atlases with hundreds of interconnected thoughts.
+
+## Technical Challenges and Solutions
+
+Several interesting problems emerged during development:
+
+### Challenge
+
+How to animate camera movement through 3D space smoothly while maintaining focus on specific nodes.
+
+### Solution
+
+A dedicated `cameraAnimation.ts` utility module that handles interpolation and easing functions, wrapped in a `useAnimationState` hook for React integration.
+
+---
+
+### Challenge
+
+Rendering text labels in 3D that remain readable at various depths and angles.
+
+### Solution
+
+Billboard techniques that keep labels facing the camera, combined with depth-based scaling.
+
+---
+
+### Challenge
+
+Managing complex state across sequential animations (node reveals, line drawing, camera movement).
+
+### Solution
+
+A centralized animation state system with hooks that components can subscribe to, ensuring synchronized timing.
+
+---
+
+## Reflections on Rapid Development
+
+Building a functional 3D mind-mapping experience is about clear vision and modern tools. React Three Fiber's abstraction over Three.js eliminated boilerplate. TypeScript caught errors before they became runtime bugs. The data-driven architecture meant iteration on content and structure could happen independently.
+
+But more than tools, it required a clear conceptual model: treat depth as meaning and interaction as exploration.
+
+## The Bigger Picture
+
+Axis Mundi isn't just a technical exercise, it's an experiment in how we interface with knowledge. Traditional mind-maps are powerful but constrained by the page. Digital mind-maps add interactivity but often remain flat. This project asks: 
+
+### What if our tools for thought matched the dimensionality of thought itself?
+
+We think in networks, not lists. In associations, not hierarchies. In spaces, not pages. Axis Mundi is a step toward tools that honor that complexity while making it navigable, even beautiful.
+
+---
+
+*Axis Mundi is open source and built with Next.js, Three.js, and React Three Fiber. The project continues to evolve as we explore the intersection of consciousness, knowledge, and three-dimensional space.*
