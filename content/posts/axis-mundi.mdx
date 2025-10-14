@@ -44,9 +44,10 @@ This data-driven approach means the entire visualization is configurable by edit
 
 ### Phase 2: The Core System (`data loader, level system, improved connections`)
 
-With the structure defined, phase two focused on bringing it to life. The atlas data loader fetches and parses the JSON, then distributes nodes across Z-space to create depth. Each level represents a different plane of thought, receding into the distance.
+With the structure defined, phase two focused on bringing it to life. The atlas data loader fetches and parses the JSON, then distributes nodes across Z-space to create depth. These connections represent the associative links that make a mind-map meaningful.
 
-The connection system was also implemented—animated lines that draw between related nodes, creating a web of relationships that reveals itself progressively. This isn't just decoration; the connections represent the associative links that make a mind-map meaningful.
+
+
 
 ### Phase 3: Animation & Polish (`animations for camera and nodes, animation controls exposed`)
 
@@ -61,9 +62,40 @@ The animation system includes:
 
 ### Phase 4-5: Refinement (`linted, more nodes, visual improvements` and `multiple connections per node`)
 
-The final commits focused on polish and flexibility. Code linting ensured quality. The node system was expanded with richer content. Visual improvements enhanced the atmosphere. Most significantly, the connection architecture was refactored to support multiple connections per node, allowing for more complex relationship mapping.
+These commits focused on polish and flexibility. The node system was expanded with additional content. Visual improvements enhanced the atmosphere. Most significantly, the connection architecture was refactored to support multiple connections per node, allowing for more complex relationship mapping.
 
-The JSON structure evolution reflects this maturity—the system can now handle intricate webs of associations, not just simple linear progressions.
+Implementing the *interlevel* connection system required an update to the underlying data structure. 
+
+```json
+{
+  "levels": [
+    {
+      "name": "Mind",
+      "nodes": [
+        { "id": "thought", "label": "thought" },
+        { "id": "form", "label": "form" },
+        { "id": "mind", "label": "mind" },
+        { "id": "body", "label": "body" }
+      ],
+      "connections": [
+        { "from": "thought", "to": "form" },
+        { "from": "thought", "to": "mind" },
+        { "from": "form", "to": "body" },
+        { "from": "mind", "to": "body" }
+      ]
+    }
+  ]
+  "interLevelConnections": [
+    { "from": "body", "to": "idea" },
+    { "from": "earth", "to": "water" },
+    { "from": "leaves", "to": "sky" },
+    { "from": "devils", "to": "screams" },
+    { "from": "angels", "to": "songs" }
+  ]
+}
+```
+
+The new JSON structure can now handle intricate webs of associations, not just simple linear progressions.
 
 ## The Design Philosophy
 
@@ -79,7 +111,7 @@ Rather than overwhelming users with all information at once, the experience unfo
 
 ### Spatial Metaphor
 
-Depth in Z-space isn't just visual—it represents conceptual depth. Moving through levels is like diving deeper into a subject or ascending to higher abstractions.
+Depth in Z-space isn't just visual, it represents conceptual depth. Moving through levels is like diving deeper into a subject or ascending to higher abstractions.
 
 ## Current State and Future Vision
 
@@ -131,15 +163,17 @@ A centralized animation state system with hooks that components can subscribe to
 
 Building a functional 3D mind-mapping experience is about clear vision and modern tools. React Three Fiber's abstraction over Three.js eliminated boilerplate. TypeScript caught errors before they became runtime bugs. The data-driven architecture meant iteration on content and structure could happen independently.
 
-But more than tools, it required a clear conceptual model: treat depth as meaning and interaction as exploration.
+But more than tools, it required a clear conceptual model: treat **depth as meaning** and **interaction as exploration**.
 
 ## The Bigger Picture
 
-Axis Mundi isn't just a technical exercise, it's an experiment in how we interface with knowledge. Traditional mind-maps are powerful but constrained by the page. Digital mind-maps add interactivity but often remain flat. This project asks: 
+Axis Mundi isn't just a technical exercise, it's an experiment in how we interface with knowledge. Traditional mind-maps are powerful but constrained by the page. Digital mind-maps add interactivity but often remain flat. 
+
+This project asks: 
 
 ### What if our tools for thought matched the dimensionality of thought itself?
 
-We think in networks, not lists. In associations, not hierarchies. In spaces, not pages. Axis Mundi is a step toward tools that honor that complexity while making it navigable, even beautiful.
+We think in networks, not lists. In associations, not hierarchies. In spaces, not pages. Axis Mundi is a step toward tools that honor that complexity while making it an intuitive and enjoyable interactive experience.
 
 ---
 
