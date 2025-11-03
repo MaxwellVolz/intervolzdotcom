@@ -132,14 +132,17 @@ credentials-file: /home/YOU/.cloudflared/YOUR_TUNNEL_ID.json
 ingress:
   - hostname: intervolz.com
     service: http://localhost:80
+  - hostname: www.intervolz.com
+    service: http://localhost:80
   - service: http_status:404
 ```
+
+> Both `intervolz.com` and `www.intervolz.com` need to be declared separately to avoid broken URLs.
 
 #### One-time DNS Setup
 
 ```bash
 cloudflared tunnel route dns intervolz-tunnel intervolz.com
-
 ```
 
 #### Run at boot:
