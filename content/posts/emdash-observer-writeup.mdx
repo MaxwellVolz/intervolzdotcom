@@ -1,0 +1,106 @@
+---
+title: Emdash Observer
+date: 2025-12-11T13:57:00.000-08:00
+pinned: true
+draft: true
+work: false
+tags: web dataviz d3
+---
+
+
+## Intro
+
+Saw this post on hackernews today.
+
+[Em Dash in Reddit Comments (jonatron.github.io)](https://news.ycombinator.com/item?id=46236514)
+
+Currently it has 3 comments.
+
+> "Hopefully someone else can use the CSV to make a graph that isn't terrible"
+>
+> jonatron **the OP**, 48 minutes ago
+
+Well *jonatron*, I will!
+
+Also, amazing handle.
+
+## Data Processing
+
+### Current Data Format
+
+day (as unix timestamp / 86400), dash/emdash/count/both, count
+
+Example Snippet:
+
+```csv
+13135,count,34
+13139,dash,10
+13143,dash,31
+13147,count,102
+13148,count,81
+13129,dash,12
+13140,dash,24
+```
+
+### Data Target Format
+
+1. Sort by day
+2. Group by day for d3 visualizations
+3. Calculate metrics (em dash rates, etc.)
+4. Output optimized JSON format
+
+**It's Python time!**
+
+1. injest the raw CSV
+2. groups all dash-related counts by day
+3. sorts the days
+4. computes per-day metrics like dash rates
+5. converts days into real dates
+6. write out both a sorted CSV and a JSON dataset
+7. print overall summary stats and trend comparisons across the dataset
+
+Annnnd...done. Probably. 
+
+Data looks like this now:
+
+```json
+{
+  "data": [
+    {
+      "day": 13129,
+      "date": "2005-12-12",
+      "count": 76,
+      "dash": 12,
+      "emdash": 0,
+      "both": 0,
+      "emdashRate": 0.0,
+      "dashRate": 15.7895,
+      "bothRate": 0.0,
+      "anyDashRate": 15.7895
+    },
+  ]
+}
+```
+
+Setup project with the following:
+
+- **TypeScript** - Type-safe development
+- **Tailwind CSS** - Modern utility-first styling
+- **D3.js** - Interactive data visualization
+- **Python 3** - Data processing pipeline
+
+UI elements looking pretty **'99**, let's try out **HeadlessUI**...
+
+And that was a big waste of time!
+
+## Thoughts on Tailwind CSS + HeadlessUI
+
+tl;dr
+
+way too granular and exotic for my current tastes
+
+### The setup is wild
+
+We eventually landed on the shadcn/...
+
+# Will write up more on this tomorrow it's late.

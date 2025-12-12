@@ -127,8 +127,7 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
 
           <div className="max-w-xl">
             <p className="text-lg text-gray-600 leading-relaxed">
-              Currently exploring modern solutions at the intersections of AI, engineering, and art.
-              Always shipping, always iterating.
+              Currently exploring opportunities to apply my expertise. <span className="font-medium text-emerald-400">"Hire me!"</span>
             </p>
           </div>
         </div>
@@ -138,7 +137,7 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
       <div className="max-w-4xl mx-auto px-6 py-16 border-t border-gray-100">
         <div className="space-y-12">
           <h2 className="text-xl font-bold text-black uppercase tracking-wider">
-            WHAT I'M BUILDING
+            WHAT I'VE BEEN DOING LATELY
           </h2>
 
           <div className="space-y-8">
@@ -246,10 +245,9 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
           <div className="flex justify-between items-center">
             <a
               href="/downloads/mvolz_resume.pdf"
-              download
               className="inline-flex items-center px-4 py-2 bg-black text-white text-sm font-medium rounded hover:bg-gray-800 transition-colors duration-200"
             >
-              Resume
+              Resume.pdf
             </a>
             <div className="flex items-center space-x-4">
               <a

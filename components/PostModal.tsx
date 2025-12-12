@@ -24,7 +24,7 @@ export default function PostModal({ post, onClose }: { post: any, onClose: () =>
             <div className={articleStyles.article}>
                 <button onClick={onClose} style={{ float: 'right' }}>✕</button>
                 <h1>{post.frontmatter.title}</h1>
-                {post.frontmatter.date && <p>{new Date(post.frontmatter.date).toLocaleDateString()}</p>}
+                {/* {post.frontmatter.date && <p>{new Date(post.frontmatter.date).toLocaleDateString()}</p>} */}
                 <MDXRemote {...post.source} />
             </div>
         </div>
