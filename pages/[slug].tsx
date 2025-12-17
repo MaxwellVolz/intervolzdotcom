@@ -36,7 +36,7 @@ export default function BlogPostPage({ source, frontmatter }: any) {
   return (
     <main className="prose lg:prose-xl max-w-3xl mx-auto px-6 py-12">
       <h1 className="font-display text-4xl mb-2">{frontmatter.title}</h1>
-      <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">{new Date(frontmatter.date).toLocaleDateString()}</p>
+      {/* <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">{new Date(frontmatter.date).toLocaleDateString()}</p> */}
       <article className="prose lg:prose-xl">
         <MDXRemote {...source} components={{ Kbd }} />
       </article>
