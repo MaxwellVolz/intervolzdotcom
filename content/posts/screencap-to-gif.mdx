@@ -6,4 +6,75 @@ draft: true
 work: false
 tags: windows automation
 ---
-coming soon!
+
+Produce high-quality GIFs without bloated GUI apps!
+
+* **Use OBS to capture**
+  Best frictionless experience, hotkeys, consistent FPS.
+
+* **Use ffmpeg + gifsicle to process**
+  Best quality, tiny file sizes, predictable outputs.
+  Easy to automate inside FastAPI, Node scripts, or n8n nodes if you ever need to pipeline this.
+
+---
+
+# Simple + Powerful Toolchain
+
+## 1. **Capture desktop video**
+
+### Windows
+
+Use **OBS Studio** with these settings:
+
+* Output → Recording → Format: `mp4` or `mkv`
+* Encoder: `x264` (CPU)
+* Rate Control: `CQP` with 18–23 for crisp captures
+* FPS: 30 or 60
+* Hotkeys for start/stop recording
+
+OBS is stable, scriptable, and captures clean frames.
+
+# 2. **Convert video → GIF**
+
+Use **ffmpeg + gifsicle**. This gives far better results than ffmpeg alone.
+
+## Step A — generate a palette (best quality)
+
+```sh
+ffmpeg -i out.mp4 -vf "fps=30,scale=800:-1:flags=lanczos,palettegen" palette.png
+```
+
+## Step B — create the GIF using that palette
+
+```sh
+ffmpeg -i out.mp4 -i palette.png -filter_complex "fps=30,scale=800:-1:flags=lanczos[x];[x][1:v]paletteuse=dither=bayer" out.gif
+```
+
+## Step C — optimize file size with gifsicle
+
+```sh
+gifsicle -O3 out.gif -o out_optimized.gif
+```
+
+---
+
+# 3. Single Script Solution
+
+### Windows PowerShell or Bash:
+
+```sh
+#!/usr/bin/env bash
+INPUT="$1"
+BASENAME="${INPUT%.*}"
+
+ffmpeg -y -i "$INPUT" -vf "fps=30,scale=800:-1:flags=lanczos,palettegen" "$BASENAME-palette.png"
+ffmpeg -y -i "$INPUT" -i "$BASENAME-palette.png" -filter_complex "fps=30,scale=800:-1:flags=lanczos[x];[x][1:v]paletteuse" "$BASENAME.gif"
+gifsicle -O3 "$BASENAME.gif" -o "$BASENAME-optimized.gif"
+```
+
+Usage:
+
+```sh
+./to-gif.sh screen.mp4
+```
+

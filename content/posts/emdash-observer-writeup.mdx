@@ -82,11 +82,14 @@ Data looks like this now:
 }
 ```
 
+## Making it a Website
+
 Setup project with the following:
 
+- **Next.js 16** - React framework with static export
 - **TypeScript** - Type-safe development
-- **Tailwind CSS** - Modern utility-first styling
-- **D3.js** - Interactive data visualization
+- **Tailwind CSS 4** - Modern utility-first styling
+- **D3.js 7** - Interactive data visualization
 - **Python 3** - Data processing pipeline
 
 UI elements looking pretty **'99**, let's try out **HeadlessUI**...
@@ -95,12 +98,63 @@ And that was a big waste of time!
 
 ## Thoughts on Tailwind CSS + HeadlessUI
 
-tl;dr
+The **shadcn + Tailwind + Radix** primitives turns basic UI building into a maze of unnecessary abstraction and ceremony.
 
-way too granular and exotic for my current tastes
+I wanted a styled component library and what I got was:
 
-### The setup is wild
+- a design system skeleton
+- 40 layers of indirection
+- low-level primitives that weren’t meant to be seen
+- CSS variables you have to maintain
+- at-rules that VSCode doesn’t recognize
+- configuration scattered across `globals.css`, `tailwind.config.ts`, and *Radix wrappers*
 
-We eventually landed on the shadcn/...
 
-# Will write up more on this tomorrow it's late.
+### You wanted a switch?
+
+shadcn gives you:
+
+- <SwitchPrimitives.Root> - what the hell even is this
+- <SwitchPrimitives.Thumb> - a switch...THUMB?! what.
+- 40 Tailwind classes
+- CSS variables for colors
+- dark mode variants
+- data-state attributes for animation
+- a wrapper ref-forwarding function
+- every customizable part exposed whether you need it or not
+
+And I'm left scratching my bald head:
+
+> "Why do I need six files and three systems to render a toggle?"
+
+I'm not trying to **engineer** a switch. I want to *use* a switch.
+
+**/rant**
+
+## Pivot Time: Material UI
+
+Instead of being frustrated (I'm not anymore!).
+
+Switching to a known library that looks nice and is less untamed (thanks Google).
+
+Annnnd we have something to post on the thread!
+
+![](/uploads/emdash-observer/emdash_first_pass.png)
+
+## Jonatron responds!
+
+![](/uploads/emdash-observer/jonatron_comments.png)
+
+*And the fire is re-lit!*
+
+Let's make this nice for real.
+
+Layout Sketch:
+
+![](/uploads/emdash-observer/wireframe.png)
+
+Data Filtering:
+
+![](/uploads/emdash-observer/filters.png)
+
+### 
