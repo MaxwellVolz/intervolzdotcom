@@ -28,7 +28,6 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta httpEquiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
         <meta httpEquiv="Pragma" content="no-cache" />
         <meta httpEquiv="Expires" content="0" />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       <Component {...pageProps} />
     </>
