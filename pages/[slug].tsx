@@ -8,6 +8,7 @@ import remarkSubstitutions from '@/lib/remarkSubstitutions';
 import remarkGfm from 'remark-gfm';
 import Link from 'next/link';
 import rehypePrettyCode from 'rehype-pretty-code';
+import rehypeSlug from 'rehype-slug';
 import { useEffect } from 'react';
 import { Kbd } from '@/components/Kbd';
 
@@ -71,6 +72,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     mdxOptions: {
       remarkPlugins: [remarkSubstitutions, remarkGfm],
       rehypePlugins: [
+        rehypeSlug,
         [rehypePrettyCode, {
           theme: 'github-dark', // or 'nord', 'one-dark-pro', etc.
           onVisitLine(node) {
