@@ -2,8 +2,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     output: 'export',
-    basePath: '/crazytaxi',
-    assetPrefix: '/crazytaxi/',
+    // basePath: '/crazytaxi',
+    // assetPrefix: '/crazytaxi/',
     trailingSlash: true,
     webpack(config) {
       config.module.rules.push({
