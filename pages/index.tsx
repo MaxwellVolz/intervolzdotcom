@@ -24,8 +24,26 @@ const tagColors: Record<string, string> = {
   python: 'bg-yellow-50 text-yellow-700 border border-yellow-200',
   react: 'bg-sky-50 text-sky-700 border border-sky-200',
   javascript: 'bg-stone-100 text-stone-700 border border-stone-200',
+  '@meta': 'bg-indigo-50 text-indigo-700 border border-indigo-200',
+  howto: 'bg-teal-50 text-teal-700 border border-teal-200',
+  blog: 'bg-gray-50 text-gray-700 border border-gray-200',
+  'CI/CD': 'bg-purple-50 text-purple-700 border border-purple-200',
+  windows: 'bg-blue-100 text-blue-800 border border-blue-300',
+  art: 'bg-pink-50 text-pink-700 border border-pink-200',
+  backend: 'bg-zinc-100 text-zinc-700 border border-zinc-200',
+  fastapi: 'bg-green-50 text-green-700 border border-green-200',
+  dataviz: 'bg-fuchsia-50 text-fuchsia-700 border border-fuchsia-200',
+  arvr: 'bg-violet-100 text-violet-800 border border-violet-300',
 };
 
+// Fun Zone items
+const funZoneItems = [
+  { url: '/crazytaxi', preview_image: '/games/waynemo_preview.png', image_text: 'Wayne Mo' },
+  { url: '/axisrecall', preview_image: '/games/axisrecall_preview.png', image_text: 'Axis Recall' },
+  { url: 'https://wassuh.com', preview_image: '/games/wassuh_preview.png', image_text: 'Coit Cache' },
+  { url: '/room', preview_image: '/games/room_preview.png', image_text: 'Room' },
+  { url: '/earth', preview_image: '/games/earth_preview.png', image_text: 'Earth' },
+];
 
 
 type PostMeta = {
@@ -33,9 +51,10 @@ type PostMeta = {
   title: string;
   date: string;
   cover?: string;
-  pinned?: boolean;
+  technical?: boolean;
   work?: boolean;
   draft?: boolean;
+  in_progress?: boolean;
   tags?: string[];
 };
 
@@ -53,9 +72,10 @@ export async function getStaticProps() {
       title: data.title || slug,
       date: data.date ? new Date(data.date).toISOString() : '',
       cover: data.cover || null,
-      pinned: !!data.pinned,
+      technical: !!data.technical,
       work: !!data.work,
       draft: !!data.draft,
+      in_progress: !!data.in_progress,
       tags: typeof data.tags === 'string'
         ? data.tags.trim().split(/\s+/)
         : Array.isArray(data.tags)
@@ -67,7 +87,7 @@ export async function getStaticProps() {
 
   const visiblePosts = posts
     .filter((post) => !post.draft)
-    .sort((a, b) => (b.pinned ? -1 : 0) - (a.pinned ? -1 : 0) || b.date.localeCompare(a.date));
+    .sort((a, b) => (b.technical ? -1 : 0) - (a.technical ? -1 : 0) || b.date.localeCompare(a.date));
 
   return { props: { posts: visiblePosts } };
 }
@@ -110,38 +130,126 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
 
   return (
     <div className="min-h-screen bg-white relative">
-      {/* Hero Section */}
-      <div className="max-w-4xl mx-auto px-6 py-24 relative z-10">
-        <div className="space-y-8">
-          <h1 className="text-6xl md:text-8xl font-bold text-black tracking-tight">
-            MVOLZ
-          </h1>
 
+      {/* What I'm Building Section */}
+      <div className="max-w-4xl mx-auto px-6 py-16 relative z-10">
+
+        <div className="space-y-12">
+          <h2 className="text-xl font-bold text-black uppercase tracking-wider">
+            HAPPY NEW YEAR 2026
+          </h2>
           <div className="max-w-2xl">
             <p className="text-2xl md:text-3xl text-gray-900 leading-relaxed font-light">
-              I build products that matter. Full-stack engineer shipping
-              <span className="font-medium text-blue-600"> AI-powered solutions</span> and
-              <span className="font-medium text-emerald-600"> data visualizations</span> that solve real problems.
+              I update both this section and the articles of this blog with
+              <span className="font-medium text-blue-600"> randomness</span>. But! I am
+              determined to <span className="font-medium text-emerald-600">increase the frequency </span>
+              this year. Hope you find something you like. Thanks for checking out my stuff!
             </p>
           </div>
 
           <div className="max-w-xl">
-            <p className="text-lg text-gray-600 leading-relaxed">
-              Currently exploring opportunities to apply my expertise. <span className="font-medium text-emerald-400">"Hire me!"</span>
+            <p className="text-lg text-gray-600 leading-relaxed inline-flex items-center gap-3">
+              For what I'm doing right exactly now:
+              <a
+                href="https://github.com/MaxwellVolz"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-600 hover:text-black transition-colors"
+                aria-label="GitHub"
+              >
+                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                  <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
+                </svg>
+              </a>
             </p>
+          </div>
+
+        </div>
+      </div>
+
+      <div className="max-w-4xl mx-auto px-6 py-16 border-t border-gray-100">
+        <div className="space-y-12">
+          <h2 className="text-xl font-bold text-black uppercase tracking-wider">
+            THE FUN ZONE
+          </h2>
+
+          <div className="grid grid-cols-[repeat(auto-fill,150px)] gap-4">
+            {funZoneItems.map((item) => {
+              const isExternal = item.url.startsWith('http');
+              const LinkComponent = isExternal ? 'a' : Link;
+              const linkProps = isExternal
+                ? { href: item.url, target: '_blank', rel: 'noopener noreferrer' }
+                : { href: item.url };
+
+              return (
+                <LinkComponent
+                  key={item.url}
+                  {...linkProps}
+                  className="group relative block"
+                >
+                  <div className="w-[150px] h-[150px] rounded-lg border-2 border-gray-300 overflow-hidden transition-all duration-200 hover:border-gray-500 hover:shadow-lg">
+                    <img
+                      src={item.preview_image}
+                      alt={item.image_text}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <span className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-200 rounded-lg">
+                    <span className="text-white font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                      {item.image_text}
+                    </span>
+                  </span>
+                </LinkComponent>
+              );
+            })}
           </div>
         </div>
       </div>
 
-      {/* What I'm Building Section */}
+      {/* Currently In Progress */}
       <div className="max-w-4xl mx-auto px-6 py-16 border-t border-gray-100">
         <div className="space-y-12">
           <h2 className="text-xl font-bold text-black uppercase tracking-wider">
-            WHAT I'VE BEEN DOING LATELY
+            Currently In Progress
           </h2>
 
           <div className="space-y-8">
-            {posts.filter((post) => post.pinned).map((post) => (
+            {posts.filter((post) => post.in_progress).map((post) => (
+              <article key={post.slug} className="group">
+                <Link href={`/${post.slug}`} className="block">
+                  <h3 className="text-2xl md:text-3xl font-medium text-black group-hover:text-gray-600 transition-colors duration-200 mb-3">
+                    {post.title}
+                  </h3>
+                </Link>
+                {post.tags && (
+                  <div className="flex flex-wrap gap-2">
+                    {post.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className={getTagClassName(tag, 'sm')}
+                        onMouseEnter={() => handleTagHover(tag)}
+                        onMouseLeave={handleTagLeave}
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </article>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Technical and Tutorials */}
+      <div className="max-w-4xl mx-auto px-6 py-16 border-t border-gray-100">
+        <div className="space-y-12">
+          <h2 className="text-xl font-bold text-black uppercase tracking-wider">
+            Technical and Tutorials
+          </h2>
+
+          <div className="space-y-8">
+            {posts.filter((post) => post.technical).map((post) => (
               <article key={post.slug} className="group">
                 <Link href={`/${post.slug}`} className="block">
                   <h3 className="text-2xl md:text-3xl font-medium text-black group-hover:text-gray-600 transition-colors duration-200 mb-3">
@@ -204,6 +312,39 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
         </div>
       </div>
 
+
+      {/* Anti-Hero Section */}
+      <div className="max-w-4xl mx-auto px-6 py-24 relative z-10">
+        <div className="space-y-12">
+          <h2 className="text-xl font-bold text-black uppercase tracking-wider">
+            WHO AM I
+          </h2>
+        </div>
+
+        <div className="space-y-8">
+          <h1 className="text-6xl md:text-8xl font-bold text-black tracking-tight">
+            MVOLZ
+          </h1>
+
+          <div className="max-w-2xl">
+            <p className="text-2xl md:text-3xl text-gray-900 leading-relaxed font-light">
+              I build products that matter. Full-stack engineer shipping
+              <span className="font-medium text-blue-600"> AI-powered solutions</span> and
+              <span className="font-medium text-emerald-600"> data visualizations</span> that solve real problems.
+            </p>
+          </div>
+
+          <div className="max-w-xl">
+            <p className="text-lg text-gray-600 leading-relaxed">
+              Currently looking for a new adventure. <a href="/downloads/mvolz_resume.pdf" className="hover:bg-red-500 transition-colors duration-200"
+              >
+                <span className="font-medium text-emerald-400">Hire me!</span>
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Previous Articles Section */}
       <div className="max-w-4xl mx-auto px-6 py-16 border-t border-gray-100">
         <div className="space-y-12">
@@ -212,7 +353,7 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
           </h2>
 
           <div className="grid gap-8 md:grid-cols-2">
-            {posts.filter((post) => !post.pinned && !post.work).map((post) => (
+            {posts.filter((post) => !post.technical && !post.work && !post.in_progress).map((post) => (
               <article key={post.slug} className="group">
                 <Link href={`/${post.slug}`} className="block">
                   <h3 className="text-xl font-medium text-black group-hover:text-gray-600 transition-colors duration-200 mb-3">
@@ -250,6 +391,17 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
               Resume.pdf
             </a>
             <div className="flex items-center space-x-4">
+              <a
+                href="https://github.com/MaxwellVolz"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-600 hover:text-black transition-colors"
+                aria-label="GitHub"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
+                </svg>
+              </a>
               <a
                 href="https://linkedin.com/in/maxwellvolz"
                 target="_blank"

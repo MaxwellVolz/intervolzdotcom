@@ -12,7 +12,7 @@ import { RendererManager, RenderMode } from '@/lib/RendererManager';
 
 export default function RoomScene() {
   const mountRef = useRef<HTMLDivElement>(null);
-  const orbitMaxDistance = 1.0;
+  const orbitMaxDistance = 1.05;
 
   useEffect(() => {
     if (!mountRef.current) return;
@@ -125,7 +125,7 @@ export default function RoomScene() {
       }
 
 
-      const targetPosition = OOI.sphere.position.clone().add(new THREE.Vector3(0, 0.2, -0.3));
+      const targetPosition = OOI.sphere.position.clone().add(new THREE.Vector3(0, 0.3, -0.3));
       camera.position.copy(targetPosition.clone().add(new THREE.Vector3(-2, 2, -3)));
       camera.lookAt(targetPosition);
 
