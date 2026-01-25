@@ -131,23 +131,8 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
   return (
     <div className="min-h-screen bg-white relative">
 
-      {/* What I'm Building Section */}
-      <div className="max-w-4xl mx-auto px-6 py-16 relative z-10">
-
-        <div className="space-y-12">
-          <h2 className="text-xl font-bold text-black uppercase tracking-wider">
-            HAPPY NEW YEAR 2026
-          </h2>
-          <div className="max-w-2xl">
-            <p className="text-2xl md:text-3xl text-gray-900 leading-relaxed font-light">
-              I update both this section and the articles of this blog with
-              <span className="font-medium text-blue-600"> randomness</span>. But! I am
-              determined to <span className="font-medium text-emerald-600">increase the frequency </span>
-              this year. Hope you find something you like. Thanks for checking out my stuff!
-            </p>
-          </div>
-
-          <div className="max-w-xl">
+      {/* 
+      <div className="max-w-xl">
             <p className="text-lg text-gray-600 leading-relaxed inline-flex items-center gap-3">
               For what I'm doing right exactly now:
               <a
@@ -162,8 +147,36 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
                 </svg>
               </a>
             </p>
+          </div> */}
+
+      <div className="max-w-4xl mx-auto px-6 py-24 relative z-10">
+        <div className="space-y-12">
+          <h2 className="text-xl font-bold text-black uppercase tracking-wider">
+            HELLO
+          </h2>
+        </div>
+
+        <div className="space-y-8">
+          <h1 className="text-6xl md:text-8xl font-bold text-black tracking-tight">
+            I AM MAX
+          </h1>
+
+          <div className="max-w-2xl">
+            <p className="text-2xl md:text-3xl text-gray-900 leading-relaxed font-light">
+              I make stuff. A lot of stuff. Engineer / Artist currently leveraging
+              <span className="font-medium text-blue-600"> AI</span> with
+              <span className="font-medium text-emerald-600"> experience</span> to solve real problems.
+            </p>
           </div>
 
+          <div className="max-w-xl">
+            <p className="text-lg text-gray-600 leading-relaxed">
+              Currently looking for a new adventure. <a href="/downloads/mvolz_resume.pdf" className="hover:bg-red-500 transition-colors duration-200"
+              >
+                <span className="font-medium text-emerald-400">Hire me!</span>
+              </a>
+            </p>
+          </div>
         </div>
       </div>
 
@@ -312,38 +325,6 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
         </div>
       </div>
 
-
-      {/* Anti-Hero Section */}
-      <div className="max-w-4xl mx-auto px-6 py-24 relative z-10">
-        <div className="space-y-12">
-          <h2 className="text-xl font-bold text-black uppercase tracking-wider">
-            WHO AM I
-          </h2>
-        </div>
-
-        <div className="space-y-8">
-          <h1 className="text-6xl md:text-8xl font-bold text-black tracking-tight">
-            MVOLZ
-          </h1>
-
-          <div className="max-w-2xl">
-            <p className="text-2xl md:text-3xl text-gray-900 leading-relaxed font-light">
-              I build products that matter. Full-stack engineer shipping
-              <span className="font-medium text-blue-600"> AI-powered solutions</span> and
-              <span className="font-medium text-emerald-600"> data visualizations</span> that solve real problems.
-            </p>
-          </div>
-
-          <div className="max-w-xl">
-            <p className="text-lg text-gray-600 leading-relaxed">
-              Currently looking for a new adventure. <a href="/downloads/mvolz_resume.pdf" className="hover:bg-red-500 transition-colors duration-200"
-              >
-                <span className="font-medium text-emerald-400">Hire me!</span>
-              </a>
-            </p>
-          </div>
-        </div>
-      </div>
 
       {/* Previous Articles Section */}
       <div className="max-w-4xl mx-auto px-6 py-16 border-t border-gray-100">
