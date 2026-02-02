@@ -4,8 +4,181 @@ date: 2026-01-08T15:29:00.000-08:00
 technical: false
 draft: false
 work: false
+pinned: true
 in_progress: true
-tags: react web js
+tags: react web threeJS blender
 ---
 
-In progress! 
+Building a Crazy Taxi-inspired management game in the browser with React, Three.js, and Blender. One month of dev from first commit to playable demo.
+
+![](/imgs/wayne_mo_logo.gif "Wayne Mo - title screen placeholder")
+
+---
+
+## The Idea
+
+I wanted to make something that felt like Crazy Taxi meets an idle management sim. You're not driving the taxi — you're running the fleet. Pickups, dropoffs, rush hour chaos, all rendered in a little Blender city running in the browser.
+
+The constraint: build it entirely with web tech. No Unity, no game engine. Just Next.js, React Three Fiber, and models from Blender.
+
+---
+
+## Tech Stack
+
+| Tech              | Role                                 |
+| ----------------- | ------------------------------------ |
+| Next.js 15        | App framework                        |
+| React Three Fiber | React renderer for Three.js          |
+| Three.js          | 3D rendering                         |
+| Blender           | City modeling, path nodes, animation |
+| TypeScript        | Type safety across the whole project |
+| gltfjsx           | GLB -> React component generation    |
+
+---
+
+## Phase 1: Foundation (Dec 28)
+
+Started with the basics — a Three.js canvas, overhead camera, and a single taxi driving a loop around a procedural 8x8 grid of buildings.
+
+![](/imgs/wayne_mo_foundation.png "Early city with road loop")
+
+The movement system was deterministic path-following from day one. No physics, no AI. Taxis interpolate between path nodes at constant speed using `useFrame`. Smooth rotation to face the movement direction. 60fps.
+
+This was the right call. Physics would have been a nightmare for a game about *timing*, not driving.
+
+---
+
+## Blender Integration (Dec 28)
+
+Same day, I started pulling the city out of code and into Blender. The procedural grid was fine for testing but I wanted a handcrafted city.
+
+The pipeline:
+1. Model the city in Blender with path node markers (tiny spheres)
+2. Name nodes with a type system: `PathNode_001`, `INT_001`, `PathNode_PickUp`
+3. Define connections via Blender custom properties
+4. Export as `.glb`
+5. Run `gltfjsx` to generate typed React components
+6. Extract path nodes at runtime and build the road network dynamically
+
+![](/imgs/wayne_mo_blender_nodes.png "Blender scene with path node markers")
+
+This Blender-driven workflow meant I could redesign the entire city without touching code. Move a node in Blender, re-export, road network updates automatically.
+
+---
+
+## Delivery System (Dec 30)
+
+Got the core gameplay loop working in a single day. Color-coded pickups and dropoffs — match the colors, deliver the package, get paid.
+
+- One package at a time (enforced)
+- Unique colors per active delivery
+- Score display with running total
+- Visual indicators for pickup/dropoff locations
+
+Then stacked on top: taxi spawning, collision system, game timer, taxi cost system, game over modal. Also added Rush Hour — a timed chaos mode where everything speeds up and deliveries pay more.
+
+![](/imgs/wayne_mo_phase1.png "Gameplay with color-coded deliveries")
+
+---
+
+## The Big Push (Jan 5-6)
+
+This was the sprint. Over two days:
+
+- **Massive dev push** — got everything into "working game" state
+- Mobile styling overhaul
+- Component reorganization
+- Full CSS Module refactor (moved everything out of inline styles)
+- Camera keyboard controls + better indicators
+- Score multiplier system with distance-based tiers (1x-4x)
+- Directional arrow indicators pointing to deliveries
+- Box models replacing the placeholder presents
+
+![](/imgs/wayne_mo_multiplier.png "Score multiplier with directional arrows")
+
+The multiplier system uses distance-weighted distribution — farther deliveries pay more but you risk running out of time. It added real decision-making to what was previously just "drive to the color."
+
+---
+
+## Intro Scene & Tutorial (Jan 7-8)
+
+Built a 2D intro scene and tutorial flow. The tutorial walks you through pickup and delivery mechanics with a step-by-step slider.
+
+Then the interactable system happened. The intro scene had all these clickable 3D objects — a pizza, VR headsets, tutorial buttons — and each one needed hover animations, click handlers, and state management. It was 400 lines of spaghetti.
+
+So I built a **configuration-driven interactable system**. Reduced per-object code from 200 lines to 10. Five animation types: hover, bobble, hover_bobble, spin, and GLB (for Blender-baked clips). The intro scene went from 400 lines to 100.
+
+---
+
+## The Apartment (Jan 13-24)
+
+This is where things got weird (good weird). Added a progression system with unlockable apartments and desks. Your apartment is the hub — you look around in 3D, click objects to start the game or access the shop.
+
+Features that landed:
+- **Audio system** — Web Audio API for sound effects, ambient city horns, a whip sound on the Play button (obviously)
+- **Progression shop** — spend earnings on apartment upgrades and desk unlocks
+- **LookAround controls** — scroll to zoom, pinch on mobile
+- **3 desk levels** with baked positions from Blender
+- **Performance pass** — ripped out all the pointLights, replaced with emissive materials and circle mesh underglow
+
+![](/imgs/wayne_mo_apartment.png "Apartment scene with desk progression")
+
+Also rebuilt the city model. New buildings, new layout, better textures. The commit message was "new city new me" which about sums it up.
+
+---
+
+## Maxwell & Dialogue (Jan 27-28)
+
+Added a character, **ME!** lol, with crossfade animation support and a cinematic dialogue system. Text overlays with custom button labels per step. This was the narrative layer the game was missing.
+
+The tutorial got rebuilt too. Starts paused with a bouncing arrow on the play button. Dialogue steps guide you through the mechanics without a wall of text.
+
+![](/imgs/wayne_mo_maxwell.png "Maxwell character in dialogue scene")
+
+---
+
+## Current State
+
+| System               |      Status |
+| -------------------- | ----------: |
+| City model (Blender) |     Working |
+| Path-based movement  |     Working |
+| Delivery system      |     Working |
+| Score + multipliers  |     Working |
+| Rush Hour mechanic   |     Working |
+| Audio system         |     Working |
+| Progression/shop     |     Working |
+| Intro scene          |     Working |
+| Tutorial             |     Working |
+| Dialogue system      |     Working |
+| Mobile support       |  Needs love |
+| VR headset models    | In progress |
+
+---
+
+## What I Learned
+
+**Blender as level editor works.** The path node system was the best architectural decision of the project. Designing roads and pickup zones visually instead of in code saved massive iteration time.
+
+**CSS Modules over inline styles, always.** I waited too long to refactor and it hurt. Should have started there.
+
+**Configuration-driven systems scale.** The interactable system refactor was a turning point. Going from "each object is a bespoke component" to "each object is a config entry" made adding content trivial.
+
+**Web Audio API is fine.** I was dreading audio. It was fine. `AudioManager` with a few `createBufferSource` calls and you're done.
+
+---
+
+## What's Next
+
+- Polish the dialogue/narrative flow
+- More city detail in Blender
+- Leaderboard integration
+- Possible Unity port (wrote docs for it already, we'll see)
+
+![](/imgs/wayne_mo_roadmap.png "Roadmap sketch placeholder")
+
+---
+
+### Play It
+
+The game is live at [intervolz.com/crazytaxi](https://intervolz.com/crazytaxi). Still in active development.
