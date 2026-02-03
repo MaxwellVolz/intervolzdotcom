@@ -105,6 +105,8 @@ Each line satisfies `ly = lx + k` in cell-local coordinates. `k` sweeps from `-w
 
 The first renderer used React Three Fiber with an orthographic camera and `<line>` elements for every stroke. It didn't work well for this use case.
 
+Three.js was included originally because I invisioned the drawings happening on a 3D canvas but this is backlogged for now.
+
 The problems:
 
 1. **Frameloop issues.** R3F defaults to on-demand rendering. Visibility changes via `useFrame` weren't triggering repaints. Adding `frameloop="always"` and `invalidate()` calls was fighting the framework.
@@ -170,7 +172,21 @@ Vertical lines, not straight, not touching. The `wobbly-lines` handler generates
 ### Wall Drawing #38 (1970)
 Colored tissue paper squares in a pegboard grid. The `pegboard` handler fills a grid with randomly colored squares — closed paths detected and filled instead of stroked.
 
+Added an optional backgroudn color for this guy.
+
 ![](/imgs/sollewitt_38.png "Wall Drawing #38")
+
+
+### Wall Drawing #46 (1970)
+Vertical lines, not straight, not touching, covering the wall evenly.
+
+![](/imgs/sollewitt_46.png "Wall Drawing #46")
+
+
+### Wall Drawing #47 (1970)
+A wall divided into fifteen equal parts, each with a different line direction, and all combinations.
+
+![](/imgs/sollewitt_47.png "Wall Drawing #47")
 
 ---
 
