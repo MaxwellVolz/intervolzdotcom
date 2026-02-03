@@ -1,0 +1,187 @@
+---
+title: Developing ggoverlay
+date: 2026-02-02T12:00:00.000-08:00
+technical: true
+draft: false
+work: false
+pinned: true
+in_progress: true
+tags: rust python grpc game-overlay ml
+---
+
+Building a real-time game-state inference engine in Rust. DXGI capture, heuristic analysis, YOLO escalation via gRPC, transparent overlay, and a debug dashboard. First target: Arc Raiders.
+
+---
+
+## The Idea
+
+I wanted a system that could watch a game and understand what's happening — not by reading memory or hooking into the process, but by looking at the screen. Pure visual inference. Like a second pair of eyes that can tell you "you're in combat" or "you're in the menu" just from the pixels.
+
+The approach: run cheap heuristics every frame (color detection, frame diffing, UI signature matching). Only escalate to heavy ML inference when the heuristics say "I'm not sure." Keep the hot path fast, use YOLO when it matters.
+
+The first target game is Arc Raiders. Survival shooter with distinct UI states — health bars, hotbar, minimap, crosshair. Good candidate for heuristic detection.
+
+---
+
+## Tech Stack
+
+| Tech                     | Role                                                 |
+| ------------------------ | ---------------------------------------------------- |
+| Rust (8-crate workspace) | Core engine — capture, analysis, state, overlay, API |
+| Python + YOLO            | ML sidecar for escalated inference via gRPC          |
+| tonic / prost            | gRPC between Rust engine and Python sidecar          |
+| DXGI Desktop Duplication | Frame capture on Windows                             |
+| Direct2D                 | Overlay rendering (transparent, click-through)       |
+| Axum                     | REST API server for debug dashboard                  |
+| Next.js 15 / React 19    | Debug dashboard — session inspector                  |
+| Protobuf                 | Shared schema between engine and ML sidecar          |
+
+---
+
+## Phase 0: Marketing Site (Nov 2025)
+
+Started with the landing page. Next.js site with game overlay demos, pricing section, feature breakdowns. Screenshots from Counter-Strike, Valorant, Dark and Darker. Set up Jenkins deployment. The usual "sell it before you build it" approach.
+
+This became `webapp/` when the real work started.
+
+---
+
+## The Monorepo (Jan 28)
+
+One commit. **7,794 lines added**. Everything landed at once — the Rust workspace, ML sidecar, dashboard, proto definitions, build system.
+
+The repo structure:
+
+```
+ggoverlay/
+├── engine/          Rust workspace (8 crates)
+├── ml/              Python ML sidecar
+├── dashboard/       Next.js debug dashboard
+├── proto/           Shared protobuf definitions
+├── scripts/         Proto gen, dev helpers
+├── docs/            Architecture notes
+└── webapp/          Marketing site (moved here)
+```
+
+The existing website got relocated into `webapp/`. Everything else was new.
+
+---
+
+## The Engine
+
+Eight Rust crates, each with a single job:
+
+**gg-capture** — DXGI Desktop Duplication. Grabs frames from the game window, converts BGRA to RGBA, tracks geometry. Windows-only behind `cfg` gates. Uses `dxgi-capture-rs` under the hood.
+
+**gg-analyzer** — The heuristic brain. Color matching, frame diffing, UI signature detection. Game-specific analyzers live in `games/` submodules. The Arc analyzer defines ROIs for the health bar, hotbar, minimap, and crosshair — checks for red/green in the health region, measures frame diff percentage, escalates to ML if diff exceeds 40%.
+
+**gg-state** — Generic `StateMachine<S>` with an event bus built on crossbeam channels. The Arc FSM tracks states: Unknown, Menu, InGame, Inventory, Combat, Dead. Transitions driven by analyzer signals. Every state change fires an event.
+
+**gg-session** — Subscribes to the event bus, writes `events.jsonl` and keyframe PNGs to disk. Session directories named `YYYYMMDD_HHMMSS_<uuid>/`. Keyframes saved every 30 frames.
+
+**gg-server** — Axum REST API. Serves session metadata, event history, and keyframe images to the dashboard. CORS enabled, runs on port 3000.
+
+**gg-overlay** — Win32 transparent overlay + Direct2D renderer. Click-through, always-on-top. Bounding boxes, state indicator, debug widgets.
+
+**gg-proto** — tonic-build codegen. Reads `.proto` files, generates Rust client types.
+
+**gg-core** — The binary. CLI args, TOML config, pipeline orchestration. Wires everything together — spawns the capture loop, analyzer, state machine, session logger, API server, and gRPC client.
+
+---
+
+## The Pipeline
+
+The data flow is linear until it fans out:
+
+```
+Game Window → gg-capture → gg-analyzer → gg-state
+                                            ↓
+                                        EventBus
+                                       ↙        ↘
+                               gg-session       gg-server → dashboard
+                            (events.jsonl        (REST API)
+                             + keyframes)
+```
+
+Every frame goes through capture → analyze → state update. The state machine emits events to the bus. The session logger and API server both consume from the bus independently.
+
+The capture loop runs at configurable FPS (default 30). Each frame gets the full heuristic pass — color regions, frame diff against previous, signature matching. If the analyzer says "escalate," that event hits the bus too.
+
+---
+
+## ML Sidecar
+
+Python process running a gRPC server on port 50051. Wraps ultralytics YOLOv8 with lazy model loading — doesn't touch the GPU until the first inference request.
+
+The service interface:
+- `Detect` — send a frame, get back bounding boxes with class names and confidence scores
+- `HealthCheck` — is the model loaded?
+- `LoadModel` — swap models at runtime (per-game models planned)
+
+Preprocessing handles JPEG, PNG, and raw BGRA frames. Letterbox resize to 640x640 before inference.
+
+The Rust side has a complete gRPC client (`grpc_client.rs`) — connects, encodes frames to JPEG, sends detect requests, parses responses. It's fully implemented.
+
+---
+
+## Debug Dashboard
+
+Next.js app that connects to the Axum API. Session list view shows all recorded sessions with timestamps, event counts, keyframe counts. Click into a session and you get:
+
+- **Timeline** — scrub through the session
+- **Frame Inspector** — view keyframes at any point
+- **State Graph** — visualize state transitions
+- **Event List** — raw event stream
+
+The API client (`api.ts`) hits the same endpoints the Rust server exposes. Typed with TypeScript interfaces that mirror the Rust/proto types.
+
+---
+
+## Current State
+
+| System                              |           Status |
+| ----------------------------------- | ---------------: |
+| DXGI frame capture                  |          Working |
+| Heuristic analyzer (Arc)            |          Working |
+| State machine + event bus           |          Working |
+| Session logging (JSONL + keyframes) |          Working |
+| REST API server                     |          Working |
+| Debug dashboard                     |          Working |
+| Config system (TOML)                |          Working |
+| gRPC client (Rust)                  | Built, not wired |
+| ML sidecar (Python)                 | Built, not wired |
+| Overlay window creation             |          Stubbed |
+| Overlay rendering (Direct2D)        |          Stubbed |
+| WebSocket live events               |          Stubbed |
+
+The capture → analyze → state → log → API → dashboard pipeline works end-to-end. 
+
+You can run the engine on Windows with Arc open, and session data flows all the way through to the dashboard.
+
+What's not connected: the ML sidecar client is initialized in the pipeline but never called during the capture loop (the variable is literally `_ml_client`). 
+
+The overlay window and renderer are stubbed with TODOs — no Win32 window gets created, no Direct2D drawing happens. WebSocket endpoint accepts connections but doesn't stream.
+
+---
+
+## What I Learned
+
+**The heuristic-first approach works.** Running color checks and frame diffs every frame is effectively free. The escalation model means ML inference only fires when something ambiguous happens — which is rare once the heuristics are tuned for a specific game's UI.
+
+**Eight crates is the right granularity.** Each crate compiles independently, has a clear boundary, and can be tested in isolation. `gg-analyzer` doesn't know about `gg-server`. `gg-session` doesn't know about `gg-overlay`. The event bus is the only coupling point, and that's by design.
+
+**Protobuf as shared schema between Rust and Python is clean.** One `.proto` file, two codegen pipelines (tonic-build and grpcio-tools), zero drift. The proto definitions are the contract.
+
+**DXGI Desktop Duplication is fast but fragile.** It's the only way to capture frames at 30+ FPS without game hooks on Windows, but it breaks if the desktop compositor resets, the monitor changes, or the window minimizes. The error handling in `gg-capture` accounts for all of these.
+
+---
+
+## What's Next
+
+- Wire the ML gRPC client into the capture loop (the plumbing is there, just needs the call)
+- Implement the overlay — Win32 window creation and Direct2D rendering
+- WebSocket event streaming for live dashboard updates
+- Train a custom YOLO model on Arc Raiders UI elements
+- Second game target (probably Counter-Strike)
+
+---

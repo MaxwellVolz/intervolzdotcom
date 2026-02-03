@@ -30,7 +30,7 @@ If you don't know what those things are...*leave now*. Ha! Just kidding. I attem
   - [3. Cloudflare Tunnel](#3-cloudflare-tunnel)
     - [One-time DNS Setup](#one-time-dns-setup)
     - [Run at boot:](#run-at-boot)
-    - [Check Status](#check-status)
+    - [Check Status and restart `cloudflared`](#check-status-and-restart-cloudflared)
 - [Build \& Export](#build--export)
 - [References](#references)
 
@@ -152,10 +152,12 @@ sudo cloudflared service install
 sudo systemctl enable --now cloudflared
 ```
 
-#### Check Status
+#### Check Status and restart `cloudflared` 
 
 ```bash
 sudo systemctl status cloudflared
+
+sudo systemctl enable --now cloudflared
 ```
 
 ---
