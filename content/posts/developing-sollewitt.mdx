@@ -1,0 +1,215 @@
+---
+title: Generative Art without AI
+date: 2026-02-02T18:00:00.000-08:00
+technical: false
+draft: false
+work: false
+pinned: false
+in_progress: true
+tags: react web art
+---
+
+Instruction-driven generative wall drawings in the browser. A tribute to Sol LeWitt, built with Next.js and Canvas 2D.
+
+![](/imgs/sollewitt_hero.png "Wall Drawing #11 — generated in the browser")
+
+---
+
+## The Idea
+
+Sol LeWitt wrote instructions. Other people drew them. The drawings were never the same twice — the instructions defined constraints, and the execution was an interpretation within those constraints.
+
+That's exactly what a generative system does. So I built one.
+
+Each "wall drawing" is defined as a data structure — a title, a description, and an ordered list of steps. The engine reads the steps, rolls a seed, and produces strokes. Press Play and it draws itself. Press Re-roll and you get a different valid interpretation of the same instruction.
+
+The whole thing runs as a static Next.js site. No server, no database. Just instructions and math.
+
+---
+
+## Tech Stack
+
+| Tech          | Role                         |
+| ------------- | ---------------------------- |
+| Next.js 15    | App framework, static export |
+| Canvas 2D     | All rendering                |
+| Framer Motion | UI transitions               |
+| TypeScript    | Type safety                  |
+
+That's it. No Three.js, no WebGL. More on why below.
+
+---
+
+## The Instruction Model
+
+Every drawing is a `DrawingInstruction`. Here's Wall Drawing #11:
+
+```ts
+{
+  id: 'wall-drawing-11',
+  title: 'Wall Drawing #11',
+  description:
+    'A wall divided horizontally and vertically into four equal parts. '
+    + 'Within each part, three of the four kinds of lines are superimposed.',
+  year: 1969,
+  medium: 'Black pencil',
+  steps: [
+    { type: 'divide', params: { rows: 2, cols: 2, drawGrid: true } },
+    {
+      type: 'lines',
+      params: {
+        lineKinds: ['horizontal', 'vertical', 'diagonal-left', 'diagonal-right'],
+        pickPerCell: 3,
+        density: { min: 30, max: 60 },
+      },
+    },
+  ],
+}
+```
+
+The engine reads `divide` → draws the grid. Then reads `lines` → for each cell, shuffles the four line kinds, picks three, and fills the cell with dense parallel hatching. The density range means each seed produces a slightly different feel.
+
+Adding a new drawing means writing a new instruction file and registering it. The engine handles the rest.
+
+---
+
+## The Diagonal Problem
+
+First pass at diagonal lines was wrong. I was parameterizing start and end points on opposing edges and interpolating — which produces fan lines that converge, not parallel hatching.
+
+
+Sol LeWitt's diagonals are straight parallel lines at 45°. Every line has the same slope, just offset. The fix was a sweep across the cell:
+
+```ts
+case 'diagonal-right': {
+  // ly = lx + k, sweep k from -w to h
+  const k = -w + (i + 0.5) / count * (w + h)
+  const lx0 = Math.max(0, -k)
+  const ly0 = Math.max(0, k)
+  const lx1 = Math.min(w, h - k)
+  const ly1 = Math.min(h, w + k)
+  if (lx0 < lx1) {
+    lines.push([[x + lx0, y + ly0], [x + lx1, y + ly1]])
+  }
+  break
+}
+```
+
+Each line satisfies `ly = lx + k` in cell-local coordinates. `k` sweeps from `-w` to `h`, evenly spaced. The `Math.max`/`Math.min` calls clip each line to the cell bounds. Every line is parallel. Every line is at 45°.
+
+![](/imgs/sollewitt_11.png "Correct: parallel hatching at 45°")
+
+---
+
+## Dropping Three.js
+
+The first renderer used React Three Fiber with an orthographic camera and `<line>` elements for every stroke. It didn't work well for this use case.
+
+The problems:
+
+1. **Frameloop issues.** R3F defaults to on-demand rendering. Visibility changes via `useFrame` weren't triggering repaints. Adding `frameloop="always"` and `invalidate()` calls was fighting the framework.
+2. **React reconciliation overhead.** Hundreds of `<line>` JSX elements meant React was diffing a huge virtual tree on every seed change.
+3. **WebGL linewidth.** Most browsers cap `linewidth` at 1px in WebGL. All the stroke width variation in the instructions was invisible.
+
+Canvas 2D solved all three problems. No render loop to manage — you just draw when you need to. No virtual DOM overhead — it's imperative `ctx.lineTo()` calls. And `ctx.lineWidth` works exactly as expected at any value.
+
+---
+
+## The Offscreen Buffer
+
+Drawing hundreds of strokes every frame is wasteful. Most frames during playback only add a few new strokes. So the renderer uses a double-buffer strategy:
+
+1. An **offscreen canvas** accumulates drawn strokes. New strokes get drawn onto it incrementally.
+2. Each frame, the offscreen buffer is **blitted** to the display canvas in a single `drawImage` call.
+3. If progress goes backward (seek or re-roll), the buffer clears and redraws from scratch up to the target.
+
+```
+frame N:   strokes 0-140 already on buffer → draw 141-145 → blit
+frame N+1: strokes 0-145 already on buffer → draw 146-150 → blit
+seek to 0: clear buffer → blit empty
+```
+
+The animation loop runs via `requestAnimationFrame` and reads a shared `progressRef` — a mutable ref that the playback timer writes to. No React state, no re-renders. The rAF loop, the progress ref, and the canvas context are the entire rendering pipeline.
+
+Both the display canvas and offscreen buffer are scaled by `devicePixelRatio` for crisp lines on Retina displays.
+
+---
+
+## Playback
+
+Each wall section is a full-viewport (`100dvh`) container. The playback timer maps 5 seconds linearly across all strokes. Timeline bar is seekable — click anywhere to jump.
+
+The progress ref is shared between three systems:
+- The **rAF timer** in `WallSection` writes `progressRef.current` every frame
+- The **canvas paint loop** in `DrawingCanvas` reads it every frame and draws incrementally
+- The **timeline bar** gets its width set via direct DOM manipulation (`bar.style.width`)
+
+Zero `setState` calls during playback. React only re-renders on play/stop/seek/reroll — the button state changes.
+
+---
+
+## Drawings
+
+Six wall drawings implemented so far. Each one required a different step handler in the engine.
+
+### Wall Drawing #11 (1969)
+Four equal squares, three of four line kinds per cell. Dense parallel hatching.
+
+![](/imgs/sollewitt_11.png "Wall Drawing #11")
+
+### Wall Drawing #17 (1969)
+Four parts, a different line direction in each. Uses the `unique` flag to assign one kind per cell without repeats.
+
+![](/imgs/sollewitt_17.png "Wall Drawing #17")
+
+### Wall Drawing #46 (1970)
+Vertical lines, not straight, not touching. The `wobbly-lines` handler generates per-segment random displacement around a vertical center.
+
+![](/imgs/sollewitt_46.png "Wall Drawing #46")
+
+### Wall Drawing #38 (1970)
+Colored tissue paper squares in a pegboard grid. The `pegboard` handler fills a grid with randomly colored squares — closed paths detected and filled instead of stroked.
+
+![](/imgs/sollewitt_38.png "Wall Drawing #38")
+
+---
+
+## Project Structure
+
+```
+app/
+  layout.tsx            Root layout
+  page.tsx              Entry → Gallery
+
+components/
+  Gallery.tsx           Seed management, renders WallSections
+  WallSection.tsx       100dvh container, playback timer, controls
+  DrawingCanvas.tsx     Canvas 2D renderer with offscreen buffer
+  Controls.tsx          Play / Stop / Re-roll
+  Timeline.tsx          Seekable progress bar
+
+lib/
+  engine.ts             Seeded PRNG, stroke generation, step handlers
+  drawings/             One file per instruction
+
+types/
+  drawings.ts           DrawingInstruction, StrokeElement, LineKind
+```
+
+---
+
+## What I Learned
+
+**Canvas 2D is underrated.** For 2D generative art, it's the right tool. WebGL/Three.js adds complexity that only pays off in 3D. The `lineWidth` issue alone was reason enough to switch.
+
+**Offscreen buffers make incremental drawing trivial.** The double-buffer pattern is old graphics programming wisdom. It works just as well in a browser `<canvas>`.
+
+**Refs over state for animation.** React state triggers re-renders. Mutable refs don't. For anything running at 60fps, refs are the only sane option. Share a ref between the timer and the renderer, skip React entirely for the hot path.
+
+**Sol LeWitt's instructions are surprisingly precise.** "Three of the four kinds of lines" is an exact combinatorial specification. The generative system just formalizes what was already algorithmic.
+
+---
+
+### See It
+
+Live at [intervolz.com/sollewitt](https://intervolz.com/sollewitt). Press Play.
