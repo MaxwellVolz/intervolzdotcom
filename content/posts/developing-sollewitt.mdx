@@ -9,6 +9,7 @@ in_progress: true
 tags: react web art
 ---
 
+TODO: re
 Instruction-driven generative wall drawings in the browser. A tribute to Sol LeWitt, built with Next.js and Canvas 2D.
 
 ![](/imgs/sollewitt_11.png "Wall Drawing #11 — generated in the browser")
@@ -152,7 +153,7 @@ Zero `setState` calls during playback. React only re-renders on play/stop/seek/r
 
 ## Drawings
 
-Six wall drawings implemented so far. Each one required a different step handler in the engine.
+Fifteen wall drawings implemented so far. Each one required a different step handler in the engine.
 
 ### Wall Drawing #11 (1969)
 Four equal squares, three of four line kinds per cell. Dense parallel hatching.
@@ -211,6 +212,31 @@ lib/
 types/
   drawings.ts           DrawingInstruction, StrokeElement, LineKind
 ```
+
+---
+
+## Engine Functions
+
+The `engine.ts` file contains handler functions for each step type. Each handler interprets its parameters and generates `StrokeElement[]` arrays.
+
+| Handler                     | Step Type              | Description                                                                                                                                                           | Used By            |
+| --------------------------- | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ |
+| `handleDivideAndLines`      | `divide` + `lines`     | Grid of cells with parallel line hatching. Supports `unique` (one direction per cell) and `progressive` (cumulative directions) modes. Optional colors per direction. | #11, #17, #56, #87 |
+| `handleBands`               | `bands`                | Randomly placed bands of parallel lines in specified directions.                                                                                                      | #46, #47           |
+| `handlePegboard`            | `pegboard`             | Grid of colored squares (closed paths that get filled).                                                                                                               | #38                |
+| `handleWobblyLines`         | `wobbly-lines`         | Vertical lines with per-segment random displacement for hand-drawn effect.                                                                                            | #11                |
+| `handleCombinatorial`       | `combinatorial`        | All combinations of line directions arranged in rows (4 singles, 6 pairs, 4 triples, 1 quad = 15 cells).                                                              | #85                |
+| `handleScatteredLines`      | `scattered-lines`      | Thousands of short lines at random positions and angles, covering wall evenly.                                                                                        | #86                |
+| `handleGridWobbly`          | `grid-wobbly`          | Grid of cells where each cell has wobbly lines in one random direction.                                                                                               | #88                |
+| `handleCombinatorialWobbly` | `combinatorial-wobbly` | 15 vertical columns for all color combinations, with wobbly vertical lines.                                                                                           | #95                |
+| `handleGridAndArcs`         | `grid-and-arcs`        | Grid overlay with concentric quarter-circle arcs emanating from all four corners.                                                                                     | #130               |
+
+Utility functions:
+- `seededRandom(seed)` — deterministic PRNG for reproducible outputs
+- `shuffle(arr, rand)` — Fisher-Yates shuffle using seeded random
+- `generateLinesForCell(kind, x, y, w, h, count)` — parallel lines at 0°, 90°, or 45° within bounds
+- `getCombinations(arr, k)` — all k-combinations of array elements
+- `pushStroke(strokes, path, style)` — append a stroke with auto-incrementing draw order
 
 ---
 
