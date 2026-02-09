@@ -38,7 +38,7 @@ const tagColors: Record<string, string> = {
 
 // Fun Zone items
 const funZoneItems = [
-  { url: '/crazytaxi', preview_image: '/games/waynemo_preview.png', image_text: 'Wayne Mo' },
+  { url: 'https://waynemo.com', preview_image: '/games/waynemo_preview.png', image_text: 'Wayne Mo' },
   { url: '/axisrecall', preview_image: '/games/axisrecall_preview.png', image_text: 'Axis Recall' },
   { url: 'https://wassuh.com', preview_image: '/games/wassuh_preview.png', image_text: 'Coit Cache' },
   { url: '/room', preview_image: '/games/room_preview.png', image_text: 'Room' },
