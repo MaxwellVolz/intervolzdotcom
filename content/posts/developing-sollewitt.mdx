@@ -27,7 +27,7 @@ Sol LeWitt wrote instructions. Other people drew them. The drawings were never t
 
 That's exactly what a generative system does. So I built one.
 
-Each "wall drawing" is defined as a data structure — a title, a description, and an ordered list of steps. The engine reads the steps, rolls a seed, and produces strokes. Press Play and it draws itself. Press Re-roll and you get a different valid interpretation of the same instruction.
+Each "wall drawing" is defined as a data structure with title, description, and an ordered list of steps. The engine reads the steps, rolls a seed, and produces strokes. Press `Create` and it draws itself. Re-roll and you get a different valid interpretation of the same instruction.
 
 The whole thing runs as a static Next.js site. No server, no database. Just instructions and math.
 
@@ -35,14 +35,13 @@ The whole thing runs as a static Next.js site. No server, no database. Just inst
 
 ## Tech Stack
 
-| Tech          | Role                         |
-| ------------- | ---------------------------- |
-| Next.js 15    | App framework, static export |
-| Canvas 2D     | All rendering                |
-| Framer Motion | UI transitions               |
-| TypeScript    | Type safety                  |
+| Tech       | Role                         |
+| ---------- | ---------------------------- |
+| Next.js 15 | App framework, static export |
+| Canvas 2D  | All rendering                |
+| TypeScript | Type safety                  |
 
-That's it. No Three.js, no WebGL. More on why below.
+That's it. No WebGL, no heavy rendering libraries. Canvas 2D is the right tool for 2D generative art, there's no render loop to manage, and the imperative API maps naturally to stroke-by-stroke drawing.
 
 ---
 
@@ -73,7 +72,10 @@ Every drawing is a `DrawingInstruction`. Here's Wall Drawing #11:
 }
 ```
 
-The engine reads `divide` → draws the grid. Then reads `lines` → for each cell, shuffles the four line kinds, picks three, and fills the cell with dense parallel hatching. The density range means each seed produces a slightly different feel.
+1. `divide` → draws the grid
+2. Then reads `lines` → for each cell
+3. We shuffle the four line kinds, pick three, and fill the cell with dense parallel hatching
+   - The density range means each seed produces a slightly different feel
 
 Adding a new drawing means writing a new instruction file and registering it. The engine handles the rest.
 
@@ -82,7 +84,6 @@ Adding a new drawing means writing a new instruction file and registering it. Th
 ## The Diagonal Problem
 
 First pass at diagonal lines was wrong. I was parameterizing start and end points on opposing edges and interpolating — which produces fan lines that converge, not parallel hatching.
-
 
 Sol LeWitt's diagonals are straight parallel lines at 45°. Every line has the same slope, just offset. The fix was a sweep across the cell:
 
@@ -104,22 +105,6 @@ case 'diagonal-right': {
 Each line satisfies `ly = lx + k` in cell-local coordinates. `k` sweeps from `-w` to `h`, evenly spaced. The `Math.max`/`Math.min` calls clip each line to the cell bounds. Every line is parallel. Every line is at 45°.
 
 ![](/imgs/sollewitt_11.png "Correct: parallel hatching at 45°")
-
----
-
-## Dropping Three.js
-
-The first renderer used React Three Fiber with an orthographic camera and `<line>` elements for every stroke. It didn't work well for this use case.
-
-Three.js was included originally because I invisioned the drawings happening on a 3D canvas but this is backlogged for now.
-
-The problems:
-
-1. **Frameloop issues.** R3F defaults to on-demand rendering. Visibility changes via `useFrame` weren't triggering repaints. Adding `frameloop="always"` and `invalidate()` calls was fighting the framework.
-2. **React reconciliation overhead.** Hundreds of `<line>` JSX elements meant React was diffing a huge virtual tree on every seed change.
-3. **WebGL linewidth.** Most browsers cap `linewidth` at 1px in WebGL. All the stroke width variation in the instructions was invisible.
-
-Canvas 2D solved all three problems. No render loop to manage — you just draw when you need to. No virtual DOM overhead — it's imperative `ctx.lineTo()` calls. And `ctx.lineWidth` works exactly as expected at any value.
 
 ---
 
@@ -145,20 +130,20 @@ Both the display canvas and offscreen buffer are scaled by `devicePixelRatio` fo
 
 ## Playback
 
-Each wall section is a full-viewport (`100dvh`) container. The playback timer maps 5 seconds linearly across all strokes. Timeline bar is seekable — click anywhere to jump.
+Each wall section is a full-viewport (`100dvh`) container. You see the drawing's instructions centered on screen with a **Create** button. Click it and the instructions fade out, then the drawing animates over 5 seconds. Once done, re-roll and share/download buttons appear. Re-roll takes you back to the instruction view with a new seed.
 
 The progress ref is shared between three systems:
 - The **rAF timer** in `WallSection` writes `progressRef.current` every frame
 - The **canvas paint loop** in `DrawingCanvas` reads it every frame and draws incrementally
 - The **timeline bar** gets its width set via direct DOM manipulation (`bar.style.width`)
 
-Zero `setState` calls during playback. React only re-renders on play/stop/seek/reroll — the button state changes.
+Zero `setState` calls during playback. React only re-renders on state transitions — the Create/complete/reroll moments.
 
 ---
 
 ## Drawings
 
-Fifteen wall drawings implemented so far. Each one required a different step handler in the engine.
+Nineteen wall drawings implemented so far. Each one required a different step handler in the engine.
 
 ### Wall Drawing #11 (1969)
 Four equal squares, three of four line kinds per cell. Dense parallel hatching.
@@ -207,7 +192,7 @@ components/
   Gallery.tsx           Seed management, renders WallSections
   WallSection.tsx       100dvh container, playback timer, controls
   DrawingCanvas.tsx     Canvas 2D renderer with offscreen buffer
-  Controls.tsx          Play / Stop / Re-roll
+  Controls.tsx          Re-roll / Download
   Timeline.tsx          Seekable progress bar
 
 lib/
@@ -224,17 +209,20 @@ types/
 
 The `engine.ts` file contains handler functions for each step type. Each handler interprets its parameters and generates `StrokeElement[]` arrays.
 
-| Handler                     | Step Type              | Description                                                                                                                                                           | Used By            |
-| --------------------------- | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ |
-| `handleDivideAndLines`      | `divide` + `lines`     | Grid of cells with parallel line hatching. Supports `unique` (one direction per cell) and `progressive` (cumulative directions) modes. Optional colors per direction. | #11, #17, #56, #87 |
-| `handleBands`               | `bands`                | Randomly placed bands of parallel lines in specified directions.                                                                                                      | #46, #47           |
-| `handlePegboard`            | `pegboard`             | Grid of colored squares (closed paths that get filled).                                                                                                               | #38                |
-| `handleWobblyLines`         | `wobbly-lines`         | Vertical lines with per-segment random displacement for hand-drawn effect.                                                                                            | #11                |
-| `handleCombinatorial`       | `combinatorial`        | All combinations of line directions arranged in rows (4 singles, 6 pairs, 4 triples, 1 quad = 15 cells).                                                              | #85                |
-| `handleScatteredLines`      | `scattered-lines`      | Thousands of short lines at random positions and angles, covering wall evenly.                                                                                        | #86                |
-| `handleGridWobbly`          | `grid-wobbly`          | Grid of cells where each cell has wobbly lines in one random direction.                                                                                               | #88                |
-| `handleCombinatorialWobbly` | `combinatorial-wobbly` | 15 vertical columns for all color combinations, with wobbly vertical lines.                                                                                           | #95                |
-| `handleGridAndArcs`         | `grid-and-arcs`        | Grid overlay with concentric quarter-circle arcs emanating from all four corners.                                                                                     | #130               |
+| Handler                       | Step Type                 | Description                                                                                                                                                           | Used By                      |
+| ----------------------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
+| `handleDivideAndLines`        | `divide` + `lines`        | Grid of cells with parallel line hatching. Supports `unique` (one direction per cell) and `progressive` (cumulative directions) modes. Optional colors per direction. | #11, #17, #19, #47, #56, #87 |
+| `handleBands`                 | `bands`                   | Randomly placed bands of parallel lines in specified directions.                                                                                                      | #16                          |
+| `handlePegboard`              | `pegboard`                | Grid of colored squares (closed paths that get filled).                                                                                                               | #38                          |
+| `handleWobblyLines`           | `wobbly-lines`            | Vertical lines with per-segment random displacement for hand-drawn effect.                                                                                            | #46                          |
+| `handleCombinatorial`         | `combinatorial`           | All combinations of line directions arranged in rows (4 singles, 6 pairs, 4 triples, 1 quad = 15 cells).                                                              | #85                          |
+| `handleScatteredLines`        | `scattered-lines`         | Thousands of short lines at random positions and angles, covering wall evenly.                                                                                        | #86                          |
+| `handleGridWobbly`            | `grid-wobbly`             | Grid of cells where each cell has wobbly lines in one random direction. Supports `fillViewport` for edge-to-edge cells.                                               | #88                          |
+| `handleCombinatorialWobbly`   | `combinatorial-wobbly`    | 15 vertical columns for all color combinations, with wobbly vertical lines.                                                                                           | #95                          |
+| `handleGridAndArcs`           | `grid-and-arcs`           | Grid overlay with concentric quarter-circle arcs emanating from all four corners.                                                                                     | #130                         |
+| `handleMidpointArcs`          | `midpoint-arcs`           | Arcs drawn from midpoints of each wall side.                                                                                                                          | #138                         |
+| `handleProgressiveWobblyGrid` | `progressive-wobbly-grid` | Grid with increasing count of wobbly lines per column (vertical) and per row (horizontal). Supports `fillViewport`.                                                   | #142                         |
+| `handleSquareAndLine`         | `square-and-line`         | Random black square with one or more colored lines crossing through.                                                                                                  | #154, #159, #160             |
 
 Utility functions:
 - `seededRandom(seed)` — deterministic PRNG for reproducible outputs
@@ -247,7 +235,7 @@ Utility functions:
 
 ## What I Learned
 
-**Canvas 2D is underrated.** For 2D generative art, it's the right tool. WebGL/Three.js adds complexity that only pays off in 3D. The `lineWidth` issue alone was reason enough to switch.
+**Canvas 2D is underrated.** For 2D generative art, it's the right tool.
 
 **Offscreen buffers make incremental drawing trivial.** The double-buffer pattern is old graphics programming wisdom. It works just as well in a browser `<canvas>`.
 
@@ -255,4 +243,9 @@ Utility functions:
 
 **Sol LeWitt's instructions are surprisingly precise.** "Three of the four kinds of lines" is an exact combinatorial specification. The generative system just formalizes what was already algorithmic.
 
+---
+
+More drawings soon!
+
+Thank you for checking out my project.
 
