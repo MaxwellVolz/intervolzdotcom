@@ -1,0 +1,77 @@
+---
+title: Sol LeWitt on Hacker News
+date: 2026-02-11T12:00:00.000-08:00
+technical: false
+draft: false
+work: false
+pinned: false
+in_progress: true
+tags: web react
+---
+
+What happens when your side project hits the front page of Hacker News.
+
+---
+
+## Posting It
+
+I submitted [the Sol LeWitt generator](https://intervolz.com/sollewitt) to Hackernews and it didn't completely flop!
+
+[The HN post](https://news.ycombinator.com/item?id=46965968)
+
+## Hour One: Nothing
+
+Not even an upvote. Full skydive to the bottom. 
+
+The post was sitting somewhere on page 5 of `/new`. 
+
+I checked a few times, saw it hadn't moved, and figured that was it. I sent a text that said "nobody likes me" *lol*.
+
+I know most HN submissions die in `/new`. That's just how it works.
+
+## Getting Traction
+
+I had my `GoAccess` log pulled up on a second monitor to monitor the web traffic in real-time and `Unique Visitors` was crawling...
+
+Then it started picking up! A few upvotes and bang! Page 2.
+
+And then it was on the front page. Sitting right there between the usual mix of Show HNs and tech articles. 
+
+Stoked. I've been reading articles and checking links at this exact location for a decade.
+
+![Hacker News front page](/imgs/sol_hn_frontpage.jpeg "On the front page!")
+
+It peaked at **#16**. Not the top of the page, but *on* the page. For a solo side project I built over a weekend, that felt pretty good.
+
+## The Traffic
+
+Here's what it looked like from the server side. My little Intel NUC was serving static files through Cloudflare, so it handled the load fine, but the numbers were wild compared to my normal traffic of basically zero.
+
+![GoAccess traffic overview](/imgs/sol_hn_goaccess.jpeg "Traffic spike from HN")
+
+The spike was sharp. A big burst over a few hours, a long tail through the rest of the day, and trending back to normal now.
+
+![Cloudflare Stats](/imgs/sol_hn_cloudflare.png "Traffic spike on Cloudflare")
+
+
+## What I Learned
+
+**Metadata matters more than you think.** I love HN because of its lack of fluff. Just a text link, no previews, no images. But there's a whole ecosystem of sites that mirror or enhance HN content: [hckrnews.com](https://hckrnews.com), [hnews.xyz](https://hnews.xyz), various RSS readers, and social media bots that auto-post trending stories.
+
+![hckrnews.com](/imgs/sol_hn_hckrnews.png "How the post looked on hckrnews.com")
+
+These sites *do* pull metadata. Open Graph images, descriptions, page titles, etc. If your page has a good `og:image` and a clear `og:description`, your post looks significantly better on these aggregators compared to a bare link with no preview. It's the difference between someone scrolling past and someone clicking through.
+
+![betacat](/imgs/sol_hn_betacat.png "betacat aggregator")
+
+I didn't have great metadata set up initially. I didn't think about it! I realized this from digging into the referring sites to see where people were coming from. Something to fix for next time.
+
+**The HN audience is generous with feedback.** The comments were constructive, positive, and interesting.
+
+![HN comments](/imgs/sol_hn_comments.jpeg "The comments were great")
+
+**Static sites handle HN traffic just fine.** Pre-rendered HTML + Cloudflare means you're basically serving from cache. No database to melt, no server-side rendering to choke. The NUC didn't even notice.
+
+---
+
+Not a bad day 😎

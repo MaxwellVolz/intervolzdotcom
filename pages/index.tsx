@@ -39,6 +39,7 @@ const tagColors: Record<string, string> = {
 // Fun Zone items
 const funZoneItems = [
   { url: 'https://waynemo.com', preview_image: '/games/waynemo_preview.png', image_text: 'Wayne Mo' },
+  { url: '/sollewitt', preview_image: '/games/sol_preview.png', image_text: 'Sol LeWitt' },
   { url: '/axisrecall', preview_image: '/games/axisrecall_preview.png', image_text: 'Axis Recall' },
   { url: 'https://wassuh.com', preview_image: '/games/wassuh_preview.png', image_text: 'Coit Cache' },
   { url: '/room', preview_image: '/games/room_preview.png', image_text: 'Room' },
@@ -223,7 +224,7 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
       <div className="max-w-4xl mx-auto px-6 py-16 border-t border-gray-100">
         <div className="space-y-12">
           <h2 className="text-xl font-bold text-black uppercase tracking-wider">
-            Currently In Progress
+            Right Now Right Now
           </h2>
 
           <div className="space-y-8">
