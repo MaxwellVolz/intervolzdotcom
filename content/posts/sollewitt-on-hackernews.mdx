@@ -11,23 +11,37 @@ tags: web react
 
 What happens when your side project hits the front page of Hacker News.
 
+### tl;dr
+
+- **43 points** on HN translated to **~2,000 unique human visitors** and **17,948 hits** on the project page
+- The traffic spike lasted **~10 hours** at sustained levels before tapering
+- A static site on a home Intel NUC behind Cloudflare handled the entire HN front page load with **zero errors**
+- The post rippled out to **9+ aggregator/social platforms** beyond HN itself
+- **macOS + Linux users made up 43%** of the audience — distinctly technical crowd
+- Peak bandwidth was ~57 MB in a single hour — trivial for even a home connection
+
 ---
 
-## Posting It
+## February 2nd at Noon
 
 I submitted [the Sol LeWitt generator](https://intervolz.com/sollewitt) to Hackernews and it didn't completely flop!
 
-[The HN post](https://news.ycombinator.com/item?id=46965968)
+| Metric | Value                                                                                  |
+| ------ | -------------------------------------------------------------------------------------- |
+| Title  | *Show HN: Sol LeWitt-style instruction-based drawings in the browser*                  |
+| Link   | [news.ycombinator.com/item?id=46965968](https://news.ycombinator.com/item?id=46965968) |
 
-## Hour One: Nothing
+## Hour One
 
-Not even an upvote. Full skydive to the bottom. 
+Not even an upvote. I was plummetting to the bottom of the stack.
+
+~220 hits on my site. **Zero upvotes**. 
 
 The post was sitting somewhere on page 5 of `/new`. 
 
 I checked a few times, saw it hadn't moved, and figured that was it. I sent a text that said "nobody likes me" *lol*.
 
-I know most HN submissions die in `/new`. That's just how it works.
+I know most HN submissions die a short death. That's just how it works.
 
 ## Getting Traction
 
@@ -35,7 +49,7 @@ I had my `GoAccess` logs pulled up on a second monitor to monitor the web traffi
 
 Then it started picking up! A few upvotes and bang! Page 2.
 
-And then it was on the front page. Sitting right there between the usual mix of Show HNs and tech articles. 
+And then it was on the front page. Sitting right there between the usual mix of Show HNs and tech articles.
 
 Stoked. I've been reading articles and checking links at this exact location for a decade.
 
@@ -43,13 +57,65 @@ Stoked. I've been reading articles and checking links at this exact location for
 
 It peaked at **#16**. Not the top of the page, but *on the page*. For a solo side project I built over a weekend, that felt pretty good.
 
-## The Traffic
+The spike was sharp. A big burst over a few hours, a long tail through the rest of the day, and trending back to normal now.
+
+![GoAccess traffic overview](/imgs/sol_hn_goaccess.jpeg "Midnight, 12 hours since posted")
+
+## February 10th - Hourly Breakdown
+
+The classic HN spike: sharp ramp, sustained plateau, gradual tail-off.
+
+```
+07:00       9 hits  ·
+08:00       5 hits  ·
+09:00      14 hits  ·
+10:00      19 hits  ·
+11:00      22 hits  ▏
+12:00     249 hits  ██
+13:00      52 hits  ▍
+14:00   2,977 hits  ██████████████████████████████  ← PEAK
+15:00   2,405 hits  ████████████████████████
+16:00   2,012 hits  ████████████████████
+17:00   1,779 hits  █████████████████▊
+18:00   1,712 hits  █████████████████
+19:00   1,639 hits  ████████████████▍
+20:00   1,724 hits  █████████████████▏
+21:00   1,760 hits  █████████████████▌
+22:00     815 hits  ████████▏
+23:00     755 hits  ███████▌
+```
+
+**Peak hour: 14:00 PST** (2,977 hits)
+**Sustained plateau: ~1,700-2,000 hits/hr** for 6+ hours (15:00-21:00)
+
+## Traffic Overview (4-Day Window)
 
 Here's what it looked like from the server side. My little Intel NUC was serving static files through Cloudflare, so it handled the load fine, but the numbers were wild compared to my normal traffic of basically zero.
 
-![GoAccess traffic overview](/imgs/sol_hn_goaccess.jpeg "Traffic spike from HN")
+Data sourced from nginx access logs via GoAccess 1.9.3. All traffic routed through Cloudflare Tunnel to a local Intel NUC.
 
-The spike was sharp. A big burst over a few hours, a long tail through the rest of the day, and trending back to normal now.
+> Note: I host other things from my home server so this first table is **all** my traffic.
+
+| Date                | Total Hits | Unique Visitors | Bandwidth    |
+| ------------------- | ---------- | --------------- | ------------ |
+| Feb 8 (baseline)    | 6,198      | 177             | 187.3 MB     |
+| Feb 9 (baseline)    | 2,955      | 101             | 142.3 MB     |
+| **Feb 10 (HN day)** | **24,222** | **2,083**       | **827.6 MB** |
+| Feb 11 (tail)       | 16,077     | 580             | 289.6 MB     |
+
+**Total bandwidth served over the HN window: ~1.45 GB**
+**Traffic multiplier on HN day: 5x** the baseline average
+
+### /sollewitt/* Specifically
+
+| Date       | Hits       | Bandwidth    |
+| ---------- | ---------- | ------------ |
+| Feb 8      | 39         | 1.0 MB       |
+| Feb 9      | 11         | 0.4 MB       |
+| **Feb 10** | **17,948** | **280.0 MB** |
+| Feb 11     | 6,483      | 82.1 MB      |
+
+From ~25 sollewitt hits/day to **17,948** — a **718x increase**.
 
 ![Cloudflare Stats](/imgs/sol_hn_cloudflare.png "Traffic spike on Cloudflare")
 
@@ -62,6 +128,46 @@ The spike was sharp. A big burst over a few hours, a long tail through the rest 
 
 These sites *do* pull metadata. Open Graph images, descriptions, page titles, etc. If your page has a good `og:image` and a clear `og:description`, your post looks significantly better on these aggregators compared to a bare link with no preview. It's the difference between someone scrolling past and someone clicking through.
 
+### Where Did They Come From?
+
+| Source                    | Hits  | Notes                             |
+| ------------------------- | ----- | --------------------------------- |
+| news.ycombinator.com      | 1,692 | Direct HN front page clicks       |
+| intervolz.com (self)      | 2,413 | Internal navigation / asset loads |
+| google.com / google.co.uk | 448   | Google search referrals           |
+| hckrnews.com              | 51    | HN aggregator                     |
+| brutalist.report          | 30    | HN aggregator                     |
+| lobste.rs                 | 16    | Tech community                    |
+| t.co (Twitter/X)          | 11    | Social sharing                    |
+| hnrss.org                 | 10    | HN RSS feeds                      |
+| hn.premii.com             | 7     | HN aggregator                     |
+| Facebook                  | 7     | Social sharing                    |
+| hackerweb.app             | 5     | HN reader app                     |
+
+
+The **HackerNews iOS app** was the single largest user agent with **2,310 hits** (`HackerNews/1536 CFNetwork`).
+
+
+### Device Type
+
+| Type    | Hits  | Share  |
+| ------- | ----- | ------ |
+| Desktop | 6,408 | 66%    |
+| Mobile  | 3,289 | 34%    |
+| Tablet  | 23    | &lt;1% |
+
+### Platform
+
+| OS      | Hits  | Share |
+| ------- | ----- | ----- |
+| macOS   | 3,108 | 31%   |
+| Windows | 2,108 | 21%   |
+| Android | 2,004 | 20%   |
+| iOS     | 1,721 | 17%   |
+| Linux   | 1,192 | 12%   |
+
+**Linux at 12%** — significantly above the global ~2-4% desktop share. Classic HN audience skew.
+
 ![betacat](/imgs/sol_hn_betacat.png "betacat aggregator")
 
 I didn't have great metadata set up initially. I didn't think about it! I realized this from digging into the referring sites to see where people were coming from. Something to fix for next time.
@@ -70,7 +176,66 @@ I didn't have great metadata set up initially. I didn't think about it! I realiz
 
 ![HN comments](/imgs/sol_hn_comments.jpeg "The comments were great")
 
-**Static sites handle HN traffic just fine.** Pre-rendered HTML + Cloudflare means you're basically serving from cache. No database to melt, no server-side rendering to choke. The NUC didn't even notice.
+
+## Bot vs. Human Traffic
+
+| Type        | Hits   | Share |
+| ----------- | ------ | ----- |
+| Human       | 15,640 | 87%   |
+| Bot/Crawler | 2,308  | 13%   |
+
+Bots include generic `bot` user agents, RSS readers (SpaceCowboys), and crawlers that followed the HN post.
+
+### HTTP Status Codes (/sollewitt, Feb 10)
+
+| Code | Count  | Meaning                                 |
+| ---- | ------ | --------------------------------------- |
+| 200  | 15,623 | OK — full response served               |
+| 304  | 2,179  | Not Modified — browser cache hit        |
+| 301  | 146    | Redirect (trailing slash normalization) |
+
+**12% cache hit rate** via `304 Not Modified` — Cloudflare and browser caching doing their job.
+
+### Why It Survived the Hug of Death
+
+1. **Fully static** — No database, no server-side rendering, no API calls. Just HTML, JS, CSS, and fonts.
+2. **Cloudflare caching** — CDN absorbed repeat requests; only ~12% of requests hit origin with 304s.
+3. **Canvas 2D rendering is client-side** — The expensive generative art computation happens in each visitor's browser, not on the server.
+4. **Small payload** — Full page load ~170KB (compressed). The NUC never broke a sweat.
+5. **Zero downtime** — 0 `5xx` errors on /sollewitt paths. Every single request was served successfully.
+
+## Bandwidth Breakdown (/sollewitt on Feb 10)
+
+| Category                       | Size         | Share |
+| ------------------------------ | ------------ | ----- |
+| Static assets (JS, CSS, fonts) | 228.7 MB     | 82%   |
+| HTML page responses            | 51.3 MB      | 18%   |
+| **Total**                      | **280.0 MB** |       |
+
+The Next.js bundle (`4bd1b696-*.js` at 53KB/load and `255-*.js` at 52KB/load) accounted for the bulk of static bandwidth.
+
+## Security Noise
+
+The HN visibility also attracted the usual automated scanning:
+
+| Attack Vector                                               | Hits   |
+| ----------------------------------------------------------- | ------ |
+| WordPress probes (`/wp-login.php`, `/wp-admin/`)            | 1,718+ |
+| PHP shell attempts (`/alfa.php`, `/sx.php`, `/x.php`, etc.) | 400+   |
+| Git config exposure (`/.git/config`)                        | 32     |
+| Environment file probes (`/.env`)                           | 22     |
+
+All returned **404** — there's no PHP, no WordPress, no `.git`, and no `.env` on this server.
+
+## Notable User Agents
+
+| Agent                             | Hits    | What It Is              |
+| --------------------------------- | ------- | ----------------------- |
+| `HackerNews/1536 CFNetwork`       | 2,310   | Official HN iOS app     |
+| `SpaceCowboys Android RSS Reader` | 348     | Android RSS reader      |
+| Generic `bot`                     | 412     | Unidentified bots       |
+| `OAI-SearchBot`                   | present | OpenAI's search crawler |
+
 
 ---
 
