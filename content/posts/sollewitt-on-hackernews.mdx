@@ -17,8 +17,8 @@ What happens when your side project hits the front page of Hacker News.
 - The traffic spike lasted **~10 hours** at sustained levels before tapering
 - A static site on a home Intel NUC behind Cloudflare handled the entire HN front page load with **zero errors**
 - The post rippled out to **9+ aggregator/social platforms** beyond HN itself
-- **macOS + Linux users made up 43%** of the audience — distinctly technical crowd
-- Peak bandwidth was ~57 MB in a single hour — trivial for even a home connection
+- Distinctly technical crowd with **macOS + Linux users making up 43%** of the audience
+- Bandwidth was trivial for even a home connection peaking at ~57 MB in a single hour
 
 ---
 
@@ -115,7 +115,7 @@ Data sourced from nginx access logs via GoAccess 1.9.3. All traffic routed throu
 | **Feb 10** | **17,948** | **280.0 MB** |
 | Feb 11     | 6,483      | 82.1 MB      |
 
-From ~25 sollewitt hits/day to **17,948** — a **718x increase**.
+From ~25 sollewitt hits/day to **17,948** - a **718x increase**.
 
 ![Cloudflare Stats](/imgs/sol_hn_cloudflare.png "Traffic spike on Cloudflare")
 
@@ -166,7 +166,7 @@ The **HackerNews iOS app** was the single largest user agent with **2,310 hits**
 | iOS     | 1,721 | 17%   |
 | Linux   | 1,192 | 12%   |
 
-**Linux at 12%** — significantly above the global ~2-4% desktop share. Classic HN audience skew.
+**Linux at 12%** - significantly above the global ~2-4% desktop share. Classic HN audience skew.
 
 ![betacat](/imgs/sol_hn_betacat.png "betacat aggregator")
 
@@ -190,19 +190,19 @@ Bots include generic `bot` user agents, RSS readers (SpaceCowboys), and crawlers
 
 | Code | Count  | Meaning                                 |
 | ---- | ------ | --------------------------------------- |
-| 200  | 15,623 | OK — full response served               |
-| 304  | 2,179  | Not Modified — browser cache hit        |
+| 200  | 15,623 | OK - full response served               |
+| 304  | 2,179  | Not Modified - browser cache hit        |
 | 301  | 146    | Redirect (trailing slash normalization) |
 
-**12% cache hit rate** via `304 Not Modified` — Cloudflare and browser caching doing their job.
+**12% cache hit rate** via `304 Not Modified` - Cloudflare and browser caching doing their job.
 
 ### Why It Survived the Hug of Death
 
-1. **Fully static** — No database, no server-side rendering, no API calls. Just HTML, JS, CSS, and fonts.
-2. **Cloudflare caching** — CDN absorbed repeat requests; only ~12% of requests hit origin with 304s.
-3. **Canvas 2D rendering is client-side** — The expensive generative art computation happens in each visitor's browser, not on the server.
-4. **Small payload** — Full page load ~170KB (compressed). The NUC never broke a sweat.
-5. **Zero downtime** — 0 `5xx` errors on /sollewitt paths. Every single request was served successfully.
+1. **Fully static:** No database, no server-side rendering, no API calls. Just HTML, JS, CSS, and fonts.
+2. **Cloudflare caching:** CDN absorbed repeat requests; only ~12% of requests hit origin with 304s.
+3. **Canvas 2D rendering is client-side:** The expensive generative art computation happens in each visitor's browser, not on the server.
+4. **Small payload:** Full page load ~170KB (compressed). The NUC never broke a sweat.
+5. **Zero downtime:** 0 `5xx` errors on /sollewitt paths. Every single request was served successfully.
 
 ## Bandwidth Breakdown (/sollewitt on Feb 10)
 
@@ -225,7 +225,7 @@ The HN visibility also attracted the usual automated scanning:
 | Git config exposure (`/.git/config`)                        | 32     |
 | Environment file probes (`/.env`)                           | 22     |
 
-All returned **404** — there's no PHP, no WordPress, no `.git`, and no `.env` on this server.
+All returned **404** - there's no PHP, no WordPress, no `.git`, and no `.env` on this server.
 
 ## Notable User Agents
 
