@@ -7,10 +7,13 @@ import type { GetStaticPaths, GetStaticProps } from 'next';
 import remarkSubstitutions from '@/lib/remarkSubstitutions';
 import remarkGfm from 'remark-gfm';
 import Link from 'next/link';
+import Head from 'next/head';
 import rehypePrettyCode from 'rehype-pretty-code';
 import rehypeSlug from 'rehype-slug';
 import { useEffect } from 'react';
 import { Kbd } from '@/components/Kbd';
+
+const SITE_URL = 'https://intervolz.com';
 
 export default function BlogPostPage({ source, frontmatter }: any) {
 
@@ -34,7 +37,23 @@ export default function BlogPostPage({ source, frontmatter }: any) {
   }, []);
 
 
+  const ogImage = frontmatter.cover
+    ? `${SITE_URL}${frontmatter.cover}`
+    : `${SITE_URL}/imgs/og-default.png`;
+
   return (
+    <>
+      <Head>
+        <title>{frontmatter.title} | intervolz</title>
+        <meta property="og:title" content={frontmatter.title} />
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={`${SITE_URL}/${frontmatter.slug}/`} />
+        <meta property="og:image" content={ogImage} />
+        <meta property="og:site_name" content="intervolz" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={frontmatter.title} />
+        <meta name="twitter:image" content={ogImage} />
+      </Head>
     <main className="prose lg:prose-xl max-w-3xl mx-auto px-6 py-12">
       <h1 className="font-display text-4xl mb-2">{frontmatter.title}</h1>
       {/* <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">{new Date(frontmatter.date).toLocaleDateString()}</p> */}
@@ -46,6 +65,7 @@ export default function BlogPostPage({ source, frontmatter }: any) {
         <Link href={`/ `}>Home</Link>
       </div>
     </main>
+    </>
   );
 }
 
@@ -94,6 +114,8 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       frontmatter: {
         title: data.title || slug,
         date: data.date ? new Date(data.date).toISOString() : '',
+        cover: data.cover || '',
+        slug,
       },
     },
   };
