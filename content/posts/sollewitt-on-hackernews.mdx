@@ -9,27 +9,63 @@ in_progress: true
 tags: web react
 ---
 
-This year I am developing a presence on Hackernews.
 
-I submitted my [Tribute to Sol LeWitt](https://intervolz.com/sollewitt) as a "Show HN" post at **12:02:05 PM PST**. [link](https://news.ycombinator.com/item?id=46965968)
+## tl;dr
 
-> Show HN is for something you've made that other people can play with. HN users can try it out, give you feedback, and ask questions in the thread.
-
-Here's how the day unfolded.
-
----
-
-### tl;dr
-
-- 43 HN points → ~2k visitors / 17,948 hits
+- Made the front page
+- 69 HN points → ~60k visitors
 - Traffic surge held ~10 hrs
+- Traffic remains 20–60x the pre-HN baseline
 - Home Server + Cloudflare handled it flawlessly
 - Spread to 9+ aggregators beyond HN
 - I'm happy with it
 
 ---
 
-## Hour One
+
+**This year I am developing a presence on Hackernews.**
+
+I submitted [Tribute to Sol LeWitt](https://intervolz.com/sollewitt) as a ["Show HN" post](https://news.ycombinator.com/item?id=46965968) at **02/10/2026 12:02:05 PM PST**.
+
+> Show HN is for something you've made that other people can play with. HN users can try it out, give you feedback, and ask questions in the thread.
+
+---
+
+## Origin and Context of Project
+
+### Short History
+
+While cleaning up some old bookmarks I came across [solving sol](https://solvingsol.com/), a project I saved **7 years ago**. I created the repo November 14th, 2018. Yeesh.
+
+Unfortunately, I committed a `README.md` and proceeded to never push any further local development. I remember experimenting with Canvas, making the first few drawings, and not being quite happy with the results.
+
+*Fast forward to 2026.*
+
+I still love art. I still love programming. And I still love **Sol Lewitt**. So I built it.
+
+### Bonus History
+
+I read through [solving sol](https://solvingsol.com/) and looked up the author, [Brad Bouse](https://bradwearsglasses.com/).
+
+Cool guy with a cool website. I snoop around. Finally get to his LinkedIn...wait a second. 
+
+**HE WORKED AT YAMMER?!?!**
+
+What. Small world. Let me explain...
+
+I did a single day job shadow at Yammer in 2010 that **changed my life**. It was the day I decided I was going to pursue programming as a career.
+
+Sadly, according to LinkedIn, he had already moved on by the time I did my job shadow.
+
+Welp. If you see this, Brad, I just sent you a message on LinkedIn :salute:.
+
+Ok! Now for the stats...
+
+## Analysis
+
+Here's how the day unfolded.
+
+### Hour One
 
 Not even an upvote. I was plummetting to the bottom of the stack.
 
@@ -41,7 +77,7 @@ I checked a few times, saw it hadn't moved, and figured that was it. I sent a te
 
 I know most HN submissions die a short death. That's just how it works.
 
-## Getting Traction
+### Getting Traction
 
 I kept glancing over at my other monitor where the real-time traffic was open. Nothing.
 
@@ -65,7 +101,7 @@ The spike was sharp. A big burst over a few hours with a long tail through the r
 
 ![GoAccess traffic overview](/imgs/sol_hn_goaccess.jpeg "Midnight, 12 hours since posted")
 
-## HN Comments
+### HN Comments
 
 ![HN comment](/imgs/sol_hn_comment1.png "<3")
 ![HN comment](/imgs/sol_hn_comment2.png "<3")
@@ -73,7 +109,7 @@ The spike was sharp. A big burst over a few hours with a long tail through the r
 ![HN comment](/imgs/sol_hn_comment4.png "<3")
 ![HN comments](/imgs/sol_hn_comment_holly.png "holly01 came back!")
 
-## February 10th - Hourly Breakdown
+### February 10th - Hourly Breakdown
 
 Sharp ramp, sustained plateau, gradual tail-off.
 
@@ -101,7 +137,7 @@ Sharp ramp, sustained plateau, gradual tail-off.
 
 **Sustained plateau: ~1,700-2,000 hits/hr** for 6+ hours (15:00-21:00)
 
-## Traffic Overview (4-Day Window)
+### Traffic Overview (4-Day Window)
 
 Here's what it looked like from the server side. My little Intel NUC was serving static files through Cloudflare, so it handled the load fine, but the numbers were wild compared to my normal traffic of basically zero.
 
@@ -116,6 +152,8 @@ Here's what it looked like from the server side. My little Intel NUC was serving
 From ~25 hits/day to **17,948**...a **718x increase**.
 
 > Data sourced from nginx access logs via GoAccess 1.9.3. All traffic routed through Cloudflare Tunnel to a local Intel NUC.
+> 
+> I've since added google analytics so my next post-op will have much more information!
 
 ## Where Did They Come From?
 
@@ -143,6 +181,8 @@ I was **#5** on hckrnews.com the first time I ever visited the site. Pretty cool
 
 ![hckrnews.com](/imgs/sol_hn_hckrnews.png "How the post looked on hckrnews.com")
 
+## Who are they?!
+
 ### Device Breakdown
 
 | Type    | Hits  | Share  |
@@ -160,6 +200,8 @@ I was **#5** on hckrnews.com the first time I ever visited the site. Pretty cool
 | Android | 2,004 | 20%   | ~43%          |
 | iOS     | 1,721 | 17%   | ~18%          |
 | Linux   | 1,192 | 12%   | ~1.5%         |
+
+
 
 **Linux** and **macOS** significantly overrepresented due to HN audience skew.
 
@@ -204,7 +246,7 @@ All returned **404**. There's no PHP, no WordPress, no `.git`, and no `.env` on 
 | Generic `bot`                     | 412     | Unidentified bots       |
 | `OAI-SearchBot`                   | present | OpenAI's search crawler |
 
-## Why It Survived the Hug of Death
+### How I Survived the Hug of Death
 
 1. **Fully static:** No database, no server-side rendering, no API calls. Just HTML, JS, CSS, and fonts.
 2. **Cloudflare caching:** CDN absorbed repeat requests; only ~12% of requests hit origin with 304s.
@@ -214,7 +256,84 @@ All returned **404**. There's no PHP, no WordPress, no `.git`, and no `.env` on 
 
 ---
 
-For a few hours, something I made for fun was sitting in front of one of the most technical audiences on the internet, being shared, and they liked it. 
+## The Week After (Feb 11–17)
+
+> Data sourced from nginx access logs for the 7 days following the HN post. Feb 17 is partial (through ~11:30 AM PST).
+
+### Daily Overview
+
+![](/imgs/sol-week.png "the week after")
+
+
+| Date                | Total Hits | /sollewitt Hits |
+| ------------------- | ---------- | --------------- |
+| **Feb 10 (HN day)** | **24,222** | **17,948**      |
+| Feb 11              | 16,140     | 7,116           |
+| Feb 12              | 13,985     | 7,157           |
+| **Feb 13**          | **18,231** | **12,391**      |
+| Feb 14              | 10,212     | 2,672           |
+| Feb 15              | 3,485      | 1,546           |
+| Feb 16              | 5,080      | 590             |
+| Feb 17 (partial)    | 1,500      | 251             |
+
+
+### The Feb 13 Secondary Spike
+
+Traffic saw a **secondary surge on Feb 13** due to:
+
+#### **HN still driving clicks**
+
+Continued engagement from `news.ycombinator.com` with 920 referrals 3 days after submission.
+
+#### **Google search traffic peaked**
+
+358 Google referrals (vs 184 on Feb 11), suggesting the post had been indexed and people were finding it through search.
+
+#### **Crawler activity**
+
+958 bot/crawler hits mixed in, plus heavy overnight traffic (1,000+ hits/hr from midnight–3 AM) from indexing bots.
+
+#### **HN iOS app still active**
+
+1,484 combined hits from HackerNews/CFNetwork user agents.
+
+The hourly pattern on Feb 13 was distinctly different from Feb 10 with traffic spread more evenly.
+
+### The Long Tail of Referral Sources
+
+Referral traffic evolved as the post propagated outward:
+
+| Source                    | Feb 11 | Feb 12 | Feb 13 | Feb 14 | Feb 15 | Feb 16 | Feb 17 |
+| ------------------------- | ------ | ------ | ------ | ------ | ------ | ------ | ------ |
+| news.ycombinator.com      | 274    | 492    | 920    | 39     | —      | —      | —      |
+| google.com                | 184    | 153    | 358    | 26     | 9      | 6      | 1      |
+| lobste.rs                 | 51     | 39     | 41     | 50     | 48     | 50     | 22     |
+| intervolz.com (blog post) | 33     | 131    | 40     | 1      | 40     | 27     | 12     |
+
+**lobste.rs** delivered a consistent ~50 referrals/day for the entire week, outlasting both HN and Google traffic.
+
+The first version of post you're reading now drove a secondary wave on Feb 12 (131 hits), as visitors who found the project on HN came back to read the writeup.
+
+
+### Continued Reliability
+
+Zero `5xx` errors across the entire post-HN period. Every request served successfully for all 7 days:
+
+| Status           | Total (Feb 11–17) |
+| ---------------- | ----------------- |
+| 200 OK           | 24,785            |
+| 304 Not Modified | 6,659             |
+| 301 Redirect     | 127               |
+| 404 Not Found    | 152               |
+| 5xx              | **0**             |
+
+Yesssssssssssss.
+
+
+
+### Wrap Up
+
+For a few hours, something I made for fun was sitting in front of one of the most technical audiences on the internet, being shared, and they liked it!
 
 And then, just as fast as it arrived, the wave rolled back out.
 
