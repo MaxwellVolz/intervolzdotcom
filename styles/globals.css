@@ -155,3 +155,15 @@ p img {
   animation: v2-fold 0.25s ease-in forwards;
   transform-origin: top;
 }
+
+@keyframes v2-logo-jitter {
+  0%   { transform: translate(0, 0); }
+  20%  { transform: translate(-1px, 1px); }
+  40%  { transform: translate(1px, -1px); }
+  60%  { transform: translate(-1px, -1px); }
+  80%  { transform: translate(1px, 1px); }
+  100% { transform: translate(0, 0); }
+}
+.v2-logo-jitter {
+  animation: v2-logo-jitter 0.12s steps(1) infinite;
+}

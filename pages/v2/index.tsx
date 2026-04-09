@@ -3,9 +3,23 @@ import Link from 'next/link';
 import { getAllPosts, type PostMeta } from '@/lib/getPosts';
 import BootSequence from '@/components/v2/BootSequence';
 import TerminalWindow from '@/components/v2/TerminalWindow';
+import GravityText from '@/components/v2/GravityText';
+
+// GitHub's search API only counts PUBLIC commits, which undercounts heavily
+// (no private repos, no work orgs). The "contributions in the last year"
+// number from the profile page is the real flex. Hardcoded here — bump it
+// when you remember to.
+const CONTRIBUTIONS_LAST_YEAR = 1173;
 
 export async function getStaticProps() {
-  return { props: { posts: getAllPosts() } };
+  return {
+    props: {
+      posts: getAllPosts(),
+      gh: {
+        contributions: CONTRIBUTIONS_LAST_YEAR,
+      },
+    },
+  };
 }
 
 type Section = {
@@ -34,7 +48,9 @@ function fmtPerms(p: PostMeta) {
   return '-rw-r--r--';
 }
 
-export default function V2Home({ posts }: { posts: PostMeta[] }) {
+type GhProps = { contributions: number };
+
+export default function V2Home({ posts, gh }: { posts: PostMeta[]; gh: GhProps }) {
   const [booted, setBooted] = useState(false);
   const [skip, setSkip] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -46,6 +62,14 @@ export default function V2Home({ posts }: { posts: PostMeta[] }) {
       setSkip(true);
       setBooted(true);
     }
+    const prevBody = document.body.style.backgroundColor;
+    const prevHtml = document.documentElement.style.backgroundColor;
+    document.body.style.backgroundColor = '#09090b';
+    document.documentElement.style.backgroundColor = '#09090b';
+    return () => {
+      document.body.style.backgroundColor = prevBody;
+      document.documentElement.style.backgroundColor = prevHtml;
+    };
   }, []);
 
   const handleBootDone = () => {
@@ -61,16 +85,32 @@ export default function V2Home({ posts }: { posts: PostMeta[] }) {
         <TerminalWindow title="mvolz@intervolz: ~/">
           <div className="space-y-2">
             <p className="text-emerald-400">$ whoami</p>
-            <p className="text-zinc-300">max — engineer / artist. shipping things with AI.</p>
+            <p className="text-zinc-300">maxwell — engineer / artist. san francisco, CA.</p>
             <p className="text-emerald-400 mt-4">$ cat ~/status</p>
+            <p className="text-zinc-300">36 · 6&apos;4&quot; · 210 lbs · still bald</p>
+            <p className="text-emerald-400 mt-4">$ gh stats --user maxwellvolz --since 1y</p>
             <p className="text-zinc-300">
-              Currently looking for a new adventure.{' '}
-              <a href="/downloads/mvolz_resume.pdf" className="text-emerald-300 underline hover:bg-emerald-500/10">
-                ./hire_me.sh
+              <span className="text-emerald-300">{gh.contributions.toLocaleString()}</span> contributions ·{' '}
+              <a
+                href="https://github.com/MaxwellVolz"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-emerald-300 underline hover:bg-emerald-500/10"
+              >
+                github.com/maxwellvolz
               </a>
             </p>
           </div>
         </TerminalWindow>
+
+        <div className="my-16 flex justify-center select-none">
+          <GravityText
+            text="INTERVOLZ"
+            radius={160}
+            strength={0.55}
+            className="text-6xl md:text-8xl font-mono font-bold text-emerald-300 tracking-tight"
+          />
+        </div>
 
         {SECTIONS.map((section) => {
           const items = posts.filter(section.filter);
