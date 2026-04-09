@@ -1,12 +1,10 @@
-import fs from 'fs';
-import path from 'path';
-import matter from 'gray-matter';
 // import styles from '../styles/Blog.module.css';
 import Link from 'next/link';
 // import IDELayout from './layout/IDELayout';
 import RoomScene from './room';
 import MVolzLogo from '@/public/imgs/mvolz2.svg';
 import { useState } from 'react';
+import { getAllPosts, type PostMeta } from '@/lib/getPosts';
 
 // Modern muted color palette inspired by YC startup design systems
 const tagColors: Record<string, string> = {
@@ -47,50 +45,8 @@ const funZoneItems = [
 ];
 
 
-type PostMeta = {
-  slug: string;
-  title: string;
-  date: string;
-  cover?: string;
-  technical?: boolean;
-  work?: boolean;
-  draft?: boolean;
-  in_progress?: boolean;
-  tags?: string[];
-};
-
 export async function getStaticProps() {
-  const postsDir = path.join(process.cwd(), 'content/posts');
-  const files = fs.readdirSync(postsDir);
-
-  const posts: PostMeta[] = files.map((file) => {
-    const slug = file.replace(/\.mdx?$/, '');
-    const raw = fs.readFileSync(path.join(postsDir, file), 'utf8');
-    const { data } = matter(raw);
-
-    return {
-      slug,
-      title: data.title || slug,
-      date: data.date ? new Date(data.date).toISOString() : '',
-      cover: data.cover || null,
-      technical: !!data.technical,
-      work: !!data.work,
-      draft: !!data.draft,
-      in_progress: !!data.in_progress,
-      tags: typeof data.tags === 'string'
-        ? data.tags.trim().split(/\s+/)
-        : Array.isArray(data.tags)
-          ? data.tags
-          : [],
-
-    };
-  });
-
-  const visiblePosts = posts
-    .filter((post) => !post.draft)
-    .sort((a, b) => (b.technical ? -1 : 0) - (a.technical ? -1 : 0) || b.date.localeCompare(a.date));
-
-  return { props: { posts: visiblePosts } };
+  return { props: { posts: getAllPosts() } };
 }
 
 

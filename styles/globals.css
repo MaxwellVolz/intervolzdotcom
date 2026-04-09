@@ -138,3 +138,20 @@ p img {
 .kbd {
   @apply bg-zinc-800 text-white px-2 py-0.5 rounded font-mono text-sm;
 }
+/* v2 terminal window interactions */
+@keyframes v2-shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-6px) rotate(-0.3deg); }
+  20%, 40%, 60%, 80% { transform: translateX(6px) rotate(0.3deg); }
+}
+.v2-shake {
+  animation: v2-shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+@keyframes v2-fold {
+  from { transform: scaleY(1); opacity: 1; }
+  to { transform: scaleY(0); opacity: 0; }
+}
+.v2-fold {
+  animation: v2-fold 0.25s ease-in forwards;
+  transform-origin: top;
+}
