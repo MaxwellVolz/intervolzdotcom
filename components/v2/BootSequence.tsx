@@ -226,7 +226,7 @@ export default function BootSequence({ onComplete, skip }: Props) {
         ))}
         {showLogo && (
           <>
-            <pre className="v2-logo-jitter mt-6 text-emerald-300 text-[7px] sm:text-[10px] md:text-xs leading-tight !bg-transparent !p-0 !rounded-none">
+            <pre className="mt-6 text-emerald-300 text-[7px] sm:text-[10px] md:text-xs leading-tight !bg-transparent !p-0 !rounded-none">
               {INTERVOLZ_LOGO}
             </pre>
             <div className="mt-6 text-xs md:text-sm text-green-500 animate-pulse">
