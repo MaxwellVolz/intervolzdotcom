@@ -17,6 +17,7 @@ const BOOT_LINES: { delay: number; text: string }[] = [
 ];
 
 const GLITCH_CHARS = '!@#$%^&*<>?/\\|=+-_~░▒▓█';
+const NBSP = ' ';
 
 function GlitchLine({ text }: { text: string }) {
   const [display, setDisplay] = useState(text);
@@ -51,7 +52,20 @@ function GlitchLine({ text }: { text: string }) {
     return () => cancelAnimationFrame(raf);
   }, [text]);
 
-  return <>{display || '\u00A0'}</>;
+  if (!display) return <>{NBSP}</>;
+  return (
+    <>
+      {display.split('').map((ch, i) => (
+        <span
+          key={i}
+          data-grav
+          style={{ display: 'inline-block', willChange: 'transform' }}
+        >
+          {ch === ' ' ? NBSP : ch}
+        </span>
+      ))}
+    </>
+  );
 }
 
 type Props = { onComplete: () => void; skip: boolean };
@@ -112,7 +126,14 @@ export default function BootSequence({ onComplete, skip }: Props) {
       const seen = new Set<HTMLElement>();
       els.forEach((el) => {
         seen.add(el);
-        if (!cache.has(el)) {
+        const existing = cache.get(el);
+        if (existing) {
+          // Re-measure keeping the current displacement so scroll/layout
+          // shifts update the base without losing the spring state.
+          const r = el.getBoundingClientRect();
+          existing.baseX = r.left + r.width / 2 - existing.dx;
+          existing.baseY = r.top + r.height / 2 - existing.dy;
+        } else {
           el.style.transform = '';
           const r = el.getBoundingClientRect();
           cache.set(el, {
@@ -128,6 +149,11 @@ export default function BootSequence({ onComplete, skip }: Props) {
       }
     };
     recompute();
+    // Re-measure once webfonts settle — otherwise first paint caches
+    // fallback-font positions and everything looks offset.
+    if (typeof document !== 'undefined' && (document as any).fonts?.ready) {
+      (document as any).fonts.ready.then(() => recompute());
+    }
 
     const onMove = (e: MouseEvent) => {
       mouse.x = e.clientX;
@@ -143,8 +169,7 @@ export default function BootSequence({ onComplete, skip }: Props) {
       mouse.x = -99999;
       mouse.y = -99999;
     };
-    const onResize = () => {
-      cache.clear();
+    const onLayout = () => {
       recompute();
     };
 
@@ -175,8 +200,9 @@ export default function BootSequence({ onComplete, skip }: Props) {
     window.addEventListener('mousemove', onMove);
     window.addEventListener('touchmove', onTouch, { passive: true });
     window.addEventListener('mouseout', onLeave);
-    window.addEventListener('resize', onResize);
-    window.addEventListener('scroll', onResize, { passive: true });
+    window.addEventListener('resize', onLayout);
+    window.addEventListener('scroll', onLayout, { passive: true });
+    root.addEventListener('scroll', onLayout, { passive: true });
 
     return () => {
       cancelAnimationFrame(raf);
@@ -184,8 +210,9 @@ export default function BootSequence({ onComplete, skip }: Props) {
       window.removeEventListener('mousemove', onMove);
       window.removeEventListener('touchmove', onTouch);
       window.removeEventListener('mouseout', onLeave);
-      window.removeEventListener('resize', onResize);
-      window.removeEventListener('scroll', onResize);
+      window.removeEventListener('resize', onLayout);
+      window.removeEventListener('scroll', onLayout);
+      root.removeEventListener('scroll', onLayout);
     };
   }, []);
 
@@ -193,13 +220,11 @@ export default function BootSequence({ onComplete, skip }: Props) {
     const handler = () => finish();
     const t = setTimeout(() => {
       window.addEventListener('keydown', handler);
-      window.addEventListener('click', handler);
       window.addEventListener('touchstart', handler, { passive: true });
     }, 200);
     return () => {
       clearTimeout(t);
       window.removeEventListener('keydown', handler);
-      window.removeEventListener('click', handler);
       window.removeEventListener('touchstart', handler);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -220,16 +245,41 @@ export default function BootSequence({ onComplete, skip }: Props) {
           🤙 Welcome to InterVolz.com!
         </div>
         {lines.map((line, idx) => (
-          <div key={idx} data-grav className="whitespace-pre" style={{ willChange: 'transform' }}>
+          <div key={idx} className="whitespace-pre">
             <GlitchLine text={line} />
           </div>
         ))}
         {showLogo && (
           <>
-            <pre className="mt-6 text-emerald-300 text-[7px] sm:text-[10px] md:text-xs leading-tight !bg-transparent !p-0 !rounded-none">
-              {INTERVOLZ_LOGO}
-            </pre>
-            <div className="mt-6 text-xs md:text-sm text-green-500 animate-pulse">
+            <div
+              className="mt-6 text-emerald-300 leading-tight whitespace-pre font-mono"
+              style={{ fontSize: 'min(10px, calc((100vw - 3rem) / 59))' }}
+            >
+              {INTERVOLZ_LOGO.split('\n').map((line, li) => (
+                <div key={li}>
+                  {line.length === 0
+                    ? NBSP
+                    : line.split('').map((ch, ci) =>
+                        ch === ' ' ? (
+                          NBSP
+                        ) : (
+                          <span
+                            key={ci}
+                            data-grav
+                            style={{ display: 'inline-block', willChange: 'transform' }}
+                          >
+                            {ch}
+                          </span>
+                        )
+                      )}
+                </div>
+              ))}
+            </div>
+            <div
+              data-grav
+              className="mt-6 text-xs md:text-sm text-green-500 animate-pulse"
+              style={{ willChange: 'transform' }}
+            >
               press any key to continue...
             </div>
           </>
