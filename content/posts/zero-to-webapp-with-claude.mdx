@@ -1,0 +1,280 @@
+---
+title: Zero → WebApp with Claude
+date: 2026-06-15T10:00:00.000-07:00
+cover: ''
+technical: true
+draft: false
+work: false
+pinned: false
+in_progress: false
+tags: ai llm web automation react
+---
+
+So you want to build something with AI...here is how I do it.
+
+For most of my current projects I've stopped treating each app as a fresh question.
+
+Two reusable assets make AI app-building repeatable:
+
+1. **A second brain** - a durable place the project's state lives, so Claude never cold-starts.
+2. **A standard stack** - one deploy recipe I repeat, so "add auth" or "add payments" is a known move, not a science fair.
+
+This post walks the whole ladder: from `create-next-app` to a complete app with users, a database, auth, and Stripe subscriptions. The worked example is [antetu.com](https://antetu.com), a real app I shipped exactly this way. Claude Code does the typing, a Notion second brain holds the plan, and one command, `/next`, turns the roadmap into commits.
+
+---
+
+## The two reusable assets
+
+**The brain** is where decisions live so the chat window doesn't have to. When you build inside a chat, every decision is trapped in the transcript: scroll up to remember the data model, re-paste the file you changed three messages ago, re-explain the constraints you already explained. The context window ends up doing double duty as working memory _and_ project history, and it's bad at the second job. Move the history out to Notion and a fresh session is never a cold start.
+
+**The stack** is the part most "vibe coding" posts skip. The reason I can go from idea to deployed SaaS quickly isn't just a clever prompt, it's that I deploy the _same way every time_. Next.js on Vercel. Supabase for database, auth, and storage. Stripe for money. Because the shape is fixed, each new feature is muscle memory, and Claude has seen the pattern a thousand times in its training data, so it writes it well.
+
+Here's the ladder this whole post climbs:
+
+```
+create-next-app + git push       →  a live URL                 (minutes)
++ Supabase Postgres              →  data that persists
++ Supabase Auth                  →  real users, real sessions
++ Stripe Checkout + webhook      →  money, entitlements
+──────────────────────────────────────────────────────────────
+                                    a complete SaaS
+```
+
+Let me start with the brain, because it's what decides _which rung you climb next_.
+
+---
+
+## The brain: Notion as a second brain
+
+Every project starts as a duplicate of one Notion page: my **Project Starter Template**. It's the source of truth that outlives any single chat session, and the structure is deliberately boring. Boring is what survives.
+
+```
+📐 Project Starter Template
+├── Elevator pitch (quote)            ← what it is, who it's for, the key idea
+├── Repo · Stack · Target             ← one line, the orientation header
+│
+├── 📋 Live Tasks (database)          ← Status, Priority, Labels, Created At
+│
+├── 📝 Meeting Notes
+│   └── Init - MM.DD.YY               ← starting-state snapshot
+│
+├── 🛠 Engineering
+│   ├── Architecture                  ← the system as-built
+│   ├── Data Model
+│   └── Dev Workflow
+│
+├── 🎮 Product
+│   ├── Roadmap                       ← what to build next, and why
+│   └── Open Questions
+│
+├── 🤝 Process
+│   └── Claude Code Project Instructions
+│
+└── 🔗 Links · 📦 Archive
+```
+
+The pages map to the questions a coding agent actually asks. _How does this work?_ → Engineering. _What should I build?_ → Product. _How do I behave in this repo?_ → Process. The **Live Tasks** database is the heartbeat: it's where the roadmap becomes discrete, prioritized, _pickable_ units of work.
+
+For Antetu, the Roadmap was basically the ladder above. The first tasks were "scaffold + deploy," then "add Supabase + persist data," then "add auth," then "add Stripe subscriptions." Each rung was a handful of tasks in the database.
+
+> Grab the template here: **[Project Starter Template](https://app.notion.com/p/Project-Starter-Template-37686f15f06480df9b8df6625cf34f07)**. Duplicate it, or just ask Claude to copy the structure for you.
+
+---
+
+## The driver: `/next`
+
+`/next` is a Claude Code skill. You type it, and Claude does the whole "what should I work on" dance: find the project, read the tasks, rank them, propose one, and once you say go...branch, build, and check it off. The steps:
+
+**1. Locate the project's database.** Find the repo root, look it up in a registry keyed by absolute repo path. The current working directory decides which Notion board is in play, so there's no "which project did you mean?" and no risk of editing the wrong one.
+
+**2. Pull open tasks** from Notion, keeping only rows whose `Status` is incomplete.
+
+**3. Check project memory** - skim `MEMORY.md` for in-flight work or blockers that should bias the pick.
+
+**4. Rank and pick one**, opinionated on purpose:
+
+| Rank by                      | Why                                                                         |
+| ---------------------------- | --------------------------------------------------------------------------- |
+| **Priority** (High → Low)    | Obvious.                                                                    |
+| **In Progress over Todo**    | Finish what's started before opening a new front.                           |
+| **Labels**                   | If memory or recent git activity points at a subsystem, prefer tasks there. |
+| **Created At** (older first) | Tiebreaker. Don't let old work rot.                                         |
+
+It presents the top pick with a two-to-four-bullet plan of attack and asks: **Ready to start on this? (y/n)**
+
+**5. Start working.** On a yes, the loop closes itself, and notice the status flips in Notion _first_, so the board is honest the moment work begins:
+
+```
+Status → In Progress     (in Notion, before any code)
+git branch               (slugified from the task name)
+... implement, test ...
+Status → Done            (+ Completed At = today)
+git commit
+```
+
+Now the actual climb. Everything below is what `/next` built, one rung at a time.
+
+---
+
+## Rung 0: the simplest possible web app
+
+The goal here is not features. It's a **live URL with a deploy pipeline**, before any complexity exists.
+
+```bash
+pnpm create next-app@latest antetu      # App Router, TypeScript, Tailwind
+cd antetu && git init && gh repo create
+git push -u origin main
+```
+
+Then import the repo on Vercel once. That's the entire setup. After that, **every push to `main` deploys to production, and every push to a branch gets its own preview URL.** No CI to configure, no Dockerfile, no server to provision. Vercel detects Next.js and does the right thing.
+
+This matters more than it looks. Before I've written a line of real logic, I have:
+
+- a production URL I can send to someone,
+- a preview deploy on every branch (so `/next`'s per-task branches are each independently viewable),
+- and a deploy I never think about again.
+
+Antetu at this stage was a static marketing page and a questionnaire that stored answers in `localStorage` under `antetu_family_members`. **No database, no accounts, no backend.** People could use the core product anonymously. That anonymous tier never went away, it became the bottom of a three-tier model (anonymous → free signed-in → paid) as the app grew.
+
+---
+
+## Rung 1: persistence (Supabase Postgres)
+
+`localStorage` is a great Rung 0 cheat, but data trapped in one browser isn't a product. Time for a database.
+
+I add **Supabase** through the Vercel Marketplace, which provisions a managed Postgres instance and syncs the connection env vars into the project automatically. The schema lives in the repo as plain SQL migrations, checked in, reviewable, greppable:
+
+```
+supabase/migrations/
+  0001_init.sql          family_members, answers
+  0002_rls.sql           row-level security policies
+  ...
+  0010_trusted_contact_members.sql
+```
+
+Antetu's core tables: `family_members`, and `answers` as an **append-only audit log** (the latest row per `(family_member_id, question_id)` is the current value, you never lose history). Migrations are how the database stays a version-controlled artifact instead of a pile of clicks in a dashboard.
+
+The storage layer dispatches on auth state, which is what lets the anonymous tier coexist with the cloud one:
+
+```
+anonymous  → localStorage           (the Rung 0 path, still alive)
+signed in  → Supabase via API route (the cloud path)
+```
+
+When an anonymous user later signs in, a migration prompt offers to copy their local data into Postgres. The Rung 0 work didn't get thrown away, it got absorbed.
+
+---
+
+## Rung 2: real users (Supabase Auth)
+
+Persistence without identity just means _one_ shared blob. Accounts are the next rung, and because I'm already on Supabase, **auth lives next to the data**, no second vendor, no syncing user IDs between two systems.
+
+Antetu uses **Supabase Auth** with two sign-in methods:
+
+- **Google OAuth** for one-click sign-in,
+- **email magic link** for people who'd rather not use Google (Resend delivers the email).
+
+Sessions are server-rendered via `@supabase/ssr` and stored in **httpOnly cookies**, so the user is known on the very first paint (no flash of logged-out UI) and JavaScript can't read the session token (kills most XSS session theft). A signed-in user is just a row in Supabase's `auth.users` table, identified by a UUID, and _everything_ user-owned is scoped by that UUID.
+
+Here's the one opinionated call worth stealing. Antetu is **server-authoritative**: all database reads and writes for signed-in users go through Next.js API routes, not the browser Supabase client.
+
+```
+Browser  ──fetch──▶  /api/...  ──requireUser()──▶  service-role client  ──▶  Postgres
+                         │
+                         └─ scopes every query by user.id, in code
+```
+
+Each route verifies the caller (`requireUser()` / `requirePaidUser()`), then queries with the service-role client, scoping by `user.id` explicitly. Row-Level Security still pins every row to `auth.uid()` as a backstop, so the anon key shipped to the browser literally cannot read another user's rows. But the _primary_ enforcement is plain route code you can grep and test.
+
+The browser Supabase client is allowed exactly one job: auth operations (sign in, sign out, `onAuthStateChange`). It never touches `.from(...)`. That single rule is the whole security posture in one sentence.
+
+---
+
+## Rung 3: money (Stripe subscriptions)
+
+The top rung turns a free app into a business. Antetu sells an annual premium plan (trusted contacts, file uploads), and the billing flow is a loop, not a button:
+
+```
+/api/checkout   →  Stripe Checkout (subscription mode)  →  user pays
+                                                              │
+Stripe  ──webhook──▶  /api/webhooks/stripe  ──upsert──▶  subscriptions table
+                                                              │
+                                          useAuth().isPaid  ◀─┘
+```
+
+Three server routes do all the work:
+
+- **`POST /api/checkout`**: creates or reuses a Stripe customer for the user, opens a Checkout Session in `subscription` mode against a price ID, returns a `{ url }` to redirect to.
+- **`POST /api/webhooks/stripe`**: verifies the `stripe-signature` header against the webhook secret, then upserts subscription state. This is the source of truth, not the client.
+- **`POST /api/portal`**: hands back a Stripe Billing Portal URL so users manage their own plan.
+
+Entitlement is **derived, never stored as a flag a client could flip**:
+
+```ts
+isPaid =
+  status in ('active', 'trialing') &&
+  (current_period_end == null || current_period_end > now());
+```
+
+The root layout server-fetches the subscription row alongside the user, so a returning subscriber never watches their paid features flash locked before the app catches up. And the webhook is hardened the way real money demands: signature-verified, deduplicated via a `stripe_webhook_events` table, and resilient to out-of-order delivery (it reconciles from the live `customer.subscription.*` events, not just the checkout payload).
+
+Local development uses the Stripe CLI to forward webhooks to localhost:
+
+```bash
+stripe listen --forward-to localhost:3000/api/webhooks/stripe
+# test card: 4242 4242 4242 4242
+```
+
+---
+
+## The thing that bites everyone: secrets and env vars
+
+Across all four rungs, one discipline keeps the whole thing safe: **secrets never touch the repo.** `.env.local` is gitignored; production secrets live in Vercel's environment variables, scoped per environment.
+
+| Var                                         | Scope                   | Notes                                                         |
+| ------------------------------------------- | ----------------------- | ------------------------------------------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL` / `..._ANON_KEY` | public                  | Safe to ship. RLS is what makes that OK.                      |
+| `SUPABASE_SERVICE_ROLE_KEY`                 | **secret, server-only** | Bypasses RLS. Imported by exactly one admin module.           |
+| `STRIPE_SECRET_KEY`                         | **secret**              | `sk_test_...` for preview/local, `sk_live_...` for prod.      |
+| `STRIPE_WEBHOOK_SECRET`                     | **secret**              | Different value per environment (local CLI vs prod endpoint). |
+
+The service-role key bypassing RLS is the scariest object in the system, so it's grep-auditable: it appears in one file, imported only by `/api/**` routes. If a secret ever lands in git by accident, rotate it immediately. Git history is forever.
+
+---
+
+## The standard stack, in one table
+
+This is the recipe I now reach for by default.
+
+| Concern      | Choice                            | Why                                                               |
+| ------------ | --------------------------------- | ----------------------------------------------------------------- |
+| Framework    | Next.js App Router (React 19, TS) | Vercel-native, huge training corpus, server + client in one repo. |
+| Hosting      | Vercel                            | Zero-config deploys, a preview URL per branch, env management.    |
+| Database     | Supabase Postgres                 | Managed, migrations in-repo, RLS as defense-in-depth.             |
+| Auth         | Supabase Auth                     | Lives next to the DB; Google + magic link out of the box.         |
+| File storage | Supabase Storage                  | Private buckets, signed URLs, same auth context as the DB.        |
+| Billing      | Stripe Checkout + webhooks        | Subscriptions, Customer Portal, server-verified entitlement.      |
+| Email        | Resend                            | Magic links and transactional mail.                               |
+| Data access  | Server-authoritative API routes   | Auth logic in greppable, testable code; RLS underneath.           |
+
+---
+
+## Why this works
+
+The real payoff shows up on the _second_ project. The stack is identical, so Claude is never improvising architecture and I'm never reviewing an unfamiliar shape. The brain means an app I haven't opened in a month is one `/next` away from productive. The two assets compound: the more I reuse them, the cheaper each rung gets.
+
+And the documentation writes itself. By the time the roadmap is empty there's a deployed app _and_ a Notion page that already describes it, because building the thing and maintaining the notes were the same act. The Done tasks are a changelog. The Architecture page is current by construction. I never sat down to "write docs," they fell out of the loop.
+
+---
+
+## Try it
+
+1. Duplicate the **[Project Starter Template](https://app.notion.com/p/Project-Starter-Template-37686f15f06480df9b8df6625cf34f07)** and write the elevator pitch + a roadmap that looks like the ladder above.
+2. `pnpm create next-app`, push, import once on Vercel. You have a live URL.
+3. Add Supabase from the Vercel Marketplace; commit your first migration.
+4. Wire Supabase Auth, then Stripe Checkout + webhook, one `/next` per rung.
+5. Connect the Notion MCP server, drop your repo path into `~/.claude/config/notion-task-databases.json`, and let `/next` drive.
+
+The model was never the bottleneck. The memory was, and the stack was. Give Claude a brain and a recipe, and the blank repo stops being scary. It's just the bottom of a ladder you've climbed before.
+
+Thanks for reading. More soon.
