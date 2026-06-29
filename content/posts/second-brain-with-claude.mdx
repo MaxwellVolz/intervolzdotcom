@@ -1,0 +1,122 @@
+---
+title: A Second Brain for Building with Claude
+date: 2026-06-15T10:00:00.000-07:00
+cover: ''
+technical: true
+draft: false
+work: false
+pinned: false
+in_progress: false
+tags: ai llm automation
+---
+
+So you want to build something with AI...here is how I do it.
+
+For most of my current projects I've stopped treating each app as a fresh question.
+
+Two reusable assets make AI app-building repeatable:
+
+1. **A second brain** - a durable place the project's state lives, so Claude never cold-starts.
+2. **A standard stack** - one deploy recipe I repeat, so "add auth" or "add payments" is a known move, not a science fair.
+
+This post is about the first asset: the **brain**. It's what decides _which rung you climb next_ and keeps a fresh Claude session from ever starting cold. [Part two: Zero → WebApp with Claude](/the-standard-stack-with-claude/) covers the second asset, the standard stack, and walks the whole ladder from `create-next-app` to a deployed SaaS with users, a database, auth, and Stripe subscriptions.
+
+The worked example through both posts is [antetu.com](https://antetu.com), a real app I shipped exactly this way. Claude Code does the typing, a Notion second brain holds the plan, and one command, `/next`, turns the roadmap into commits.
+
+---
+
+## Why a second brain
+
+**The brain** is where decisions live so the chat window doesn't have to. When you build inside a chat, every decision is trapped in the transcript: scroll up to remember the data model, re-paste the file you changed three messages ago, re-explain the constraints you already explained. The context window ends up doing double duty as working memory _and_ project history, and it's bad at the second job. Move the history out to Notion and a fresh session is never a cold start.
+
+The other asset, the standard stack, is the part most "vibe coding" posts skip: deploying the _same way every time_ so each new feature is muscle memory. That's [the next post](/the-standard-stack-with-claude/). This one is the brain, because it's what decides what the stack builds next.
+
+---
+
+## The brain: Notion as a second brain
+
+Every project starts as a duplicate of one Notion page: my **Project Starter Template**. It's the source of truth that outlives any single chat session, and the structure is deliberately boring. Boring is what survives.
+
+```
+📐 Project Starter Template
+├── Elevator pitch (quote)            ← what it is, who it's for, the key idea
+├── Repo · Stack · Target             ← one line, the orientation header
+│
+├── 📋 Live Tasks (database)          ← Status, Priority, Labels, Created At
+│
+├── 📝 Meeting Notes
+│   └── Init - MM.DD.YY               ← starting-state snapshot
+│
+├── 🛠 Engineering
+│   ├── Architecture                  ← the system as-built
+│   ├── Data Model
+│   └── Dev Workflow
+│
+├── 🎮 Product
+│   ├── Roadmap                       ← what to build next, and why
+│   └── Open Questions
+│
+├── 🤝 Process
+│   └── Claude Code Project Instructions
+│
+└── 🔗 Links · 📦 Archive
+```
+
+The pages map to the questions a coding agent actually asks. _How does this work?_ → Engineering. _What should I build?_ → Product. _How do I behave in this repo?_ → Process. The **Live Tasks** database is the heartbeat: it's where the roadmap becomes discrete, prioritized, _pickable_ units of work.
+
+For Antetu, the Roadmap was basically a ladder: "scaffold + deploy," then "add Supabase + persist data," then "add auth," then "add Stripe subscriptions." Each rung was a handful of tasks in the database. (That ladder is exactly what [part two](/the-standard-stack-with-claude/) climbs.)
+
+> Grab the template here: **[Project Starter Template](https://app.notion.com/p/Project-Starter-Template-37686f15f06480df9b8df6625cf34f07)**. Duplicate it, or just ask Claude to copy the structure for you.
+
+---
+
+## The driver: `/next`
+
+`/next` is a Claude Code skill. You type it, and Claude does the whole "what should I work on" dance: find the project, read the tasks, rank them, propose one, and once you say go...branch, build, and check it off. The steps:
+
+**1. Locate the project's database.** Find the repo root, look it up in a registry keyed by absolute repo path. The current working directory decides which Notion board is in play, so there's no "which project did you mean?" and no risk of editing the wrong one.
+
+**2. Pull open tasks** from Notion, keeping only rows whose `Status` is incomplete.
+
+**3. Check project memory** - skim `MEMORY.md` for in-flight work or blockers that should bias the pick.
+
+**4. Rank and pick one**, opinionated on purpose:
+
+| Rank by                      | Why                                                                         |
+| ---------------------------- | --------------------------------------------------------------------------- |
+| **Priority** (High → Low)    | Obvious.                                                                    |
+| **In Progress over Todo**    | Finish what's started before opening a new front.                           |
+| **Labels**                   | If memory or recent git activity points at a subsystem, prefer tasks there. |
+| **Created At** (older first) | Tiebreaker. Don't let old work rot.                                         |
+
+It presents the top pick with a two-to-four-bullet plan of attack and asks: **Ready to start on this? (y/n)**
+
+**5. Start working.** On a yes, the loop closes itself, and notice the status flips in Notion _first_, so the board is honest the moment work begins:
+
+```
+Status → In Progress     (in Notion, before any code)
+git branch               (slugified from the task name)
+... implement, test ...
+Status → Done            (+ Completed At = today)
+git commit
+```
+
+The board and the repo move together. The Done tasks become a changelog; the Architecture page stays current by construction. You never sit down to "write docs," they fall out of the loop.
+
+---
+
+## You've got a brain and a driver
+
+That's the whole first asset. A Notion page that outlives any chat, a Live Tasks database that turns a roadmap into pickable units, and a `/next` skill that reads the board, picks the next thing, and closes the loop in Git and Notion at once.
+
+But a driver needs something to build _against_. That's the second asset, the standard stack, fixed the same way every time so Claude is never improvising architecture. [Part two: Zero → WebApp with Claude](/the-standard-stack-with-claude/) walks the whole ladder, from `create-next-app` to a deployed SaaS with users, auth, and Stripe.
+
+## Try it
+
+1. Duplicate the **[Project Starter Template](https://app.notion.com/p/Project-Starter-Template-37686f15f06480df9b8df6625cf34f07)** and write the elevator pitch + a roadmap that looks like a ladder.
+2. Connect the Notion MCP server, drop your repo path into `~/.claude/config/notion-task-databases.json`, and let `/next` drive.
+3. Then climb the stack - [part two](/the-standard-stack-with-claude/) is the recipe.
+
+The model was never the bottleneck. The memory was. Give Claude a brain, and the blank repo stops being scary.
+
+Thanks for reading. Part two is [here](/the-standard-stack-with-claude/).
