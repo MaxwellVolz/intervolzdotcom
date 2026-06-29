@@ -31,7 +31,7 @@ export default function TerminalWindow({ title = 'mvolz@intervolz: ~/', children
     <>
       {fullscreen && <div className="fixed inset-0 bg-black/70 z-30" onClick={handleFullscreen} />}
       <div className={wrapperClass}>
-        <div className="flex items-center gap-2 px-4 py-2 bg-zinc-900 border-b border-zinc-800 select-none">
+        <div className="flex items-center gap-2 px-3 py-2 sm:px-4 bg-zinc-900 border-b border-zinc-800 select-none">
           <button
             type="button"
             onClick={handleClose}
@@ -53,7 +53,7 @@ export default function TerminalWindow({ title = 'mvolz@intervolz: ~/', children
           <span className="ml-3 text-xs font-mono text-zinc-400">{title}</span>
         </div>
         {!minimized && (
-          <div className={`p-6 md:p-8 font-mono text-sm text-zinc-200 ${fullscreen ? 'overflow-auto flex-1' : ''}`}>
+          <div className={`p-4 sm:p-6 md:p-8 font-mono text-sm text-zinc-200 ${fullscreen ? 'overflow-auto flex-1' : ''}`}>
             {children}
           </div>
         )}

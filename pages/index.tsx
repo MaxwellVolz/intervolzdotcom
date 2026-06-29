@@ -45,16 +45,61 @@ const FUN_ZONE = [
 ];
 
 function fmtDate(iso: string) {
-  if (!iso) return '          ';
-  return iso.slice(0, 10);
+  if (!iso) return '';
+  return iso.slice(5, 10); // MM-DD, drop the year
 }
 
-function fmtPerms(p: PostMeta) {
-  // playful unix-style perm string
-  if (p.work) return 'drwxr-xr-x';
-  if (p.technical) return '-rwxr--r--';
-  if (p.in_progress) return '-rw-rw-rw-';
-  return '-rw-r--r--';
+const MONTHS = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+];
+
+function fmtDateFull(iso: string) {
+  if (!iso) return '';
+  // parse YYYY-MM-DD manually to avoid timezone drift
+  const [y, m, d] = iso.slice(0, 10).split('-').map(Number);
+  if (!y || !m || !d) return iso;
+  return `${MONTHS[m - 1]} ${d}, ${y}`;
+}
+
+// Subtle per-category tint, anchored on the emerald brand. Related tags
+// share a hue so the palette reads intentional rather than rainbow. Full
+// literal class strings so Tailwind's JIT picks them up.
+const TAG_COLORS: Record<string, string> = {
+  // frontend — emerald (brand) + cool accents
+  web: 'text-emerald-400/80',
+  react: 'text-cyan-400/80',
+  threeJS: 'text-sky-400/80',
+  dataviz: 'text-sky-400/80',
+  javascript: 'text-yellow-400/80',
+  // backend / languages
+  python: 'text-amber-400/80',
+  fastapi: 'text-teal-400/80',
+  backend: 'text-teal-400/80',
+  rust: 'text-orange-400/80',
+  // ai
+  ai: 'text-violet-400/80',
+  llm: 'text-violet-400/80',
+  ml: 'text-violet-400/80',
+  // 3d / creative
+  blender: 'text-orange-400/80',
+  art: 'text-rose-400/80',
+  unity: 'text-zinc-300/80',
+  // automation / devops
+  automation: 'text-teal-400/80',
+  n8n: 'text-pink-400/80',
+  docker: 'text-blue-400/80',
+  windows: 'text-blue-400/80',
+  'CI/CD': 'text-indigo-400/80',
+  // writing / meta
+  howto: 'text-lime-400/80',
+  blog: 'text-lime-400/80',
+  rant: 'text-red-400/80',
+  '@meta': 'text-fuchsia-400/80',
+};
+
+function tagColor(tag: string) {
+  return TAG_COLORS[tag] ?? 'text-zinc-500';
 }
 
 type GhProps = { contributions: number };
@@ -90,13 +135,13 @@ export default function V2Home({ posts, gh }: { posts: PostMeta[]; gh: GhProps }
       {/* SSR/no-JS: real content underneath, indexable. Boot overlay only after mount. */}
       {mounted && !booted && <BootSequence onComplete={handleBootDone} skip={skip} />}
 
-      <div className="max-w-4xl mx-auto px-4 py-10">
+      <div className="max-w-4xl mx-auto px-2 py-6 sm:px-4 sm:py-10">
         <TerminalWindow title="mvolz@intervolz: ~/">
           <div className="space-y-2">
             <p className="text-emerald-400">$ whoami</p>
-            <p className="text-zinc-300">maxwell — engineer / artist. san francisco, CA.</p>
+            <p className="text-zinc-300">maxwell - engineer / artist. san francisco, CA.</p>
             <p className="text-emerald-400 mt-4">$ cat ~/status</p>
-            <p className="text-zinc-300">36 · 6&apos;4&quot; · 210 lbs · still bald</p>
+            <p className="text-zinc-300">36 · 6&apos;4&quot; · 225 lbs · still bald</p>
             <p className="text-emerald-400 mt-4">$ gh stats --user maxwellvolz --since 1y</p>
             <p className="text-zinc-300">
               <span className="text-emerald-300">{gh.contributions.toLocaleString()}</span> contributions ·{' '}
@@ -116,7 +161,7 @@ export default function V2Home({ posts, gh }: { posts: PostMeta[]; gh: GhProps }
           <TerminalWindow title="mvolz@intervolz: ~/fun-zone">
             <p className="text-emerald-400 mb-1">$ ls ~/fun-zone/ --preview</p>
             <p className="text-zinc-500 text-xs mb-4">
-              {FUN_ZONE.length} interactive demos — click to launch
+              {FUN_ZONE.length} interactive demos - click to launch
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
               {FUN_ZONE.map((item) => {
@@ -163,19 +208,30 @@ export default function V2Home({ posts, gh }: { posts: PostMeta[]; gh: GhProps }
                 <p className="text-zinc-500 text-xs mb-2">total {items.length}</p>
                 <ul className="space-y-1">
                   {items.map((p) => (
-                    <li key={p.slug} className="grid grid-cols-[auto_auto_1fr_auto] gap-x-4 items-baseline">
-                      <span className="text-zinc-500">{fmtPerms(p)}</span>
-                      <span className="text-zinc-500">{fmtDate(p.date)}</span>
-                      <Link
-                        href={`/${p.slug}`}
-                        className="text-emerald-300 hover:text-emerald-200 hover:bg-emerald-500/10 truncate"
-                      >
-                        {p.title}
-                      </Link>
-                      {p.tags && p.tags.length > 0 && (
-                        <span className="text-zinc-600 text-xs">
-                          {p.tags.map((t) => `#${t}`).join(' ')}
+                    <li
+                      key={p.slug}
+                      className="flex flex-col gap-y-1 sm:flex-row sm:items-baseline sm:gap-x-4"
+                    >
+                      <div className="flex items-baseline gap-x-3 sm:contents">
+                        <span
+                          className="shrink-0 text-zinc-500"
+                          title={fmtDateFull(p.date)}
+                        >
+                          {fmtDate(p.date)}
                         </span>
+                        <Link
+                          href={`/${p.slug}`}
+                          className="min-w-0 text-emerald-300 hover:bg-emerald-500/10 hover:text-emerald-200 sm:flex-1"
+                        >
+                          {p.title}
+                        </Link>
+                      </div>
+                      {p.tags && p.tags.length > 0 && (
+                        <div className="flex flex-wrap justify-end gap-x-3 gap-y-1 text-xs sm:flex-none">
+                          {p.tags.map((t) => (
+                            <span key={t} className={tagColor(t)}>#{t}</span>
+                          ))}
+                        </div>
                       )}
                     </li>
                   ))}
@@ -186,7 +242,7 @@ export default function V2Home({ posts, gh }: { posts: PostMeta[]; gh: GhProps }
         })}
 
         <div className="mt-8 text-center text-xs text-zinc-600 font-mono">
-          <p>intervolz v2.0 — exploring · <Link href="/old" className="underline hover:text-emerald-400">return to /old</Link></p>
+          <p>intervolz v2.0 - exploring · <Link href="/old" className="underline hover:text-emerald-400">return to /old</Link></p>
         </div>
       </div>
     </div>
