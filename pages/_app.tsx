@@ -1,5 +1,6 @@
 import type { AppProps } from 'next/app';
 import { useEffect, useState } from 'react';
+import { Analytics } from '@vercel/analytics/next';
 import '../styles/globals.css';
 import Head from 'next/head';
 
@@ -30,6 +31,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta httpEquiv="Expires" content="0" />
       </Head>
       <Component {...pageProps} />
+      <Analytics />
     </>
   );
 }
