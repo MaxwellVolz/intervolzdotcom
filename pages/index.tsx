@@ -29,19 +29,35 @@ type Section = {
 };
 
 const SECTIONS: Section[] = [
-  { key: 'now',       cmd: '> ls ~/now/',         filter: (p) => !!p.in_progress },
-  { key: 'shipped',   cmd: '> ls ~/shipped/',     filter: (p) => !!p.work },
-  { key: 'technical', cmd: '> ls ~/technical/',   filter: (p) => !!p.technical },
-  { key: 'articles',  cmd: '> ls ~/articles/',    filter: (p) => !p.in_progress && !p.work && !p.technical },
+  { key: 'now', cmd: '> ls ~/now/', filter: (p) => !!p.in_progress },
+  { key: 'shipped', cmd: '> ls ~/shipped/', filter: (p) => !!p.work },
+  { key: 'technical', cmd: '> ls ~/technical/', filter: (p) => !!p.technical },
+  {
+    key: 'articles',
+    cmd: '> ls ~/articles/',
+    filter: (p) => !p.in_progress && !p.work && !p.technical,
+  },
 ];
 
 const FUN_ZONE = [
-  { url: 'https://waynemo.com', preview: '/games/waynemo_preview.png', label: 'Wayne Mo' },
-  { url: '/sollewitt',          preview: '/games/sol_preview.png',      label: 'Sol LeWitt' },
-  { url: '/axisrecall',         preview: '/games/axisrecall_preview.png', label: 'Axis Recall' },
-  { url: 'https://wassuh.com',  preview: '/games/wassuh_preview.png',   label: 'Coit Cache' },
-  { url: '/room',               preview: '/games/room_preview.png',     label: 'Room' },
-  { url: '/earth',              preview: '/games/earth_preview.png',    label: 'Earth' },
+  {
+    url: 'https://waynemo.com',
+    preview: '/games/waynemo_preview.png',
+    label: 'Wayne Mo',
+  },
+  { url: '/sollewitt', preview: '/games/sol_preview.png', label: 'Sol LeWitt' },
+  {
+    url: '/axisrecall',
+    preview: '/games/axisrecall_preview.png',
+    label: 'Axis Recall',
+  },
+  {
+    url: 'https://wassuh.com',
+    preview: '/games/wassuh_preview.png',
+    label: 'Coit Cache',
+  },
+  { url: '/room', preview: '/games/room_preview.png', label: 'Room' },
+  { url: '/earth', preview: '/games/earth_preview.png', label: 'Earth' },
 ];
 
 function fmtDate(iso: string) {
@@ -50,8 +66,18 @@ function fmtDate(iso: string) {
 }
 
 const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
 ];
 
 function fmtDateFull(iso: string) {
@@ -105,14 +131,22 @@ function tagColor(tag: string) {
 
 type GhProps = { contributions: number };
 
-export default function V2Home({ posts, gh }: { posts: PostMeta[]; gh: GhProps }) {
+export default function V2Home({
+  posts,
+  gh,
+}: {
+  posts: PostMeta[];
+  gh: GhProps;
+}) {
   const [booted, setBooted] = useState(false);
   const [skip, setSkip] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const reduced = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches;
     if (reduced) {
       setSkip(true);
       setBooted(true);
@@ -131,21 +165,80 @@ export default function V2Home({ posts, gh }: { posts: PostMeta[]; gh: GhProps }
     setBooted(true);
   };
 
+  // ~/now renders above ~/fun-zone and the rest below it, so current work is
+  // the first thing under the header. Extracted rather than duplicated so the
+  // two call sites cannot drift.
+  const renderSection = (section: Section) => {
+    const items = posts.filter(section.filter);
+    if (items.length === 0) return null;
+    return (
+      <div className="mt-8" key={section.key}>
+        <TerminalWindow title={`mvolz@intervolz: ~/${section.key}`}>
+          <p className="text-emerald-400 mb-3">{section.cmd}</p>
+          <p className="text-zinc-500 text-xs mb-2">total {items.length}</p>
+          <ul className="space-y-1">
+            {items.map((p) => (
+              <li
+                key={p.slug}
+                className="flex flex-col gap-y-1 sm:flex-row sm:items-baseline sm:gap-x-4"
+              >
+                <div className="flex items-baseline gap-x-3 sm:contents">
+                  <span
+                    className="shrink-0 text-zinc-500"
+                    title={fmtDateFull(p.date)}
+                  >
+                    {fmtDate(p.date)}
+                  </span>
+                  <Link
+                    href={`/${p.slug}`}
+                    className="min-w-0 text-emerald-300 hover:bg-emerald-500/10 hover:text-emerald-200 sm:flex-1"
+                  >
+                    {p.title}
+                  </Link>
+                </div>
+                {p.tags && p.tags.length > 0 && (
+                  <div className="flex flex-wrap justify-end gap-x-3 gap-y-1 text-xs sm:flex-none">
+                    {p.tags.map((t) => (
+                      <span key={t} className={tagColor(t)}>
+                        #{t}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
+        </TerminalWindow>
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-200">
       {/* SSR/no-JS: real content underneath, indexable. Boot overlay only after mount. */}
-      {mounted && !booted && <BootSequence onComplete={handleBootDone} skip={skip} />}
+      {mounted && !booted && (
+        <BootSequence onComplete={handleBootDone} skip={skip} />
+      )}
 
       <div className="max-w-4xl mx-auto px-2 py-6 sm:px-4 sm:py-10">
         <TerminalWindow title="mvolz@intervolz: ~/">
           <div className="space-y-2">
             <p className="text-emerald-400">$ whoami</p>
-            <p className="text-zinc-300">maxwell - engineer / artist. san francisco, CA.</p>
-            <p className="text-emerald-400 mt-4">$ cat ~/status</p>
-            <p className="text-zinc-300">36 · 6&apos;4&quot; · 225 lbs · still bald</p>
-            <p className="text-emerald-400 mt-4">$ gh stats --user maxwellvolz --since 1y</p>
             <p className="text-zinc-300">
-              <span className="text-emerald-300">{gh.contributions.toLocaleString()}</span> contributions ·{' '}
+              maxwell - engineer / artist. san francisco, CA.
+            </p>
+            <p className="text-emerald-400 mt-4">$ cat ~/status</p>
+            <p className="text-zinc-300">
+              36 · 6&apos;4&quot; · 225 lbs · still bald
+            </p>
+            <p className="text-emerald-400 mt-4">
+              $ gh stats --user maxwellvolz --since 1y
+            </p>
+            <p className="text-zinc-300">
+              <span className="text-emerald-300">
+                {gh.contributions.toLocaleString()}
+              </span>{' '}
+              contributions ·{' '}
               <a
                 href="https://github.com/MaxwellVolz"
                 target="_blank"
@@ -158,6 +251,8 @@ export default function V2Home({ posts, gh }: { posts: PostMeta[]; gh: GhProps }
           </div>
         </TerminalWindow>
 
+        {SECTIONS.filter((s) => s.key === 'now').map(renderSection)}
+
         <div className="mt-8">
           <TerminalWindow title="mvolz@intervolz: ~/fun-zone">
             <p className="text-emerald-400 mb-1">$ ls ~/fun-zone/ --preview</p>
@@ -169,7 +264,11 @@ export default function V2Home({ posts, gh }: { posts: PostMeta[]; gh: GhProps }
                 const isExternal = item.url.startsWith('http');
                 const LinkComponent: any = isExternal ? 'a' : Link;
                 const linkProps = isExternal
-                  ? { href: item.url, target: '_blank', rel: 'noopener noreferrer' }
+                  ? {
+                      href: item.url,
+                      target: '_blank',
+                      rel: 'noopener noreferrer',
+                    }
                   : { href: item.url };
 
                 return (
@@ -189,7 +288,9 @@ export default function V2Home({ posts, gh }: { posts: PostMeta[]; gh: GhProps }
                       <span className="text-emerald-400">▸</span>
                       <span className="text-emerald-300 group-hover:text-emerald-200 truncate">
                         {item.label}
-                        {isExternal && <span className="text-zinc-500 ml-1">↗</span>}
+                        {isExternal && (
+                          <span className="text-zinc-500 ml-1">↗</span>
+                        )}
                       </span>
                     </div>
                   </LinkComponent>
@@ -199,51 +300,15 @@ export default function V2Home({ posts, gh }: { posts: PostMeta[]; gh: GhProps }
           </TerminalWindow>
         </div>
 
-        {SECTIONS.map((section) => {
-          const items = posts.filter(section.filter);
-          if (items.length === 0) return null;
-          return (
-            <div className="mt-8" key={section.key}>
-              <TerminalWindow title={`mvolz@intervolz: ~/${section.key}`}>
-                <p className="text-emerald-400 mb-3">{section.cmd}</p>
-                <p className="text-zinc-500 text-xs mb-2">total {items.length}</p>
-                <ul className="space-y-1">
-                  {items.map((p) => (
-                    <li
-                      key={p.slug}
-                      className="flex flex-col gap-y-1 sm:flex-row sm:items-baseline sm:gap-x-4"
-                    >
-                      <div className="flex items-baseline gap-x-3 sm:contents">
-                        <span
-                          className="shrink-0 text-zinc-500"
-                          title={fmtDateFull(p.date)}
-                        >
-                          {fmtDate(p.date)}
-                        </span>
-                        <Link
-                          href={`/${p.slug}`}
-                          className="min-w-0 text-emerald-300 hover:bg-emerald-500/10 hover:text-emerald-200 sm:flex-1"
-                        >
-                          {p.title}
-                        </Link>
-                      </div>
-                      {p.tags && p.tags.length > 0 && (
-                        <div className="flex flex-wrap justify-end gap-x-3 gap-y-1 text-xs sm:flex-none">
-                          {p.tags.map((t) => (
-                            <span key={t} className={tagColor(t)}>#{t}</span>
-                          ))}
-                        </div>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </TerminalWindow>
-            </div>
-          );
-        })}
+        {SECTIONS.filter((s) => s.key !== 'now').map(renderSection)}
 
         <div className="mt-8 text-center text-xs text-zinc-600 font-mono">
-          <p>intervolz v2.0 - exploring · <Link href="/old" className="underline hover:text-emerald-400">return to /old</Link></p>
+          <p>
+            intervolz v2.0 - exploring ·{' '}
+            <Link href="/old" className="underline hover:text-emerald-400">
+              return to /old
+            </Link>
+          </p>
         </div>
       </div>
     </div>
