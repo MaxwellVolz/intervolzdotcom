@@ -46,17 +46,17 @@ tags: ai llm web automation react
 
 What each one **actually does** (`lib/getPosts.ts`, `pages/index.tsx`):
 
-| Field         | Effect                                                                                                                                            |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `title`       | Heading and `<title>`. Not repeated as an `#` in the body.                                                                                        |
-| `date`        | ISO 8601 **with offset** (`-07:00` PDT / `-08:00` PST). Sorts within a bucket.                                                                    |
-| `cover`       | Optional image for the index. `''` is normal.                                                                                                     |
-| `technical`   | Buckets the post under `> ls ~/technical/`, **and sorts it _below_ every non-technical post** regardless of date (see the note under this table). |
-| `work`        | Buckets under `> ls ~/shipped/`.                                                                                                                  |
-| `in_progress` | Buckets under `> ls ~/now/`. Takes precedence over `work` and `technical`.                                                                        |
-| `draft`       | Hides from the homepage — **but the page still builds and is reachable at its URL**. This is how you stage an unpublished post on a deploy.       |
-| `pinned`      | **Inert.** Present in the Decap form and read by nothing. Leave it `false`.                                                                       |
-| `tags`        | Space-separated string.                                                                                                                           |
+| Field         | Effect                                                                                                                                      |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `title`       | Heading and `<title>`. Not repeated as an `#` in the body.                                                                                  |
+| `date`        | ISO 8601 **with offset** (`-07:00` PDT / `-08:00` PST). Sorts within a bucket.                                                              |
+| `cover`       | Optional image for the index. `''` is normal.                                                                                               |
+| `technical`   | Buckets the post under `> ls ~/technical/`. No effect on ordering.                                                                          |
+| `work`        | Buckets under `> ls ~/shipped/`.                                                                                                            |
+| `in_progress` | Buckets under `> ls ~/now/`. Takes precedence over `work` and `technical`.                                                                  |
+| `draft`       | Hides from the homepage — **but the page still builds and is reachable at its URL**. This is how you stage an unpublished post on a deploy. |
+| `pinned`      | **Inert.** Present in the Decap form and read by nothing. Leave it `false`.                                                                 |
+| `tags`        | Space-separated string.                                                                                                                     |
 
 **Bucket precedence.** `getAllPosts()` does not assign buckets — `pages/index.tsx`
 does, as a cascade: a post lands in the first of `~/now` (`in_progress`),
@@ -65,17 +65,15 @@ else. So a live build write-up can honestly carry `technical: true` and still fi
 under `~/now`. Everything, including all of the above, is also listed in `~/all`,
 which is the full archive and is paged.
 
-**The `technical` sort runs backwards.** The comparator in `lib/getPosts.ts` is:
+**Ordering is date, newest first, in every section.** `getAllPosts()` sorts once by
+`date` descending and each section filters that array, so `date` is the only thing
+that decides position. Flags decide _which_ section a post appears in; they never
+decide where it sits inside one.
 
-```ts
-(b.technical ? -1 : 0) - (a.technical ? -1 : 0) || b.date.localeCompare(a.date);
-```
-
-For a technical `a` and a non-technical `b` that evaluates to `+1`, which sorts `a`
-**after** `b`. Technical posts therefore land at the _bottom_ of any list they share
-with non-technical ones, no matter how new they are. This reads like an inverted
-comparator rather than an intent, but it is the shipped behaviour — verify before
-relying on either direction.
+Until 2026-08-11 the comparator had a `technical` term ahead of the date, and it ran
+backwards — it sorted technical posts to the _bottom_ of any list they shared with
+non-technical ones, regardless of date. It was removed rather than corrected, because
+no section wants a secondary key once the buckets are exclusive.
 
 ### Tags
 

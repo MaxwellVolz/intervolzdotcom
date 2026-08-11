@@ -41,11 +41,15 @@ export function getAllPosts(): PostMeta[] {
     };
   });
 
+  // Newest first, everywhere. Every homepage section filters this one array, so
+  // one date sort here gives all of them the same order.
+  //
+  // There used to be a `technical` term ahead of the date, and it ran backwards:
+  // `(b.technical ? -1 : 0) - (a.technical ? -1 : 0)` returns +1 for a technical
+  // `a`, which sorted technical posts to the BOTTOM of any list they shared with
+  // non-technical ones, regardless of date. `technical` now only decides which
+  // bucket a post lands in, not where it sits inside one.
   return posts
     .filter((post) => !post.draft)
-    .sort(
-      (a, b) =>
-        (b.technical ? -1 : 0) - (a.technical ? -1 : 0) ||
-        b.date.localeCompare(a.date),
-    );
+    .sort((a, b) => b.date.localeCompare(a.date));
 }

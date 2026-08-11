@@ -38,9 +38,9 @@ npm run format
 - **Frontmatter fields**:
   - `title`, `date`, `cover` (optional image)
   - `in_progress` (current work), `work` (shipped projects), `technical` (build
-    write-ups; note the comparator in `lib/getPosts.ts` sorts these _below_
-    non-technical posts, not above), `draft` (hidden from the homepage, still
-    builds at its URL), `pinned` (inert — read by nothing)
+    write-ups), `draft` (hidden from the homepage, still builds at its URL),
+    `pinned` (inert — read by nothing). Flags pick the section only; every
+    section is ordered by `date`, newest first.
   - `tags` (space-separated or array)
 - **Media**: Uploaded to `public/uploads`
 

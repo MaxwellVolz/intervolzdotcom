@@ -178,9 +178,9 @@ export default function V2Home({
     setBooted(true);
   };
 
-  // ~/all is the whole archive, newest first. The curated buckets above use the
-  // technical-first order getAllPosts applies; an archive reads by date.
-  const allPosts = [...posts].sort((a, b) => b.date.localeCompare(a.date));
+  // ~/all is the whole archive. getAllPosts already returns newest first, which
+  // is the order every section wants, so this is not re-sorted here.
+  const allPosts = posts;
   const [allShown, setAllShown] = useState(ALL_PAGE_SIZE);
   const allRemaining = allPosts.length - allShown;
 
