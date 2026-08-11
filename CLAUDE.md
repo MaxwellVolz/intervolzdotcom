@@ -126,7 +126,7 @@ Tags use predefined colors in the `TAG_COLORS` map in `pages/index.tsx`. A tag w
 no entry renders grey, so add new tags there when introducing one. Current families:
 
 - Frontend: `web`, `react`, `threeJS`, `dataviz`, `javascript`
-- Languages/backend: `python`, `rust`, `fastapi`, `backend`
+- Languages/backend: `python`, `rust`, `swift`, `fastapi`, `backend`
 - AI: `ai`, `llm`, `ml`
 - 3D/creative: `blender`, `art`, `unity`
 - Automation/devops: `automation`, `n8n`, `docker`, `windows`, `CI/CD`

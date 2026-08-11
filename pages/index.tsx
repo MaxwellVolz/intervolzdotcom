@@ -77,6 +77,7 @@ const TAG_COLORS: Record<string, string> = {
   fastapi: 'text-teal-400/80',
   backend: 'text-teal-400/80',
   rust: 'text-orange-400/80',
+  swift: 'text-orange-300/80',
   // ai
   ai: 'text-violet-400/80',
   llm: 'text-violet-400/80',

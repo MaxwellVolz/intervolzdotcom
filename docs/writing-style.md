@@ -279,6 +279,8 @@ months" is.
 - [ ] Every number has the budget it is measured against
 - [ ] Lessons are transferable claims, not diary entries
 - [ ] No hype adjectives
-- [ ] `npm run format` — Prettier formats `.mdx`
+- [ ] `npx prettier --write content/posts/<slug>.mdx` — format **only your post**.
+      Do not run `npm run format`: the repo has never been fully Prettier-clean, so
+      it rewrites 60+ unrelated files including built assets under `public/`.
 - [ ] `npm run build` passes
 - [ ] Staged with `draft: true` and read **on a phone** before publishing
