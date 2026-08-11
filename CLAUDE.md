@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a statically-generated blog/portfolio site built with Next.js, MDX, and Decap CMS. Content is Git-backed with automated Jenkins deployment to NGINX via Cloudflare Tunnel. The site serves as a personal portfolio showcasing blog posts bucketed on the homepage as `now` (in progress), `shipped` (`work: true`), `technical`, and everything else as articles.
+This is a statically-generated blog/portfolio site built with Next.js, MDX, and Decap CMS. Content is Git-backed with automated Jenkins deployment to NGINX via Cloudflare Tunnel. The site serves as a personal portfolio showcasing blog posts bucketed on the homepage as `now` (in progress), `shipped` (`work: true`) and `technical` by precedence, with `all` listing the complete archive.
 
 ## Development Commands
 
@@ -38,8 +38,9 @@ npm run format
 - **Frontmatter fields**:
   - `title`, `date`, `cover` (optional image)
   - `in_progress` (current work), `work` (shipped projects), `technical` (build
-    write-ups; also sorts above non-technical posts), `draft` (hidden from the
-    homepage, still builds at its URL), `pinned` (inert — read by nothing)
+    write-ups; note the comparator in `lib/getPosts.ts` sorts these _below_
+    non-technical posts, not above), `draft` (hidden from the homepage, still
+    builds at its URL), `pinned` (inert — read by nothing)
   - `tags` (space-separated or array)
 - **Media**: Uploaded to `public/uploads`
 
@@ -66,7 +67,7 @@ Blog posts are processed with these plugins (configured in `pages/[slug].tsx`):
 
 ### Page Organization
 
-- **`pages/index.tsx`**: Homepage with post listings in four `ls`-styled buckets (`~/now/`, `~/shipped/`, `~/technical/`, `~/articles/`) and the `TAG_COLORS` map
+- **`pages/index.tsx`**: Homepage. Three curated `ls`-styled buckets assigned by precedence (`~/now/` → `~/shipped/` → `~/technical/`, first match wins), then `~/all/` as the full paged archive. Also holds the `TAG_COLORS` map
 - **`pages/[slug].tsx`**: Individual blog post template
 - **`pages/admin.tsx`**: Decap CMS entry point
 - **`pages/layout/`**: IDE-themed layout components (unused in current build)

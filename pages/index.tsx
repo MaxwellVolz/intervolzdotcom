@@ -28,16 +28,29 @@ type Section = {
   filter: (p: PostMeta) => boolean;
 };
 
+// The curated buckets, in precedence order: a post lands in the FIRST one it
+// matches and nowhere else. Written as a cascade rather than three independent
+// predicates because the flags are not mutually exclusive in the frontmatter --
+// a post that is both in_progress and technical is normal, and used to appear
+// twice. Precedence means a post can be honestly tagged `technical: true` and
+// still be filed under ~/now while it is live work.
 const SECTIONS: Section[] = [
   { key: 'now', cmd: '> ls ~/now/', filter: (p) => !!p.in_progress },
-  { key: 'shipped', cmd: '> ls ~/shipped/', filter: (p) => !!p.work },
-  { key: 'technical', cmd: '> ls ~/technical/', filter: (p) => !!p.technical },
   {
-    key: 'articles',
-    cmd: '> ls ~/articles/',
-    filter: (p) => !p.in_progress && !p.work && !p.technical,
+    key: 'shipped',
+    cmd: '> ls ~/shipped/',
+    filter: (p) => !p.in_progress && !!p.work,
+  },
+  {
+    key: 'technical',
+    cmd: '> ls ~/technical/',
+    filter: (p) => !p.in_progress && !p.work && !!p.technical,
   },
 ];
+
+// ~/all is the complete archive rather than a leftovers bucket, so everything
+// above also appears here. Paged, because it is the whole site.
+const ALL_PAGE_SIZE = 8;
 
 const FUN_ZONE = [
   {
@@ -165,6 +178,40 @@ export default function V2Home({
     setBooted(true);
   };
 
+  // ~/all is the whole archive, newest first. The curated buckets above use the
+  // technical-first order getAllPosts applies; an archive reads by date.
+  const allPosts = [...posts].sort((a, b) => b.date.localeCompare(a.date));
+  const [allShown, setAllShown] = useState(ALL_PAGE_SIZE);
+  const allRemaining = allPosts.length - allShown;
+
+  const postRow = (p: PostMeta) => (
+    <li
+      key={p.slug}
+      className="flex flex-col gap-y-1 sm:flex-row sm:items-baseline sm:gap-x-4"
+    >
+      <div className="flex items-baseline gap-x-3 sm:contents">
+        <span className="shrink-0 text-zinc-500" title={fmtDateFull(p.date)}>
+          {fmtDate(p.date)}
+        </span>
+        <Link
+          href={`/${p.slug}`}
+          className="min-w-0 text-emerald-300 hover:bg-emerald-500/10 hover:text-emerald-200 sm:flex-1"
+        >
+          {p.title}
+        </Link>
+      </div>
+      {p.tags && p.tags.length > 0 && (
+        <div className="flex flex-wrap justify-end gap-x-3 gap-y-1 text-xs sm:flex-none">
+          {p.tags.map((t) => (
+            <span key={t} className={tagColor(t)}>
+              #{t}
+            </span>
+          ))}
+        </div>
+      )}
+    </li>
+  );
+
   // ~/now renders above ~/fun-zone and the rest below it, so current work is
   // the first thing under the header. Extracted rather than duplicated so the
   // two call sites cannot drift.
@@ -176,42 +223,38 @@ export default function V2Home({
         <TerminalWindow title={`mvolz@intervolz: ~/${section.key}`}>
           <p className="text-emerald-400 mb-3">{section.cmd}</p>
           <p className="text-zinc-500 text-xs mb-2">total {items.length}</p>
-          <ul className="space-y-1">
-            {items.map((p) => (
-              <li
-                key={p.slug}
-                className="flex flex-col gap-y-1 sm:flex-row sm:items-baseline sm:gap-x-4"
-              >
-                <div className="flex items-baseline gap-x-3 sm:contents">
-                  <span
-                    className="shrink-0 text-zinc-500"
-                    title={fmtDateFull(p.date)}
-                  >
-                    {fmtDate(p.date)}
-                  </span>
-                  <Link
-                    href={`/${p.slug}`}
-                    className="min-w-0 text-emerald-300 hover:bg-emerald-500/10 hover:text-emerald-200 sm:flex-1"
-                  >
-                    {p.title}
-                  </Link>
-                </div>
-                {p.tags && p.tags.length > 0 && (
-                  <div className="flex flex-wrap justify-end gap-x-3 gap-y-1 text-xs sm:flex-none">
-                    {p.tags.map((t) => (
-                      <span key={t} className={tagColor(t)}>
-                        #{t}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </li>
-            ))}
-          </ul>
+          <ul className="space-y-1">{items.map(postRow)}</ul>
         </TerminalWindow>
       </div>
     );
   };
+
+  const renderAll = () => (
+    <div className="mt-8">
+      <TerminalWindow title="mvolz@intervolz: ~/all">
+        <p className="text-emerald-400 mb-3">&gt; ls ~/all/</p>
+        <p className="text-zinc-500 text-xs mb-2">
+          total {allPosts.length}
+          {allRemaining > 0 && <span> · showing {allShown}</span>}
+        </p>
+        <ul className="space-y-1">
+          {allPosts.slice(0, allShown).map(postRow)}
+        </ul>
+        {allRemaining > 0 && (
+          <button
+            type="button"
+            onClick={() =>
+              setAllShown((n) => Math.min(n + ALL_PAGE_SIZE, allPosts.length))
+            }
+            className="mt-4 text-emerald-400 hover:bg-emerald-500/10 hover:text-emerald-300 focus:outline-none focus-visible:ring-1 focus-visible:ring-emerald-400"
+          >
+            $ load more{' '}
+            <span className="text-zinc-500">({allRemaining} remaining)</span>
+          </button>
+        )}
+      </TerminalWindow>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-200">
@@ -301,6 +344,8 @@ export default function V2Home({
         </div>
 
         {SECTIONS.filter((s) => s.key !== 'now').map(renderSection)}
+
+        {renderAll()}
 
         <div className="mt-8 text-center text-xs text-zinc-600 font-mono">
           <p>
