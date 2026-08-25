@@ -1,7 +1,7 @@
 ---
 title: 'Acquaintances: for people with people'
 date: 2026-08-11T10:00:00.000-07:00
-description: 'A contacts app organised around how you know people, not their names: one screen, a bubble graph, and filter chips generated from your own data. No account.'
+description: 'A contacts app organized around how you know people, not their names: one screen, a bubble graph, and filter chips generated from your own data. No account.'
 cover: ''
 technical: true
 draft: true
@@ -11,10 +11,10 @@ in_progress: true
 tags: web react dataviz
 ---
 
-Acquaintances is a contacts app organised around how you know people. The whole
+Acquaintances is a contacts app organized around how you know people. The whole
 product is one screen: a bubble graph of everyone you know, and a row of chips
 generated from your own data. Tap a venue and the people from it converge to the
-centre while everyone else drifts out and dims.
+center while everyone else drifts out and dims.
 
 I rarely forget the context of a person. "The guy I met at Bings who does sound
 design" is right there. It is the name that is gone, and every contacts app indexes
@@ -31,7 +31,7 @@ It asks you for nothing. No account, no email, nothing to install. You land on a
 demo cast with the whole product working: tap a chip to filter, tap a bubble to
 focus it, search, pan, pinch. Signing in is a button in the corner you can ignore.
 
-![The app at rest on a phone.](/imgs/acq_resting.png 'The app at rest on a phone. Fifty people, the chip row generated from their own data — Monk's Café 12, Kevin's place 4 — and the bar along the bottom naming the cast you are looking at.')
+![The app at rest on a phone.](/imgs/acq_resting.png 'The app at rest on a phone. Fifty people, the chip row generated from their own data: Monk's Café 12, Kevin's place 4. The bar along the bottom names the cast you are looking at.')
 
 Nobody in that picture is real, and keeping it that way turned out to be the hardest
 standing requirement in the project. The rest of this is how it got built, in the
@@ -42,10 +42,10 @@ order it happened.
 ## The rules live in one place (Aug 5)
 
 Day one produced an architecture decision record before it produced any code. An ADR
-is a short markdown file — one per decision, numbered, kept in `docs/adr/` — that
-states what was chosen, what else was on the table, and what the choice costs. It
-exists so a call made in one afternoon is still legible a month later, by which point
-the reasoning is otherwise gone.
+is a short markdown file: one per decision, numbered, kept in `docs/adr/`. It
+states what was chosen, what else was on the table, and what the choice costs. A
+call made in one afternoon is still legible a month later, when the reasoning is
+otherwise gone.
 
 ADR 0001 opens with four hard constraints from the brief:
 
@@ -55,7 +55,7 @@ ADR 0001 opens with four hard constraints from the brief:
 - no accounts, no backend, all data on device
 
 The second is the one the rest of the repo is downstream of. The graph
-visualisation _is_ the product, and it runs on an imperative `<canvas>` with a
+visualization _is_ the product, and it runs on an imperative `<canvas>` with a
 custom hit-test, pinch and pan gestures, and a render loop that gets 6ms a frame to
 do its work. React goes nowhere near that loop. Neither does anything that decides
 what the picture means.
@@ -72,7 +72,7 @@ ui/  ──────►  core/  ◄──────  platform/
 
 | Layer       | Holds                                                                                    | May reach for                                     |
 | ----------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| `core/`     | data model, layout engine, facet ranking, filtering, validation, the storage _interface_ | nothing at all — not even a dependency            |
+| `core/`     | data model, layout engine, facet ranking, filtering, validation, the storage _interface_ | nothing at all, not even a dependency             |
 | `platform/` | IndexedDB, photo downscaling, haptics, clock, id generation, importers                   | the browser, behind an interface `core/` declared |
 | `ui/`       | React, canvas, gestures. Owns no rules.                                                  | both of the above                                 |
 
@@ -98,8 +98,8 @@ It is `Ignore private data before anything else lands`. This is a database of th
 parties who never consented to being in it, and the gitignore went in before there
 was anything to ignore.
 
-A person has exactly one required field: `name`. Everything else — where you met,
-where they live, what they do — is an `{ personId, typeId, value }` row.
+A person has exactly one required field: `name`. Everything else is an
+`{ personId, typeId, value }` row: where you met, where they live, what they do.
 
 ![The profile sheet.](/imgs/acq_profile.png "The profile sheet. Every row below the name is an attribute, and 'Met at' appearing three times is three rows, not a schema problem.")
 
@@ -119,10 +119,10 @@ every venue, plus how recently you entered it and how much that _kind_ of attrib
 means. Values held by only one person are dropped, because tapping them is just
 opening that person the long way round.
 
-![Monk's Café, tapped.](/imgs/acq_filtered.png "Monk's Café, tapped. Twelve of fifty converge; the rest are banished to a far ring and dimmed. The chip row has re-ranked against the slice — the second chip is now 129 West 81st, which was fourth a moment ago.")
+![Monk's Café, tapped.](/imgs/acq_filtered.png "Monk's Café, tapped. Twelve of fifty converge; the rest are banished to a far ring and dimmed. The chip row has re-ranked against the slice: the second chip is now 129 West 81st, which was fourth a moment ago.")
 
 Once a filter is on, the remaining chips re-rank against the current slice, so the
-row narrows with you. Shared attributes bend the layout but are never materialised as
+row narrows with you. Shared attributes bend the layout but are never materialized as
 edges: the edge set stays exactly what you asserted, because turning shared values
 into stored relationships would claim friendships that do not exist. Rare shared
 values count for far more than common ones. Sharing a six-person bar is signal.
@@ -147,9 +147,9 @@ tick costs **~0.3ms against a 6ms budget**, and the render loop parks itself whe
 simulation settles, so a graph at rest costs no battery.
 
 The accepted cost is that I own the integrator, including its bugs. The mitigation is
-that the force model is deliberately d3-shaped — link springs, many-body charge,
-collision, radial targets, `alpha` decay — so putting d3 back is mechanical rather
-than a rewrite.
+that the force model is deliberately d3-shaped: link springs, many-body charge,
+collision, radial targets, `alpha` decay. Putting d3 back is mechanical rather than
+a rewrite.
 
 ---
 
@@ -160,7 +160,7 @@ them started by writing down what that gives up rather than quietly amending it.
 
 The shape is the same trick as everywhere else. `core/auth/session.ts` declares an
 `AuthPort` and owns nothing that implements it. `platform/supabase/auth.ts` is the
-browser's answer, and `LocalOnlyAuth` is the answer when no backend is configured —
+browser's answer, and `LocalOnlyAuth` is the answer when no backend is configured,
 which is why nothing outside `boot()` has to branch on whether accounts exist at all.
 Leave the environment file absent and the app runs exactly as it always did: signed
 out, on device, no network. That is what the public deploy does.
@@ -168,7 +168,7 @@ out, on device, no network. That is what the public deploy does.
 Sync went in the same evening: one comparable stamp on every record, tombstones and a
 dirty set, and the merge written as a pure function with no network in it. Row-level
 security was proven with two real sessions rather than asserted, and one rule carries
-most of the weight — a pulled record is never marked for push, because two devices
+most of the weight: a pulled record is never marked for push, because two devices
 bouncing one row between them is the failure that does not stop on its own.
 
 The genuinely hard question was what happens to the graph already on the device.
@@ -208,7 +208,7 @@ The deploy is where the privacy posture gets tested, and both ways to get it wro
 are silent.
 
 A plain `vercel deploy` filters uploads through `.gitignore`, and `public/data/` is
-gitignored — so it ships the synthetic fixture while looking like a success. The only
+gitignored, so it ships the synthetic fixture while looking like a success. The only
 sign is `guard: no private data staged` in the build log, which reads like a pass.
 And a preview deploy is only safe at all because Vercel Authentication gates it,
 which is a property nobody checks after the first time.
@@ -220,11 +220,11 @@ uploading, verifies that an anonymous request gets bounced, and deletes
 `--prebuilt` deploy skips the build entirely, so a stale output directory holding real
 data would be published by a `--prod` flag without anything running to stop it.
 
-| Where          | What it serves                                              |
-| -------------- | ----------------------------------------------------------- |
-| `npm run dev`  | `data/seed.json` if present, else the demo fixture          |
-| preview deploy | whatever was staged at build time, behind auth, `noindex`   |
-| production     | the synthetic fixture, always — the build refuses otherwise |
+| Where          | What it serves                                             |
+| -------------- | ---------------------------------------------------------- |
+| `npm run dev`  | `data/seed.json` if present, else the demo fixture         |
+| preview deploy | whatever was staged at build time, behind auth, `noindex`  |
+| production     | the synthetic fixture, always. The build refuses otherwise |
 
 Underneath it, `scripts/guard-private.mjs` runs first in `npm run build` and fails
 outright when `public/data/` exists and `VERCEL_ENV` is production. The unsafe
@@ -240,7 +240,7 @@ real. Signed-out visitors pick a cast.
 
 ## Where it is now
 
-Seven days old. 373 tests across 26 suites — 17 of those suites in `core/`, 9 in
+Seven days old. 373 tests across 26 suites: 17 of those suites in `core/`, 9 in
 `platform/`, 1 in `ui/`, which is the layer split showing up as a number. A
 row-level security suite is held out of that run because it needs two real Supabase
 sessions rather than mocks; `npm run rls` is one command instead of the four
@@ -249,7 +249,7 @@ tests together, and it is what runs before anything ships.
 
 It still does not work offline. Your people live in IndexedDB on the device, but
 there is no service worker caching the app shell, so with no network the page cannot
-load at all — the data is there and unreachable. Installing to the home screen gets
+load at all. The data is there and unreachable. Installing to the home screen gets
 you standalone display, not offline. The README said otherwise for about a day before
 that got corrected.
 
@@ -263,11 +263,11 @@ the rules would now be spread across three layers instead of sitting in one.
 **Determinism is worth its ceremony.** Passing a `Clock` and an `IdGenerator` into
 `core/` looked like overhead for five days, and it is the reason the layout engine
 can be tested at all: same input, same picture, every run. It is also why `d3-force`
-was rejected — a library that calls `Math.random()` inside its integrator cannot be
+was rejected: a library that calls `Math.random()` inside its integrator cannot be
 held to that, and a determinism test written against it passes by luck.
 
 **The dangerous deploy is the one that looks like it worked.** Both privacy failures
-here print a success line. That is the specific shape worth hunting for — not the
+here print a success line. That is the specific shape worth hunting for: not the
 command that errors, but the command that quietly does the wrong thing and logs a
 pass.
 
@@ -287,6 +287,6 @@ falsified, which is what makes it expensive.
 
 - A service worker, so "offline-first" stops being aspirational
 - Tests for `ui/`, which is one suite deep and is where every gesture bug will come from
-- Barnes-Hut, if the graph ever passes ~1000 people — repulsion is O(n²) with a distance cutoff today, which measures fine at this size
+- Barnes-Hut, if the graph ever passes ~1000 people: repulsion is O(n²) with a distance cutoff today, which measures fine at this size
 
 Thanks for reading. More soon.

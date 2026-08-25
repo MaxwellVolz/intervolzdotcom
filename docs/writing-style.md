@@ -34,6 +34,7 @@ Every field, every time — Decap writes them all, so hand-written posts should 
 ---
 title: Zero → WebApp with Claude
 date: 2026-06-22T10:00:00.000-07:00
+description: 'Part two of building with Claude: the standard stack. Next.js on Vercel, Supabase and Stripe, deployed the same way every time so each feature is routine.'
 cover: ''
 technical: true
 draft: false
@@ -50,7 +51,8 @@ What each one **actually does** (`lib/getPosts.ts`, `pages/index.tsx`):
 | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
 | `title`       | Heading and `<title>`. Not repeated as an `#` in the body.                                                                                  |
 | `date`        | ISO 8601 **with offset** (`-07:00` PDT / `-08:00` PST). Sorts within a bucket.                                                              |
-| `cover`       | Optional image for the index. `''` is normal.                                                                                               |
+| `description` | **Required.** The `<meta name="description">`, the og/twitter description, the RSS summary, and the SERP snippet. 150–160 characters, one sentence, no throat-clearing. Write it like the lede: what it is, plainly. |
+| `cover`       | Optional image for the index, the post header, and the og:image. `''` is normal.                                                                                               |
 | `technical`   | Buckets the post under `> ls ~/technical/`. No effect on ordering.                                                                          |
 | `work`        | Buckets under `> ls ~/shipped/`.                                                                                                            |
 | `in_progress` | Buckets under `> ls ~/now/`. Takes precedence over `work` and `technical`.                                                                  |
@@ -86,6 +88,10 @@ frontend emerald/cyan, automation teal).
 
 - Live in `public/imgs/`, referenced as `/imgs/name.png`
 - Prefixed by project: `sol_*`, `wayne_mo_*`, `sol_hn_*`
+- **Write both an alt and a caption.** The alt is the first argument, the
+  caption is the title attribute. Alt describes the image for a reader who
+  cannot see it (and for search); the caption is the note under it. When the
+  caption already describes the image, reuse it as the alt.
 - **The title attribute is the caption** — always write one:
 
 ```text
@@ -199,8 +205,16 @@ tuned Claude Code setup." "You'll want the brain from part one set up first."
 avoids them ("It is live at"); `standard-stack` uses them ("isn't just a clever
 prompt"). Pick one per article and hold it.
 
-**British-ish spellings appear** (`behaviours`, `organised`, `colours`) alongside
-American ones. Not worth normalising mid-corpus; be consistent inside a piece.
+**American spellings.** `center`, `organized`, `visualization`, `behavior`, `color`.
+Parts of the older corpus drift British (`behaviours`, `organised`, `colours`); like
+the em dashes, that is a habit of the archive rather than a standard to continue. New
+writing is American throughout, and a piece is never half and half.
+
+**No em dashes.** The older articles are full of them; new writing does not use
+them. A colon, a comma pair, or two sentences carries the same break, and the
+result reads less like a machine wrote it. This applies to prose, headings,
+captions and bullets. Quoted code is excerpted rather than rewritten, so trim an
+excerpt past the dash instead of editing someone's comment.
 
 ---
 
@@ -285,8 +299,10 @@ months" is.
 ## 5. Before publishing
 
 - [ ] Frontmatter complete, `date` carries the right UTC offset
+- [ ] `description` written: 150–160 characters, one sentence, reads like the lede
 - [ ] Every tag has a `TAG_COLORS` entry in `pages/index.tsx`
-- [ ] Every image has a caption in its title attribute
+- [ ] Every image has **alt text** and a caption in its title attribute
+- [ ] Body starts at `##` — the `#` is the frontmatter title, rendered for you
 - [ ] No `<3` or stray `->` in prose that you meant literally
 - [ ] There is a section about what did not work
 - [ ] Every number has the budget it is measured against
