@@ -28,18 +28,17 @@ type Section = {
   filter: (p: PostMeta) => boolean;
 };
 
-// The curated buckets, in precedence order: a post lands in the FIRST one it
-// matches and nowhere else. Written as a cascade rather than three independent
-// predicates because the flags are not mutually exclusive in the frontmatter --
-// a post that is both in_progress and technical is normal, and used to appear
-// twice. Precedence means a post can be honestly tagged `technical: true` and
-// still be filed under ~/now while it is live work.
+// The curated buckets. ~/now and ~/shipped are independent: something that is
+// released AND still being worked on belongs in both, and saying so twice is the
+// honest listing. ~/technical stays exclusive, as the catch-all for build
+// write-ups that are neither live work nor a shipped product -- otherwise nearly
+// every post would appear in it a second time.
 const SECTIONS: Section[] = [
   { key: 'now', cmd: '> ls ~/now/', filter: (p) => !!p.in_progress },
   {
     key: 'shipped',
     cmd: '> ls ~/shipped/',
-    filter: (p) => !p.in_progress && !!p.work,
+    filter: (p) => !!p.work,
   },
   {
     key: 'technical',

@@ -47,25 +47,26 @@ tags: ai llm web automation react
 
 What each one **actually does** (`lib/getPosts.ts`, `pages/index.tsx`):
 
-| Field         | Effect                                                                                                                                      |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| `title`       | Heading and `<title>`. Not repeated as an `#` in the body.                                                                                  |
-| `date`        | ISO 8601 **with offset** (`-07:00` PDT / `-08:00` PST). Sorts within a bucket.                                                              |
+| Field         | Effect                                                                                                                                                                                                               |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `title`       | Heading and `<title>`. Not repeated as an `#` in the body.                                                                                                                                                           |
+| `date`        | ISO 8601 **with offset** (`-07:00` PDT / `-08:00` PST). Sorts within a bucket.                                                                                                                                       |
 | `description` | **Required.** The `<meta name="description">`, the og/twitter description, the RSS summary, and the SERP snippet. 150–160 characters, one sentence, no throat-clearing. Write it like the lede: what it is, plainly. |
-| `cover`       | Optional image for the index, the post header, and the og:image. `''` is normal.                                                                                               |
-| `technical`   | Buckets the post under `> ls ~/technical/`. No effect on ordering.                                                                          |
-| `work`        | Buckets under `> ls ~/shipped/`.                                                                                                            |
-| `in_progress` | Buckets under `> ls ~/now/`. Takes precedence over `work` and `technical`.                                                                  |
-| `draft`       | Hides from the homepage — **but the page still builds and is reachable at its URL**. This is how you stage an unpublished post on a deploy. |
-| `pinned`      | **Inert.** Present in the Decap form and read by nothing. Leave it `false`.                                                                 |
-| `tags`        | Space-separated string.                                                                                                                     |
+| `cover`       | Optional image for the index, the post header, and the og:image. `''` is normal.                                                                                                                                     |
+| `technical`   | Buckets the post under `> ls ~/technical/`. No effect on ordering.                                                                                                                                                   |
+| `work`        | Buckets under `> ls ~/shipped/`.                                                                                                                                                                                     |
+| `in_progress` | Buckets under `> ls ~/now/`. Combines with `work`; suppresses `technical`.                                                                                                                                           |
+| `draft`       | Hides from the homepage — **but the page still builds and is reachable at its URL**. This is how you stage an unpublished post on a deploy.                                                                          |
+| `pinned`      | **Inert.** Present in the Decap form and read by nothing. Leave it `false`.                                                                                                                                          |
+| `tags`        | Space-separated string.                                                                                                                                                                                              |
 
-**Bucket precedence.** `getAllPosts()` does not assign buckets — `pages/index.tsx`
-does, as a cascade: a post lands in the first of `~/now` (`in_progress`),
-`~/shipped` (`work`), `~/technical` (`technical`) that it matches, and nowhere
-else. So a live build write-up can honestly carry `technical: true` and still file
-under `~/now`. Everything, including all of the above, is also listed in `~/all`,
-which is the full archive and is paged.
+**How the buckets are assigned.** `getAllPosts()` does not assign buckets;
+`pages/index.tsx` does. `~/now` (`in_progress`) and `~/shipped` (`work`) are
+independent, so a post that is released and still being worked on appears in
+both. `~/technical` is the catch-all and stays exclusive: it takes a post only
+when neither of the other two claimed it, which is what keeps nearly every
+write-up from listing twice. Everything, including all of the above, is also
+listed in `~/all`, which is the full archive and is paged.
 
 **Ordering is date, newest first, in every section.** `getAllPosts()` sorts once by
 `date` descending and each section filters that array, so `date` is the only thing

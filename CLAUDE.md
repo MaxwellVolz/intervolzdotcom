@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a statically-generated blog/portfolio site built with Next.js, MDX, and Decap CMS. Content is Git-backed with automated Jenkins deployment to NGINX via Cloudflare Tunnel. The site serves as a personal portfolio showcasing blog posts bucketed on the homepage as `now` (in progress), `shipped` (`work: true`) and `technical` by precedence, with `all` listing the complete archive.
+This is a statically-generated blog/portfolio site built with Next.js, MDX, and Decap CMS. Content is Git-backed with automated Jenkins deployment to NGINX via Cloudflare Tunnel. The site serves as a personal portfolio showcasing blog posts bucketed on the homepage as `now` (in progress) and `shipped` (`work: true`), which a post can be in at the same time, plus `technical` as the exclusive catch-all, with `all` listing the complete archive.
 
 ## Development Commands
 
@@ -82,7 +82,7 @@ All page metadata goes through `components/Seo.tsx`; site-level constants live i
 
 ### Page Organization
 
-- **`pages/index.tsx`**: Homepage. Three curated `ls`-styled buckets assigned by precedence (`~/now/` → `~/shipped/` → `~/technical/`, first match wins), then `~/all/` as the full paged archive. Also holds the `TAG_COLORS` map
+- **`pages/index.tsx`**: Homepage. Three curated `ls`-styled buckets: `~/now/` and `~/shipped/` are independent filters and a post can appear in both, `~/technical/` takes only what neither claimed. Then `~/all/` as the full paged archive. Also holds the `TAG_COLORS` map
 - **`pages/[slug].tsx`**: Individual blog post template
 - **Decap CMS**: served statically from `public/admin/` (there is no `pages/admin.tsx`)
 - **`components/layout/`**: IDE-themed layout components (unused in current build).

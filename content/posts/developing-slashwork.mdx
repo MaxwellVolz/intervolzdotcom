@@ -1,7 +1,7 @@
 ---
-title: '[WIP] slashwork: the arena I deleted'
+title: 'slashwork: five weeks building an arena, one day deleting it'
 date: 2026-07-31T10:00:00.000-07:00
-description: "slashwork is a subagent offload network for Claude Code. For five weeks it was a competition arena — then I deleted the arena and rebuilt the pieces into this."
+description: 'slashwork is a subagent offload network for Claude Code. For five weeks it was a competition arena — then I deleted the arena and rebuilt the pieces into this.'
 cover: /imgs/slashwork-cover.svg
 technical: true
 draft: false
@@ -31,15 +31,15 @@ The backbone was not new. It came from a sibling repo, `llmex`: a Rust axum coor
 
 I build the way I have written about before: plan by plan, `/next` turning a Notion roadmap into commits. slashwork's first day is a stack of them, `Plan 2 identity and auth`, `Plan 3 challenges and arena board`, `Plan 5 judge and ELO`, `Plan 8 deploy`. By the end of June 5 the coordinator served `/healthz`, did GitHub OAuth, issued API tokens, and rendered an arena board at `/` with a compete command.
 
-| Piece | Choice |
-| --- | --- |
-| Coordinator | Rust, axum + sqlx, one process serving htmx pages, a JSON API, and SSE |
-| Database | Postgres (Neon first, then Fly Postgres) |
-| Auth | GitHub OAuth plus issued API tokens |
-| Plugin | `/compete`: a skill, a worker subagent, a SubagentStop hook that POSTs the artifact |
-| Judge | a background Opus call, ranking submissions at the deadline |
-| Reputation | per-category ELO, non-transferable |
-| Hosting | Fly.io |
+| Piece       | Choice                                                                              |
+| ----------- | ----------------------------------------------------------------------------------- |
+| Coordinator | Rust, axum + sqlx, one process serving htmx pages, a JSON API, and SSE              |
+| Database    | Postgres (Neon first, then Fly Postgres)                                            |
+| Auth        | GitHub OAuth plus issued API tokens                                                 |
+| Plugin      | `/compete`: a skill, a worker subagent, a SubagentStop hook that POSTs the artifact |
+| Judge       | a background Opus call, ranking submissions at the deadline                         |
+| Reputation  | per-category ELO, non-transferable                                                  |
+| Hosting     | Fly.io                                                                              |
 
 Over the next month it filled in. Submissions, a token-authed submit API, the plugin, the judge, the ratings. It went live on Fly.io on June 7 (`e7d21ea`, add Fly app config). 257 commits in June. It worked. You could post a challenge, point a Claude Code agent at it, and watch submissions get judged over SSE.
 
@@ -76,14 +76,14 @@ Twelve PRs, plan to arena-removed, in one day. That pace is only possible becaus
 
 And almost nothing got thrown away. The pivot was mostly renaming what a thing meant:
 
-| Arena machinery | Became |
-| --- | --- |
-| Credits ledger (pay to enter a challenge) | The exchange: routing a task charges you, an accepted artifact pays the earner |
-| Per-category ELO | Per-class earner score, drives claim priority and gates big tasks |
-| Opus judge ranking a field | A one-call acceptance gate (Haiku): does it answer the task, is it substantive, does it smell like injection |
-| SSE live results | The earner wire, `GET /api/queue/stream`, the feed earners claim from |
-| `/compete` plugin | Split into `/work` (offloader intercept) and `/earn` (earner loop) |
-| Challenges, submissions, contests | `tasks`: requester, class, prompt, a bounded context bundle, status |
+| Arena machinery                           | Became                                                                                                       |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Credits ledger (pay to enter a challenge) | The exchange: routing a task charges you, an accepted artifact pays the earner                               |
+| Per-category ELO                          | Per-class earner score, drives claim priority and gates big tasks                                            |
+| Opus judge ranking a field                | A one-call acceptance gate (Haiku): does it answer the task, is it substantive, does it smell like injection |
+| SSE live results                          | The earner wire, `GET /api/queue/stream`, the feed earners claim from                                        |
+| `/compete` plugin                         | Split into `/work` (offloader intercept) and `/earn` (earner loop)                                           |
+| Challenges, submissions, contests         | `tasks`: requester, class, prompt, a bounded context bundle, status                                          |
 
 The arena tables are still in Postgres, orphaned. The code that read them is gone (`5d460ec`, remove the arena), the tables are just not dropped. Git history keeps the rest.
 
