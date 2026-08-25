@@ -7,9 +7,14 @@ import Seo from '@/components/Seo';
 
 // GitHub's search API only counts PUBLIC commits, which undercounts heavily
 // (no private repos, no work orgs). The "contributions in the last year"
-// number from the profile page is the real flex. Hardcoded here — bump it
-// when you remember to.
-const CONTRIBUTIONS_LAST_YEAR = 1173;
+// number from the profile page is the real flex. Hardcoded because the site is
+// a static export with no runtime; refresh it with the same command the page
+// prints:
+//
+//   gh api graphql -f query='{viewer{contributionsCollection{contributionCalendar{totalContributions}}}}'
+//
+// 2,548 as of 2026-08-25.
+const CONTRIBUTIONS_LAST_YEAR = 2548;
 
 export async function getStaticProps() {
   return {
@@ -281,8 +286,9 @@ export default function V2Home({
             <p className="text-zinc-300">
               36 · 6&apos;4&quot; · 225 lbs · still bald
             </p>
-            <p className="text-emerald-400 mt-4">
-              $ gh stats --user maxwellvolz --since 1y
+            <p className="text-emerald-400 mt-4 break-all">
+              $ gh api graphql -f
+              query=&apos;&#123;viewer&#123;contributionsCollection&#123;contributionCalendar&#123;totalContributions&#125;&#125;&#125;&#125;&apos;
             </p>
             <p className="text-zinc-300">
               <span className="text-emerald-300">
