@@ -1,6 +1,7 @@
 ---
 title: Developing Wayne Mo
 date: 2026-01-08T15:29:00.000-08:00
+description: "Building a Crazy Taxi-inspired fleet management game in the browser with React, Three.js and Blender — one month from first commit to playable demo."
 technical: false
 draft: false
 work: false
@@ -11,7 +12,7 @@ tags: react web threeJS blender
 
 Building a Crazy Taxi-inspired management game in the browser with React, Three.js, and Blender. One month of dev from first commit to playable demo.
 
-![](/imgs/wayne_mo_logo.gif "Wayne Mo - title screen placeholder")
+![Wayne Mo - title screen placeholder](/imgs/wayne_mo_logo.gif "Wayne Mo - title screen placeholder")
 
 ---
 
@@ -40,7 +41,7 @@ The constraint: build it entirely with web tech. No Unity, no game engine. Just 
 
 Started with the basics — a Three.js canvas, overhead camera, and a single taxi driving a loop around a procedural 8x8 grid of buildings.
 
-![](/imgs/wayne_mo_foundation.png "Early city with road loop")
+![Early city with road loop](/imgs/wayne_mo_foundation.png "Early city with road loop")
 
 The movement system was deterministic path-following from day one. No physics, no AI. Taxis interpolate between path nodes at constant speed using `useFrame`. Smooth rotation to face the movement direction. 60fps.
 
@@ -60,7 +61,7 @@ The pipeline:
 5. Run `gltfjsx` to generate typed React components
 6. Extract path nodes at runtime and build the road network dynamically
 
-![](/imgs/wayne_mo_blender_nodes.png "Blender scene with path node markers")
+![Blender scene with path node markers](/imgs/wayne_mo_blender_nodes.png "Blender scene with path node markers")
 
 This Blender-driven workflow meant I could redesign the entire city without touching code. Move a node in Blender, re-export, road network updates automatically.
 
@@ -77,7 +78,7 @@ Got the core gameplay loop working in a single day. Color-coded pickups and drop
 
 Then stacked on top: taxi spawning, collision system, game timer, taxi cost system, game over modal. Also added Rush Hour — a timed chaos mode where everything speeds up and deliveries pay more.
 
-![](/imgs/wayne_mo_phase1.png "Gameplay with color-coded deliveries")
+![Gameplay with color-coded deliveries](/imgs/wayne_mo_phase1.png "Gameplay with color-coded deliveries")
 
 ---
 
@@ -94,7 +95,7 @@ This was the sprint. Over two days:
 - Directional arrow indicators pointing to deliveries
 - Box models replacing the placeholder presents
 
-![](/imgs/wayne_mo_multiplier.png "Score multiplier with directional arrows")
+![Score multiplier with directional arrows](/imgs/wayne_mo_multiplier.png "Score multiplier with directional arrows")
 
 The multiplier system uses distance-weighted distribution — farther deliveries pay more but you risk running out of time. It added real decision-making to what was previously just "drive to the color."
 
@@ -121,7 +122,7 @@ Features that landed:
 - **3 desk levels** with baked positions from Blender
 - **Performance pass** — ripped out all the pointLights, replaced with emissive materials and circle mesh underglow
 
-![](/imgs/wayne_mo_apartment.png "Apartment scene with desk progression")
+![Apartment scene with desk progression](/imgs/wayne_mo_apartment.png "Apartment scene with desk progression")
 
 Also rebuilt the city model. New buildings, new layout, better textures. The commit message was "new city new me" which about sums it up.
 
@@ -133,7 +134,7 @@ Added a character, **ME!** lol, with crossfade animation support and a cinematic
 
 The tutorial got rebuilt too. Starts paused with a bouncing arrow on the play button. Dialogue steps guide you through the mechanics without a wall of text.
 
-![](/imgs/wayne_mo_maxwell.png "Maxwell character in dialogue scene")
+![Maxwell character in dialogue scene](/imgs/wayne_mo_maxwell.png "Maxwell character in dialogue scene")
 
 ---
 
@@ -174,8 +175,6 @@ The tutorial got rebuilt too. Starts paused with a bouncing arrow on the play bu
 - More city detail in Blender
 - Leaderboard integration
 - Possible Unity port (wrote docs for it already, we'll see)
-
-![](/imgs/wayne_mo_roadmap.png "Roadmap sketch placeholder")
 
 ---
 

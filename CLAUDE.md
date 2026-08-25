@@ -36,7 +36,8 @@ npm run format
 - **Decap CMS**: Visual editor accessible at `/admin` route
 - **Config**: `public/admin/config.yml` defines content schema
 - **Frontmatter fields**:
-  - `title`, `date`, `cover` (optional image)
+  - `title`, `date`, `description` (meta description, 150-160 chars — required),
+    `cover` (optional image)
   - `in_progress` (current work), `work` (shipped projects), `technical` (build
     write-ups), `draft` (hidden from the homepage, still builds at its URL),
     `pinned` (inert — read by nothing). Flags pick the section only; every
@@ -54,6 +55,20 @@ Blog posts are processed with these plugins (configured in `pages/[slug].tsx`):
 2. **remarkGfm**: GitHub-flavored markdown support
 3. **rehypePrettyCode**: Syntax highlighting with `github-dark` theme
 
+### SEO Files
+
+`scripts/generate-seo-files.mjs` runs as the npm `prebuild` step and writes
+`robots.txt`, `sitemap.xml`, `rss.xml` and `llms.txt` into `public/` (they are
+gitignored — the build regenerates them). They must be produced by the build:
+`deploy_blog.sh` does `rm -rf` on the web root, so hand-placed files do not survive.
+
+Add new standalone apps under `public/` to the `SUB_APPS` list in that script so
+they land in the sitemap. Thin or duplicate routes go in `EXCLUDED` and should also
+carry `<Seo noindex>`.
+
+All page metadata goes through `components/Seo.tsx`; site-level constants live in
+`lib/site.ts`. Do not hand-write `<Head>` meta in a page.
+
 ### Deployment Flow
 
 1. **Git Push**: Commits to master branch trigger Jenkins webhook
@@ -69,16 +84,21 @@ Blog posts are processed with these plugins (configured in `pages/[slug].tsx`):
 
 - **`pages/index.tsx`**: Homepage. Three curated `ls`-styled buckets assigned by precedence (`~/now/` → `~/shipped/` → `~/technical/`, first match wins), then `~/all/` as the full paged archive. Also holds the `TAG_COLORS` map
 - **`pages/[slug].tsx`**: Individual blog post template
-- **`pages/admin.tsx`**: Decap CMS entry point
-- **`pages/layout/`**: IDE-themed layout components (unused in current build)
+- **Decap CMS**: served statically from `public/admin/` (there is no `pages/admin.tsx`)
+- **`components/layout/`**: IDE-themed layout components (unused in current build).
+  They live in `components/` deliberately — inside `pages/` Next exported each one
+  as its own indexable URL.
 - **`pages/scenes/`**: Three.js experimental pages
-- **Special pages**: `room.tsx`, `earth.tsx`, `dank.tsx`, `arcade.tsx`, `leaderboard.tsx` (interactive demos)
+- **Special pages**: `room.tsx`, `earth.tsx` (interactive demos), `old.tsx` (previous
+  homepage), `404.tsx`. All are `noindex`.
 
 ### Styling
 
 - **Tailwind CSS**: Primary styling system with custom theme
 - **Typography**: `@tailwindcss/typography` for prose content
-- **Fonts**: Inter (sans), Orbitron (display), Roboto Mono (monospace)
+- **Fonts**: Orbitron (display), Roboto Mono (monospace), both self-hosted WOFF2 in
+  `public/fonts/`. `sans` is the system stack — Inter was shipped but never applied,
+  and was removed.
 - **Color scheme**: VSCode-inspired dark theme colors, plus muted tag colors
 - **Dark mode**: Managed via `data-theme` attribute on `<html>`, persisted to localStorage
 

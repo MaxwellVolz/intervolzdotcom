@@ -1,13 +1,14 @@
 ---
 title: Axis Mundi
 date: 2025-10-13T20:00:00.000-07:00
+description: "A 3D mind-mapping space built in three days with React and WebGL — a modern take on Charles Trapolin's work on visualizing knowledge structures."
 technical: true
 draft: true
 work: false
 tags: web react javascript
 ---
 
-# Building Axis Mundi: A Journey Through 3D Mind-Mapping
+## Building Axis Mundi: A Journey Through 3D Mind-Mapping
 
 [Live Demo](https://intervolz.com/mundi/)
 
@@ -47,7 +48,7 @@ This data-driven approach means the entire visualization is configurable by edit
 
 With the structure defined, phase two focused on bringing it to life. The atlas data loader fetches and parses the JSON, then distributes nodes across Z-space to create depth. These connections represent the associative links that make a mind-map meaningful.
 
-![](/uploads/phase_2.png)
+![Phase two: nodes distributed across Z-space with associative connections drawn between them](/uploads/phase_2.png)
 
 ### Phase 3: Animation & Polish (`animations for camera and nodes, animation controls exposed`)
 
@@ -60,13 +61,13 @@ The animation system includes:
 - **Level transitions** where previous layers fade and blur as new ones come into focus
 - **UI controls** that let users navigate forward, backward, or start the journey
   
-![](/uploads/phase_3.png)
+![Phase three: camera transitions and sequential node animation with navigation controls](/uploads/phase_3.png)
 
 ### Phase 4-5: Refinement
 
 >  linted, more nodes, visual improvements multiple connections per node
 
-![](/uploads/phase_4.png)
+![Phase four: more nodes and visual polish, with multiple connections per node](/uploads/phase_4.png)
 
 These commits focused on polish and flexibility. The node system was expanded with additional content. Visual improvements enhanced the atmosphere. Most significantly, the connection architecture was refactored to support multiple connections per node, allowing for more complex relationship mapping.
 
@@ -103,7 +104,7 @@ Implementing the *interlevel* connection system required an update to the underl
 
 The new JSON structure can now handle intricate webs of associations, not just simple linear progressions.
 
-![](/uploads/phase_5.png)
+![Phase five: the refactored JSON structure rendering an intricate web of associations](/uploads/phase_5.png)
 
 ## The Design Philosophy
 

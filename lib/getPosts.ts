@@ -6,6 +6,7 @@ export type PostMeta = {
   slug: string;
   title: string;
   date: string;
+  description?: string;
   cover?: string;
   technical?: boolean;
   work?: boolean;
@@ -27,6 +28,7 @@ export function getAllPosts(): PostMeta[] {
       slug,
       title: data.title || slug,
       date: data.date ? new Date(data.date).toISOString() : '',
+      description: data.description || '',
       cover: data.cover || null,
       technical: !!data.technical,
       work: !!data.work,

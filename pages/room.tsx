@@ -9,6 +9,7 @@ import loadGLTFRoom from '@/lib/loadGLTFRoom';
 import MonitorDisplay from '@/lib/monitorDisplay';
 import HNtoCanvas from '@/lib/HNtoCanvas';
 import { RendererManager, RenderMode } from '@/lib/RendererManager';
+import Seo from '@/components/Seo';
 
 export default function RoomScene() {
   const mountRef = useRef<HTMLDivElement>(null);
@@ -46,13 +47,32 @@ export default function RoomScene() {
       renderer = result.renderer;
       rendererManager = new RendererManager(renderer);
 
-      const { scene: roomScene, OOI: loadedOOI, animations } = await loadGLTFRoom();
+      const {
+        scene: roomScene,
+        OOI: loadedOOI,
+        animations,
+      } = await loadGLTFRoom();
       Object.assign(OOI, loadedOOI);
 
       const monitorConfigs = [
-        { key: 'main_monitor', label: 'Main Monitor', desktop: '/textures/main.jpg', post_app: '/textures/desktop_devR.jpg' },
-        { key: 'top_monitor', label: 'Top Monitor', desktop: '/textures/top.jpg', post_app: '/textures/discordR.jpg' },
-        { key: 'vertical_monitor', label: 'Vertical Monitor', desktop: '/textures/vertical.jpg', post_app: '/textures/vertical.jpg' },
+        {
+          key: 'main_monitor',
+          label: 'Main Monitor',
+          desktop: '/textures/main.jpg',
+          post_app: '/textures/desktop_devR.jpg',
+        },
+        {
+          key: 'top_monitor',
+          label: 'Top Monitor',
+          desktop: '/textures/top.jpg',
+          post_app: '/textures/discordR.jpg',
+        },
+        {
+          key: 'vertical_monitor',
+          label: 'Vertical Monitor',
+          desktop: '/textures/vertical.jpg',
+          post_app: '/textures/vertical.jpg',
+        },
       ];
 
       for (const { key, label, desktop, post_app } of monitorConfigs) {
@@ -69,12 +89,16 @@ export default function RoomScene() {
           if (key === 'vertical_monitor') {
             const mesh = OOI[key] as THREE.Mesh;
             const material = mesh.material as THREE.MeshBasicMaterial;
-            const canvas = (material.map as THREE.CanvasTexture).image as HTMLCanvasElement;
+            const canvas = (material.map as THREE.CanvasTexture)
+              .image as HTMLCanvasElement;
 
-            setTimeout(async () => {
-              await HNtoCanvas(display.canvas);
-              display.texture.needsUpdate = true;
-            }, 1000 + Math.random() * 2000);
+            setTimeout(
+              async () => {
+                await HNtoCanvas(display.canvas);
+                display.texture.needsUpdate = true;
+              },
+              1000 + Math.random() * 2000
+            );
           } else {
             setTimeout(() => {
               display.setImage(post_app);
@@ -102,7 +126,10 @@ export default function RoomScene() {
 
       if (animations.length > 0) {
         const mixer = new THREE.AnimationMixer(roomScene);
-        console.log('✅ animations:', animations.map((a) => a.name));
+        console.log(
+          '✅ animations:',
+          animations.map((a) => a.name)
+        );
 
         const triggerNames = ['top_paperAction', 'Icosphere.004Action'];
         const triggerActions: THREE.AnimationAction[] = [];
@@ -124,9 +151,12 @@ export default function RoomScene() {
         OOI.mixer = mixer;
       }
 
-
-      const targetPosition = OOI.sphere.position.clone().add(new THREE.Vector3(0, 0.3, -0.3));
-      camera.position.copy(targetPosition.clone().add(new THREE.Vector3(-2, 2, -3)));
+      const targetPosition = OOI.sphere.position
+        .clone()
+        .add(new THREE.Vector3(0, 0.3, -0.3));
+      camera.position.copy(
+        targetPosition.clone().add(new THREE.Vector3(-2, 2, -3))
+      );
       camera.lookAt(targetPosition);
 
       const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(1024);
@@ -137,8 +167,12 @@ export default function RoomScene() {
       mirrorSphereCamera2 = new THREE.CubeCamera(0.05, 50, cubeRenderTarget2);
       scene.add(mirrorSphereCamera2);
 
-      OOI.sphere.material = new THREE.MeshBasicMaterial({ envMap: cubeRenderTarget.texture });
-      OOI.sphere2.material = new THREE.MeshBasicMaterial({ envMap: cubeRenderTarget2.texture });
+      OOI.sphere.material = new THREE.MeshBasicMaterial({
+        envMap: cubeRenderTarget.texture,
+      });
+      OOI.sphere2.material = new THREE.MeshBasicMaterial({
+        envMap: cubeRenderTarget2.texture,
+      });
 
       mountRef.current!.appendChild(rendererManager.domElement);
       rendererManager.setSize(window.innerWidth, window.innerHeight);
@@ -169,7 +203,10 @@ export default function RoomScene() {
       for (const intersect of intersects) {
         for (const key in monitorDisplays) {
           const monitor = OOI[key];
-          if (intersect.object === monitor || monitor.children.includes(intersect.object)) {
+          if (
+            intersect.object === monitor ||
+            monitor.children.includes(intersect.object)
+          ) {
             monitorDisplays[key].handleClick();
             return;
           }
@@ -180,7 +217,11 @@ export default function RoomScene() {
           const mixer = OOI.mixer as THREE.AnimationMixer;
           if (mixer) {
             mixer._actions?.forEach((action) => {
-              if (['top_paperAction', 'Icosphere.004Action'].includes(action._clip.name)) {
+              if (
+                ['top_paperAction', 'Icosphere.004Action'].includes(
+                  action._clip.name
+                )
+              ) {
                 action.reset().play();
               }
             });
@@ -200,7 +241,10 @@ export default function RoomScene() {
           const button = OOI[buttonKey];
           if (!button) continue;
 
-          if (intersect.object === button || button.children.includes(intersect.object)) {
+          if (
+            intersect.object === button ||
+            button.children.includes(intersect.object)
+          ) {
             const oldEl = rendererManager.domElement;
             rendererManager.switch(mode);
             const newEl = rendererManager.domElement;
@@ -213,7 +257,9 @@ export default function RoomScene() {
               orbitControls.minDistance = 0.4;
               orbitControls.maxDistance = orbitMaxDistance;
               orbitControls.enableDamping = true;
-              orbitControls.target.copy(OOI.sphere.position).add(new THREE.Vector3(0, 0.2, -0.3));
+              orbitControls.target
+                .copy(OOI.sphere.position)
+                .add(new THREE.Vector3(0, 0.2, -0.3));
               orbitControls.update();
 
               newEl.addEventListener('pointerdown', onPointerDown);
@@ -258,9 +304,21 @@ export default function RoomScene() {
     return () => {
       renderer?.dispose();
       window.removeEventListener('resize', onWindowResize);
-      rendererManager.domElement.removeEventListener('pointerdown', onPointerDown);
+      rendererManager.domElement.removeEventListener(
+        'pointerdown',
+        onPointerDown
+      );
     };
   }, []);
 
-  return <div ref={mountRef} style={{ width: '100vw', height: '100vh', overflow: 'hidden' }} />;
+  return (
+    <>
+      <Seo title="3D Room Scene" path="/room/" noindex />
+
+      <div
+        ref={mountRef}
+        style={{ width: '100vw', height: '100vh', overflow: 'hidden' }}
+      />
+    </>
+  );
 }

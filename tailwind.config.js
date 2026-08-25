@@ -17,7 +17,7 @@ module.exports = {
         },
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
+        sans: ['system-ui', 'sans-serif'],
         display: ['Orbitron', 'sans-serif'],
         mono: ['Roboto Mono', 'monospace'],
       },

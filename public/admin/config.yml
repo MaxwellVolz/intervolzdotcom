@@ -20,6 +20,12 @@ collections:
       - { name: 'title', label: 'Title', widget: 'string' }
       - { name: 'date', label: 'Date', widget: 'datetime' }
 
+      - label: 'Description'
+        name: 'description'
+        widget: 'text'
+        required: false
+        hint: 'Meta description for search + social cards. 150-160 characters, one sentence, no throat-clearing.'
+
       - label: 'Cover Image'
         name: 'cover'
         widget: 'image'

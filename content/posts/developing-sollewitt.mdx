@@ -1,6 +1,7 @@
 ---
 title: Building a Sol LeWitt Drawing Generator
 date: 2026-02-02T18:00:00.000-08:00
+description: "Instruction-driven generative wall drawings in the browser, built with Next.js and Canvas 2D. A tribute to Sol LeWitt, the original prompt engineer."
 technical: true
 draft: false
 work: false
@@ -16,7 +17,7 @@ Live at: [intervolz.com/sollewitt](https://intervolz.com/sollewitt)
 
 [HN Post](https://news.ycombinator.com/item?id=46965968)
 
-![](/imgs/sollewitt_11.png "Wall Drawing #11 — generated in the browser")
+![Wall Drawing #11 — generated in the browser](/imgs/sollewitt_11.png "Wall Drawing #11 — generated in the browser")
 
 
 
@@ -108,7 +109,7 @@ case 'diagonal-right': {
 
 Each line satisfies `ly = lx + k` in cell-local coordinates. `k` sweeps from `-w` to `h`, evenly spaced. The `Math.max`/`Math.min` calls clip each line to the cell bounds. Every line is parallel. Every line is at 45°.
 
-![](/imgs/sollewitt_11.png "Correct: parallel hatching at 45°")
+![Correct: parallel hatching at 45°](/imgs/sollewitt_11.png "Correct: parallel hatching at 45°")
 
 ---
 
@@ -152,36 +153,36 @@ Nineteen wall drawings implemented so far. Each one required a different step ha
 ### Wall Drawing #11 (1969)
 Four equal squares, three of four line kinds per cell. Dense parallel hatching.
 
-![](/imgs/sollewitt_11.png "Wall Drawing #11")
+![Wall Drawing #11](/imgs/sollewitt_11.png "Wall Drawing #11")
 
 ### Wall Drawing #17 (1969)
 Four parts, a different line direction in each. Uses the `unique` flag to assign one kind per cell without repeats.
 
-![](/imgs/sollewitt_17.png "Wall Drawing #17")
+![Wall Drawing #17](/imgs/sollewitt_17.png "Wall Drawing #17")
 
 ### Wall Drawing #46 (1970)
 Vertical lines, not straight, not touching. The `wobbly-lines` handler generates per-segment random displacement around a vertical center.
 
-![](/imgs/sollewitt_46.png "Wall Drawing #46")
+![Wall Drawing #46](/imgs/sollewitt_46.png "Wall Drawing #46")
 
 ### Wall Drawing #38 (1970)
 Colored tissue paper squares in a pegboard grid. The `pegboard` handler fills a grid with randomly colored squares — closed paths detected and filled instead of stroked.
 
 Added an optional background color for this guy.
 
-![](/imgs/sollewitt_38.png "Wall Drawing #38")
+![Wall Drawing #38](/imgs/sollewitt_38.png "Wall Drawing #38")
 
 
 ### Wall Drawing #46 (1970)
 Vertical lines, not straight, not touching, covering the wall evenly.
 
-![](/imgs/sollewitt_46.png "Wall Drawing #46")
+![Wall Drawing #46](/imgs/sollewitt_46.png "Wall Drawing #46")
 
 
 ### Wall Drawing #47 (1970)
 A wall divided into fifteen equal parts, each with a different line direction, and all combinations.
 
-![](/imgs/sollewitt_47.png "Wall Drawing #47")
+![Wall Drawing #47](/imgs/sollewitt_47.png "Wall Drawing #47")
 
 ---
 

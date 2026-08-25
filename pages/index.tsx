@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { getAllPosts, type PostMeta } from '@/lib/getPosts';
 import BootSequence from '@/components/v2/BootSequence';
 import TerminalWindow from '@/components/v2/TerminalWindow';
-import GravityText from '@/components/v2/GravityText';
+import Seo from '@/components/Seo';
 
 // GitHub's search API only counts PUBLIC commits, which undercounts heavily
 // (no private repos, no work orgs). The "contributions in the last year"
@@ -136,6 +136,7 @@ const TAG_COLORS: Record<string, string> = {
   blog: 'text-lime-400/80',
   rant: 'text-red-400/80',
   '@meta': 'text-fuchsia-400/80',
+  arvr: 'text-purple-400/80',
 };
 
 function tagColor(tag: string) {
@@ -184,15 +185,21 @@ export default function V2Home({
   const [allShown, setAllShown] = useState(ALL_PAGE_SIZE);
   const allRemaining = allPosts.length - allShown;
 
-  const postRow = (p: PostMeta) => (
+  const postRow = (p: PostMeta, hidden = false) => (
     <li
       key={p.slug}
-      className="flex flex-col gap-y-1 sm:flex-row sm:items-baseline sm:gap-x-4"
+      className={`flex flex-col gap-y-1 sm:flex-row sm:items-baseline sm:gap-x-4${
+        hidden ? ' hidden' : ''
+      }`}
     >
       <div className="flex items-baseline gap-x-3 sm:contents">
-        <span className="shrink-0 text-zinc-500" title={fmtDateFull(p.date)}>
+        <time
+          dateTime={p.date}
+          className="shrink-0 text-zinc-500"
+          title={fmtDateFull(p.date)}
+        >
           {fmtDate(p.date)}
-        </span>
+        </time>
         <Link
           href={`/${p.slug}`}
           className="min-w-0 text-emerald-300 hover:bg-emerald-500/10 hover:text-emerald-200 sm:flex-1"
@@ -221,9 +228,9 @@ export default function V2Home({
     return (
       <div className="mt-8" key={section.key}>
         <TerminalWindow title={`mvolz@intervolz: ~/${section.key}`}>
-          <p className="text-emerald-400 mb-3">{section.cmd}</p>
+          <h2 className="text-emerald-400 mb-3">{section.cmd}</h2>
           <p className="text-zinc-500 text-xs mb-2">total {items.length}</p>
-          <ul className="space-y-1">{items.map(postRow)}</ul>
+          <ul className="space-y-1">{items.map((p) => postRow(p))}</ul>
         </TerminalWindow>
       </div>
     );
@@ -232,13 +239,13 @@ export default function V2Home({
   const renderAll = () => (
     <div className="mt-8">
       <TerminalWindow title="mvolz@intervolz: ~/all">
-        <p className="text-emerald-400 mb-3">&gt; ls ~/all/</p>
+        <h2 className="text-emerald-400 mb-3">&gt; ls ~/all/</h2>
         <p className="text-zinc-500 text-xs mb-2">
           total {allPosts.length}
           {allRemaining > 0 && <span> · showing {allShown}</span>}
         </p>
         <ul className="space-y-1">
-          {allPosts.slice(0, allShown).map(postRow)}
+          {allPosts.map((p, i) => postRow(p, i >= allShown))}
         </ul>
         {allRemaining > 0 && (
           <button
@@ -258,18 +265,19 @@ export default function V2Home({
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-200">
+      <Seo path="/" />
       {/* SSR/no-JS: real content underneath, indexable. Boot overlay only after mount. */}
       {mounted && !booted && (
         <BootSequence onComplete={handleBootDone} skip={skip} />
       )}
 
-      <div className="max-w-4xl mx-auto px-2 py-6 sm:px-4 sm:py-10">
+      <main className="max-w-4xl mx-auto px-2 py-6 sm:px-4 sm:py-10">
         <TerminalWindow title="mvolz@intervolz: ~/">
           <div className="space-y-2">
             <p className="text-emerald-400">$ whoami</p>
-            <p className="text-zinc-300">
+            <h1 className="text-zinc-300">
               maxwell - engineer / artist. san francisco, CA.
-            </p>
+            </h1>
             <p className="text-emerald-400 mt-4">$ cat ~/status</p>
             <p className="text-zinc-300">
               36 · 6&apos;4&quot; · 225 lbs · still bald
@@ -355,7 +363,7 @@ export default function V2Home({
             </Link>
           </p>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

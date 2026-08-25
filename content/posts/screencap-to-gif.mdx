@@ -1,6 +1,7 @@
 ---
 title: Screencap to GIF
 date: 2025-12-12T09:27:00.000-08:00
+description: "Making high-quality GIFs without bloated GUI apps: capture with OBS, then process with ffmpeg and gifsicle for tiny files and predictable output."
 technical: false
 draft: true
 work: false
@@ -18,7 +19,7 @@ Produce high-quality GIFs without bloated GUI apps!
 
 ---
 
-# Simple + Powerful Toolchain
+## Simple + Powerful Toolchain
 
 ## 1. **Capture desktop video**
 
@@ -34,7 +35,7 @@ Use **OBS Studio** with these settings:
 
 OBS is stable, scriptable, and captures clean frames.
 
-# 2. **Convert video → GIF**
+## 2. **Convert video → GIF**
 
 Use **ffmpeg + gifsicle**. This gives far better results than ffmpeg alone.
 
@@ -58,7 +59,7 @@ gifsicle -O3 out.gif -o out_optimized.gif
 
 ---
 
-# 3. Single Script Solution
+## 3. Single Script Solution
 
 ### Windows PowerShell or Bash:
 

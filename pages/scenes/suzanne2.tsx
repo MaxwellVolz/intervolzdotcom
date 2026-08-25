@@ -6,150 +6,169 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { RendererManager } from '@/lib/RendererManager';
+import Seo from '@/components/Seo';
 
 export default function ScenePage() {
-    const mountRef = useRef<HTMLDivElement>(null);
+  const mountRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-        if (!mountRef.current) return;
+  useEffect(() => {
+    if (!mountRef.current) return;
 
-        let orbitControls: OrbitControls;
-        let suzanneMesh: THREE.Object3D | null = null;
-        let isSpinning = false;
-        let spinTarget = 0;
-        let spinProgress = 0;
+    let orbitControls: OrbitControls;
+    let suzanneMesh: THREE.Object3D | null = null;
+    let isSpinning = false;
+    let spinTarget = 0;
+    let spinProgress = 0;
 
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x222222);
 
-        const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x222222);
+    const camera = new THREE.PerspectiveCamera(
+      55,
+      window.innerWidth / window.innerHeight,
+      0.001,
+      5000
+    );
+    camera.position.set(0, 1, 8);
 
-        const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.001, 5000);
-        camera.position.set(0, 1, 8);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    const rendererManager = new RendererManager(renderer);
+    renderer.outputEncoding = THREE.SRGBColorSpace;
+    renderer.physicallyCorrectLights = true;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    mountRef.current.appendChild(renderer.domElement);
 
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        const rendererManager = new RendererManager(renderer);
-        renderer.outputEncoding = THREE.SRGBColorSpace;
-        renderer.physicallyCorrectLights = true;
-        renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        renderer.setPixelRatio(window.devicePixelRatio);
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        mountRef.current.appendChild(renderer.domElement);
+    // Lighting
+    scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 5);
+    directionalLight.position.set(5, 10, 5);
+    directionalLight.castShadow = true;
+    scene.add(directionalLight);
 
-        // Lighting
-        scene.add(new THREE.AmbientLight(0xffffff, 0.5));
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 5);
-        directionalLight.position.set(5, 10, 5);
-        directionalLight.castShadow = true;
-        scene.add(directionalLight);
+    // Helpers
+    scene.add(new THREE.GridHelper(10, 10));
+    scene.add(new THREE.AxesHelper(5));
 
-        // Helpers
-        scene.add(new THREE.GridHelper(10, 10));
-        scene.add(new THREE.AxesHelper(5));
+    // Orbit controls
+    orbitControls = new OrbitControls(camera, rendererManager.domElement);
+    orbitControls.minDistance = 2.0;
+    orbitControls.maxDistance = 10.0;
+    orbitControls.enableDamping = true;
+    orbitControls.target.set(0, 0, 0);
 
-        // Orbit controls
-        orbitControls = new OrbitControls(camera, rendererManager.domElement);
-        orbitControls.minDistance = 2.0;
-        orbitControls.maxDistance = 10.0;
-        orbitControls.enableDamping = true;
-        orbitControls.target.set(0, 0, 0);
+    // Raycasting
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
 
-        // Raycasting
-        const raycaster = new THREE.Raycaster();
-        const mouse = new THREE.Vector2();
+    const onPointerDown = (event: PointerEvent) => {
+      const rect = renderer.domElement.getBoundingClientRect();
+      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 
-        const onPointerDown = (event: PointerEvent) => {
-            const rect = renderer.domElement.getBoundingClientRect();
-            mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-            mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(scene.children, true);
 
-            raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObjects(scene.children, true);
-
-            const suzanneHit = intersects.find((hit) => hit.object.name === 'Suzanne');
-            if (suzanneHit && suzanneMesh) {
-                isSpinning = !isSpinning;
-                if (isSpinning) {
-                    spinTarget = suzanneMesh.rotation.y + Math.PI * 2 * 5; // one full spin
-                    spinProgress = 0;
-                }
-                console.log(`🌀 Suzanne ${isSpinning ? 'started' : 'stopped'} spinning`);
-            }
-        };
-
-
-
-        renderer.domElement.addEventListener('pointerdown', onPointerDown);
-
-        // Load GLTF
-        const dracoLoader = new DRACOLoader();
-        dracoLoader.setDecoderPath('/jsm/libs/draco/');
-        const gltfLoader = new GLTFLoader();
-        gltfLoader.setDRACOLoader(dracoLoader);
-
-        gltfLoader.load('/models/gltf/suzanne2.glb', (gltf) => {
-            gltf.scene.traverse((child) => {
-                if ((child as THREE.Mesh).isMesh && child.name === 'Suzanne') {
-                    suzanneMesh = child;
-                    console.log('✅ Suzanne mesh found');
-                }
-            });
-            scene.add(gltf.scene);
-        });
-
-        if (scene.animations.length > 0) {
-            const mixer = new THREE.AnimationMixer(scene);
-            console.log('✅ animations:', scene.map((a) => a.name));
-
-            const triggerNames = ['top_paperAction', 'Icosphere.004Action'];
-            const triggerActions: THREE.AnimationAction[] = [];
-
-            scene.animations.forEach((clip) => {
-                const action = mixer.clipAction(clip);
-
-                if (triggerNames.includes(clip.name)) {
-                    action.setLoop(THREE.LoopOnce);
-                    // action.clampWhenFinished = true;
-                    action.stop();
-                    triggerActions.push(action);
-                } else {
-                    action.setLoop(THREE.LoopRepeat);
-                    action.play();
-                }
-            });
+      const suzanneHit = intersects.find(
+        (hit) => hit.object.name === 'Suzanne'
+      );
+      if (suzanneHit && suzanneMesh) {
+        isSpinning = !isSpinning;
+        if (isSpinning) {
+          spinTarget = suzanneMesh.rotation.y + Math.PI * 2 * 5; // one full spin
+          spinProgress = 0;
         }
+        console.log(
+          `🌀 Suzanne ${isSpinning ? 'started' : 'stopped'} spinning`
+        );
+      }
+    };
 
-        // Animate
-        const animate = () => {
-            requestAnimationFrame(animate);
+    renderer.domElement.addEventListener('pointerdown', onPointerDown);
 
-            if (isSpinning && suzanneMesh) {
-                const current = suzanneMesh.rotation.y;
-                const delta = spinTarget - current;
+    // Load GLTF
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath('/jsm/libs/draco/');
+    const gltfLoader = new GLTFLoader();
+    gltfLoader.setDRACOLoader(dracoLoader);
 
-                if (Math.abs(delta) > 0.001) {
-                    suzanneMesh.rotation.y += delta * 0.01; // <-- lerp factor
-                } else {
-                    suzanneMesh.rotation.y = spinTarget;
-                    isSpinning = false;
-                    console.log('✅ Spin complete');
-                }
-            }
+    gltfLoader.load('/models/gltf/suzanne2.glb', (gltf) => {
+      gltf.scene.traverse((child) => {
+        if ((child as THREE.Mesh).isMesh && child.name === 'Suzanne') {
+          suzanneMesh = child;
+          console.log('✅ Suzanne mesh found');
+        }
+      });
+      scene.add(gltf.scene);
+    });
 
-            orbitControls.update();
-            renderer.render(scene, camera);
-        };
+    if (scene.animations.length > 0) {
+      const mixer = new THREE.AnimationMixer(scene);
+      console.log(
+        '✅ animations:',
+        scene.map((a) => a.name)
+      );
 
-        animate();
+      const triggerNames = ['top_paperAction', 'Icosphere.004Action'];
+      const triggerActions: THREE.AnimationAction[] = [];
 
-        // Cleanup
-        return () => {
-            renderer.dispose();
-            renderer.domElement.removeEventListener('pointerdown', onPointerDown);
-            if (mountRef.current?.firstChild) {
-                mountRef.current.removeChild(renderer.domElement);
-            }
-        };
-    }, []);
+      scene.animations.forEach((clip) => {
+        const action = mixer.clipAction(clip);
 
-    return <div ref={mountRef} style={{ width: '100vw', height: '100vh', overflow: 'hidden' }} />;
+        if (triggerNames.includes(clip.name)) {
+          action.setLoop(THREE.LoopOnce);
+          // action.clampWhenFinished = true;
+          action.stop();
+          triggerActions.push(action);
+        } else {
+          action.setLoop(THREE.LoopRepeat);
+          action.play();
+        }
+      });
+    }
+
+    // Animate
+    const animate = () => {
+      requestAnimationFrame(animate);
+
+      if (isSpinning && suzanneMesh) {
+        const current = suzanneMesh.rotation.y;
+        const delta = spinTarget - current;
+
+        if (Math.abs(delta) > 0.001) {
+          suzanneMesh.rotation.y += delta * 0.01; // <-- lerp factor
+        } else {
+          suzanneMesh.rotation.y = spinTarget;
+          isSpinning = false;
+          console.log('✅ Spin complete');
+        }
+      }
+
+      orbitControls.update();
+      renderer.render(scene, camera);
+    };
+
+    animate();
+
+    // Cleanup
+    return () => {
+      renderer.dispose();
+      renderer.domElement.removeEventListener('pointerdown', onPointerDown);
+      if (mountRef.current?.firstChild) {
+        mountRef.current.removeChild(renderer.domElement);
+      }
+    };
+  }, []);
+
+  return (
+    <>
+      <Seo title="Suzanne · raycast" path="/scenes/suzanne2/" noindex />
+
+      <div
+        ref={mountRef}
+        style={{ width: '100vw', height: '100vh', overflow: 'hidden' }}
+      />
+    </>
+  );
 }
