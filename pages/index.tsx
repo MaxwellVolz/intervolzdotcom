@@ -56,25 +56,47 @@ const SECTIONS: Section[] = [
 // above also appears here. Paged, because it is the whole site.
 const ALL_PAGE_SIZE = 8;
 
-const FUN_ZONE = [
+// The old ~/fun-zone was one grid of everything interactive, which put a
+// scoring game and a generative drawing under the same heading. Split by what
+// the visitor is being asked to do: play something, or look at something.
+// Earth is parked -- restore it to ART by uncommenting the entry.
+const ZONES = [
   {
-    url: 'https://waynemo.com',
-    preview: '/games/waynemo_preview.png',
-    label: 'Wayne Mo',
+    dir: '~/games',
+    noun: 'playable',
+    verb: 'play',
+    items: [
+      {
+        url: 'https://waynemo.com',
+        preview: '/games/waynemo_preview.png',
+        label: 'Wayne Mo',
+      },
+      {
+        url: '/axisrecall',
+        preview: '/games/axisrecall_preview.png',
+        label: 'Axis Recall',
+      },
+    ],
   },
-  { url: '/sollewitt', preview: '/games/sol_preview.png', label: 'Sol LeWitt' },
   {
-    url: '/axisrecall',
-    preview: '/games/axisrecall_preview.png',
-    label: 'Axis Recall',
+    dir: '~/art',
+    noun: 'pieces',
+    verb: 'open',
+    items: [
+      {
+        url: '/sollewitt',
+        preview: '/games/sol_preview.png',
+        label: 'Sol LeWitt',
+      },
+      {
+        url: 'https://wassuh.com',
+        preview: '/games/wassuh_preview.png',
+        label: 'Coit Cache',
+      },
+      { url: '/room', preview: '/games/room_preview.png', label: 'Room' },
+      // { url: '/earth', preview: '/games/earth_preview.png', label: 'Earth' },
+    ],
   },
-  {
-    url: 'https://wassuh.com',
-    preview: '/games/wassuh_preview.png',
-    label: 'Coit Cache',
-  },
-  { url: '/room', preview: '/games/room_preview.png', label: 'Room' },
-  { url: '/earth', preview: '/games/earth_preview.png', label: 'Earth' },
 ];
 
 function fmtDate(iso: string) {
@@ -309,52 +331,56 @@ export default function V2Home({
 
         {SECTIONS.filter((s) => s.key === 'now').map(renderSection)}
 
-        <div className="mt-8">
-          <TerminalWindow title="mvolz@intervolz: ~/fun-zone">
-            <p className="text-emerald-400 mb-1">$ ls ~/fun-zone/ --preview</p>
-            <p className="text-zinc-500 text-xs mb-4">
-              {FUN_ZONE.length} interactive demos - click to launch
-            </p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-              {FUN_ZONE.map((item) => {
-                const isExternal = item.url.startsWith('http');
-                const LinkComponent: any = isExternal ? 'a' : Link;
-                const linkProps = isExternal
-                  ? {
-                      href: item.url,
-                      target: '_blank',
-                      rel: 'noopener noreferrer',
-                    }
-                  : { href: item.url };
+        {ZONES.map((zone) => (
+          <div className="mt-8" key={zone.dir}>
+            <TerminalWindow title={`mvolz@intervolz: ${zone.dir}`}>
+              <p className="text-emerald-400 mb-1">
+                $ ls {zone.dir}/ --preview
+              </p>
+              <p className="text-zinc-500 text-xs mb-4">
+                {zone.items.length} {zone.noun} - click to {zone.verb}
+              </p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                {zone.items.map((item) => {
+                  const isExternal = item.url.startsWith('http');
+                  const LinkComponent: any = isExternal ? 'a' : Link;
+                  const linkProps = isExternal
+                    ? {
+                        href: item.url,
+                        target: '_blank',
+                        rel: 'noopener noreferrer',
+                      }
+                    : { href: item.url };
 
-                return (
-                  <LinkComponent
-                    key={item.url}
-                    {...linkProps}
-                    className="group block rounded border border-zinc-700 hover:border-emerald-400 bg-zinc-900 overflow-hidden transition-colors"
-                  >
-                    <div className="aspect-square overflow-hidden bg-zinc-950">
-                      <img
-                        src={item.preview}
-                        alt={item.label}
-                        className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
-                      />
-                    </div>
-                    <div className="px-2 py-1 border-t border-zinc-800 flex items-center gap-2">
-                      <span className="text-emerald-400">▸</span>
-                      <span className="text-emerald-300 group-hover:text-emerald-200 truncate">
-                        {item.label}
-                        {isExternal && (
-                          <span className="text-zinc-500 ml-1">↗</span>
-                        )}
-                      </span>
-                    </div>
-                  </LinkComponent>
-                );
-              })}
-            </div>
-          </TerminalWindow>
-        </div>
+                  return (
+                    <LinkComponent
+                      key={item.url}
+                      {...linkProps}
+                      className="group block rounded border border-zinc-700 hover:border-emerald-400 bg-zinc-900 overflow-hidden transition-colors"
+                    >
+                      <div className="aspect-square overflow-hidden bg-zinc-950">
+                        <img
+                          src={item.preview}
+                          alt={item.label}
+                          className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+                        />
+                      </div>
+                      <div className="px-2 py-1 border-t border-zinc-800 flex items-center gap-2">
+                        <span className="text-emerald-400">▸</span>
+                        <span className="text-emerald-300 group-hover:text-emerald-200 truncate">
+                          {item.label}
+                          {isExternal && (
+                            <span className="text-zinc-500 ml-1">↗</span>
+                          )}
+                        </span>
+                      </div>
+                    </LinkComponent>
+                  );
+                })}
+              </div>
+            </TerminalWindow>
+          </div>
+        ))}
 
         {SECTIONS.filter((s) => s.key !== 'now').map(renderSection)}
 
