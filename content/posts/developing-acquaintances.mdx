@@ -1,13 +1,14 @@
 ---
-title: '[WIP] Acquaintances: the bet I collected on day six'
+title: 'Acquaintances: for people with people'
 date: 2026-08-11T10:00:00.000-07:00
+description: 'A contacts app organised around how you know people, not their names: one screen, a bubble graph, and filter chips generated from your own data. No account.'
 cover: ''
 technical: true
-draft: false
+draft: true
 work: false
 pinned: false
 in_progress: true
-tags: web react dataviz swift
+tags: web react dataviz
 ---
 
 Acquaintances is a contacts app organised around how you know people. The whole
@@ -15,47 +16,52 @@ product is one screen: a bubble graph of everyone you know, and a row of chips
 generated from your own data. Tap a venue and the people from it converge to the
 centre while everyone else drifts out and dims.
 
-Live at: [acquaintances.app](https://acquaintances.app)
-
-You rarely forget the context of a person. "The guy I met at Bings who does sound
+I rarely forget the context of a person. "The guy I met at Bings who does sound
 design" is right there. It is the name that is gone, and every contacts app indexes
 on the name.
 
-The interesting part is not the graph. On day one I wrote an architecture decision
-record whose last constraint had nothing to do with contacts: **this becomes a
-native iOS app later.** Every other decision bent around that sentence for five
-days. On day six I collected, and a Swift transliteration of the core came out
-bit-identical to the TypeScript.
+So this one indexes on the context. Seven days in it is live, it holds my own
+people, and it has already lost some of them once.
 
-Here is what that bet cost, and what it paid.
+## Try it now
+
+Live at: [acquaintances.app](https://acquaintances.app)
+
+It asks you for nothing. No account, no email, nothing to install. You land on a
+demo cast with the whole product working: tap a chip to filter, tap a bubble to
+focus it, search, pan, pinch. Signing in is a button in the corner you can ignore.
+
+![The app at rest on a phone.](/imgs/acq_resting.png 'The app at rest on a phone. Fifty people, the chip row generated from their own data — Monk's Café 12, Kevin's place 4 — and the bar along the bottom naming the cast you are looking at.')
+
+Nobody in that picture is real, and keeping it that way turned out to be the hardest
+standing requirement in the project. The rest of this is how it got built, in the
+order it happened.
 
 ---
 
-## The constraint that shaped everything (Aug 5)
+## The rules live in one place (Aug 5)
 
-ADR 0001 opens with five hard constraints from the brief:
+Day one produced an architecture decision record before it produced any code. An ADR
+is a short markdown file — one per decision, numbered, kept in `docs/adr/` — that
+states what was chosen, what else was on the table, and what the choice costs. It
+exists so a call made in one afternoon is still legible a month later, by which point
+the reasoning is otherwise gone.
+
+ADR 0001 opens with four hard constraints from the brief:
 
 - 390×844 baseline, one-handed, safe-area aware
 - 60fps layout animation at ~300 nodes on a mid-range phone
 - every field optional except name
 - no accounts, no backend, all data on device
-- **it becomes a native iOS app later**
 
-And then the line the rest of the repo is downstream of:
+The second is the one the rest of the repo is downstream of. The graph
+visualisation _is_ the product, and it runs on an imperative `<canvas>` with a
+custom hit-test, pinch and pan gestures, and a render loop that gets 6ms a frame to
+do its work. React goes nowhere near that loop. Neither does anything that decides
+what the picture means.
 
-> The last one is the constraint that shapes everything else. A web app that has to
-> become a native app is not the same project as a web app.
-
-The obvious move was Expo with `react-native-web` from day one: one codebase, a real
-iOS build, no port to plan for. I rejected it. The graph visualisation _is_ the
-product, and it needs an imperative `<canvas>`, a custom hit-test, pinch and pan
-gestures, and a 60fps render loop. Putting `react-native-web` between the app and the
-canvas taxes exactly the part that carries all the risk, and slows the iteration loop
-on the part that most needs iterating.
-
-The accepted cost is written into the ADR: `ui/` gets thrown away at port time. The
-mitigation is to make `ui/` as thin as possible and put everything that matters
-somewhere it survives.
+So the repo is three layers, and the target written into the ADR is 70% of the logic
+in `core/`.
 
 ```
 ui/  ──────►  core/  ◄──────  platform/
@@ -64,11 +70,11 @@ ui/  ──────►  core/  ◄──────  platform/
  gestures)
 ```
 
-| Layer       | Holds                                                                                    | At port time               |
-| ----------- | ---------------------------------------------------------------------------------------- | -------------------------- |
-| `core/`     | data model, layout engine, facet ranking, filtering, validation, the storage _interface_ | moves untouched            |
-| `platform/` | IndexedDB, photo downscaling, haptics, clock, id generation, importers                   | one new file per interface |
-| `ui/`       | React, canvas, gestures. Owns no rules.                                                  | rewritten                  |
+| Layer       | Holds                                                                                    | May reach for                                     |
+| ----------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| `core/`     | data model, layout engine, facet ranking, filtering, validation, the storage _interface_ | nothing at all — not even a dependency            |
+| `platform/` | IndexedDB, photo downscaling, haptics, clock, id generation, importers                   | the browser, behind an interface `core/` declared |
+| `ui/`       | React, canvas, gestures. Owns no rules.                                                  | both of the above                                 |
 
 The dependency arrows only ever point one way, and that is enforced by lint rather
 than by intent. `eslint.config.js` bans `window`, `document`, `indexedDB`,
@@ -79,10 +85,9 @@ importing `ui/`, `platform/`, React, or any backend SDK. The ADR is blunt about 
 
 The practical shape of it is that `core/` never calls `Date.now()` or
 `crypto.randomUUID()`. It takes a `Clock` and an `IdGenerator` as arguments. That
-looks like ceremony for about five days, and then it does not:
-
-> The port requirement and the testability requirement turn out to be the same
-> requirement.
+looks like ceremony for about five days, and then it does not: every layout is
+reproducible from its inputs, every test runs without a fake timer, and "it came out
+different that time" stops being a thing that can happen to you.
 
 ---
 
@@ -96,7 +101,7 @@ was anything to ignore.
 A person has exactly one required field: `name`. Everything else — where you met,
 where they live, what they do — is an `{ personId, typeId, value }` row.
 
-![](/imgs/acq_profile.png "The profile sheet. Every row below the name is an attribute, and 'Met at' appearing three times is three rows, not a schema problem.")
+![The profile sheet.](/imgs/acq_profile.png "The profile sheet. Every row below the name is an attribute, and 'Met at' appearing three times is three rows, not a schema problem.")
 
 That is load-bearing rather than decorative. The filter chips are generated from the
 frequency of attribute values across your own graph, so adding a new kind of field
@@ -105,15 +110,16 @@ in `ATTRIBUTE_TYPES`; the add form, the profile sheet, the chip ranker and the
 proximity model all read from that list. Star sign is derived from birthday on read
 and never stored, so correcting the birthday corrects the sign.
 
+It paid off inside the first session. Importing a real dataset needed eight
+attribute types the model had never heard of, and it cost one array literal.
+
 Chips are ranked, not configured. `rankFacets` scores every candidate value by how
 many people share it, with diminishing returns so one huge value cannot crowd out
 every venue, plus how recently you entered it and how much that _kind_ of attribute
 means. Values held by only one person are dropped, because tapping them is just
 opening that person the long way round.
 
-![](/imgs/acq_resting.png 'Resting. Everyone weakly held near the origin.')
-
-![](/imgs/acq_filtered.png "Monk's Café, tapped. Twelve of fifty converge; the rest are banished to a far ring and dimmed. The chip row has re-ranked against the slice — the second chip is now 129 West 81st, which was fourth a moment ago.")
+![Monk's Café, tapped.](/imgs/acq_filtered.png "Monk's Café, tapped. Twelve of fifty converge; the rest are banished to a far ring and dimmed. The chip row has re-ranked against the slice — the second chip is now 129 West 81st, which was fourth a moment ago.")
 
 Once a filter is on, the remaining chips re-rank against the current slice, so the
 row narrows with you. Shared attributes bend the layout but are never materialised as
@@ -130,14 +136,20 @@ One force drives all three views.
 | Filtered | matches at radius 0, everyone else banished to a far ring and dimmed                  |
 | Focused  | the person pinned at the origin, everyone else at a radius set by connection strength |
 
-![](/imgs/acq_focused.png 'Focused on Jerry. George, Kramer and Elaine are nearest because explicit connections outrank inferred ones.')
+![Focused on Jerry. George, Kramer and Elaine are nearest because explicit connections outrank inferred ones.](/imgs/acq_focused.png 'Focused on Jerry. George, Kramer and Elaine are nearest because explicit connections outrank inferred ones.')
 
-The simulation is hand-written over `Float32Array`s rather than reaching for
-`d3-force`, partly for determinism — d3 jitters coincident nodes with `Math.random`,
-which `core/` is not allowed to call — and partly because a force model with no
-dependencies is a force model that ports. At 300 nodes a tick costs **0.22ms against
-a 6ms budget**, and the render loop parks itself when the simulation settles, so a
-graph at rest costs no battery.
+The brief specified `d3-force`. The simulation is hand-written over `Float32Array`s
+instead, for two reasons that point the same way. d3 jitters coincident nodes with
+`Math.random`, which `core/` is not allowed to call, so any determinism test written
+against it is testing luck. And the hand-written version allocates nothing per tick,
+which is a property a test asserts rather than a claim in a comment. At 300 nodes a
+tick costs **~0.3ms against a 6ms budget**, and the render loop parks itself when the
+simulation settles, so a graph at rest costs no battery.
+
+The accepted cost is that I own the integrator, including its bugs. The mitigation is
+that the force model is deliberately d3-shaped — link springs, many-body charge,
+collision, radial targets, `alpha` decay — so putting d3 back is mechanical rather
+than a rewrite.
 
 ---
 
@@ -222,108 +234,18 @@ discouraged.
 That leaves the public site needing a graph that means something while being nobody
 real. Signed-out visitors pick a cast.
 
-![](/imgs/acq_cast.png "Four fixtures, built by scripts in the repo rather than typed in. The 119th Congress is the one that is not a sitcom: real people, public affiliations, and nobody's private notebook.")
-
----
-
-## Collecting the bet (Aug 10)
-
-ADR 0001 left one fork open: `core/` moves either as TypeScript under React Native,
-or transliterated to Swift. Swift. A JS bridge on the 60fps render path is the one
-cost this project has consistently refused to pay everywhere else, and the force
-simulation is arithmetic over flat arrays, which is what Swift is good at.
-
-Transliterating 5,472 lines is mechanical. What actually needed deciding is that
-three JavaScript semantics the code silently rests on have no Swift equivalent, and
-every one of them is invisible until two runs are compared.
-
-| JavaScript leans on                                         | Swift does not have it                                                                                                      | Decision                                                          |
-| ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| `localeCompare` as the final tie-break in four ranked lists | ICU collation disagrees with Swift's string ordering **in pure ASCII** — ICU puts `apple` before `Apple`, Swift the reverse | replace it on both sides with a comparison over UTF-16 code units |
-| `Array.prototype.sort` is stable by spec                    | Swift's `sort()` is an introsort and promises nothing                                                                       | a stable merge sort in `Support/`, used by every core sort        |
-| `Map` and `Set` iterate in insertion order                  | Swift's are unordered and hash-seeded per process, so not stable run to run                                                 | hand-rolled `OrderedDictionary` and `OrderedSet`                  |
-
-> Left alone, the three compound: unordered iteration decides ties that an unstable
-> sort then scrambles differently on every launch.
-
-Replacing `localeCompare` changes shipped web behaviour — ties between mixed-case
-names reorder — so it went in as a deliberate change rather than a refactor that
-happens to be safe.
-
-Then the float rule, which is the one that makes the whole thing possible. In
-JavaScript a `Float32Array` is storage, not arithmetic: every read widens to float64,
-intermediates stay float64, and rounding happens only on store. So Swift holds
-`[Float]` for storage and `Double` for every intermediate. Writing the accumulators as
-`Float` would round 300 times per node instead of once — and would look like a
-faithful transliteration.
-
-**Phase 1 shipped no app.** It ends with `swift test` green and nothing to look at.
-That ordering was deliberate: the simulation is the only part of the port that can
-fail in a way nobody notices for months, so it went first. Parity vectors record
-float32 **bit patterns in hex**, never decimal, and the comparison has no tolerance
-anywhere. That is not fastidiousness — reverting one line of the port produces a
-1-ULP miss on tick one, `-60.27404` against `-60.274036`, which any tolerance would
-have accepted, and which has compounded into visible drift by tick 50.
-
-### What broke
-
-**V8's libm is not Apple's.** Rank scores diverged by 1 to 2 ULP, and the cause was
-not the port. Over 80 sampled inputs each, `log1p` disagrees on 4 and `pow` on 11 —
-`log1p(2)` among them, so it is not an exotic-input problem. The rule got refined
-rather than quietly loosened: values that pass through a float32 store compare
-exactly, because the store absorbs the noise and because they feed back into
-themselves every tick; sort keys compare rounded to float32 with the resulting
-_order_ asserted exactly, because pinning their last bit would pin V8's libm rather
-than this app's behaviour.
-
-**Two modules I said were ported were not.** I reported the Phase 1 module list
-complete. `graph/candidates.ts` and `model/parse.ts` had no Swift at all. Both suites
-were green the whole time, because a module nobody ported is also a module nobody
-wrote a test for, and the vector emitter only records functions it is told about. It
-was found by diffing `core/` against the Swift sources by hand. The durable fix is
-`scripts/check-port-coverage.mjs` in CI: enumerate `src/core/`, demand a Swift
-counterpart for each, and make every exception state its reason in writing.
-
-**Swift is the slower one.** ADR 0001 called the simulation "the piece most obviously
-suited to Swift, where `Float32Array` becomes `[Float]` and gets faster". It does
-not. Release Swift runs ~0.6ms per tick against V8's ~0.2ms, about three times
-slower. V8's JIT handles this loop very well, and the port pays for its parity
-discipline by converting every stored `Float` to `Double` and back on each access.
-The trade is still right — bit-exactness for 3× the time, affordable because 0.6ms
-leaves ten times the budget at 300 nodes — but it is the opposite of what the ADR
-predicted, and it is now written into the test suite where the next person will find
-it. A debug build costs 6.5ms against that same 6ms budget, so the perf suite skips
-itself unless built with optimisation, and CI runs it in release.
-
-**An xcconfig ate the backend URL.** Yesterday, wiring Supabase for real: `//` starts
-a comment in an xcconfig, so the project URL was silently truncated to `https:`. It
-builds, it launches, and every request goes to a nonsense host. Escaped, documented,
-and `npm run ios:check` now fails on it.
-
-### Put the graph on a phone
-
-![](/imgs/acq_ios.png 'The native app, first run: SQLite opened, 120 people seeded, the same clustering. The chip row reads Bings 27, Dolores Park 9 because rankFacets is the same function the web app calls.')
-
-Almost none of that app target is new logic. It boots, opens SQLite, loads through
-validation, seeds the demo and renders — and every rule it applies lives in
-`AcquaintanceCore`, which is what the port was for. `core/` changed by exactly nothing
-to gain a real database; a `Repository` opened on SQLite never learns it is not the
-in-memory one.
-
-`ui/` was the layer ADR 0001 expected to throw away, and most of it was. The camera
-is the exception, ported rather than rewritten: it is pure arithmetic with no DOM in
-it, it decides whether a tap lands on the bubble under your finger, and rewriting it
-would have meant rediscovering the inset handling by feel.
+![Four fixtures, built by scripts in the repo rather than typed in.](/imgs/acq_cast.png "Four fixtures, built by scripts in the repo rather than typed in. The 119th Congress is the one that is not a sitcom: real people, public affiliations, and nobody's private notebook.")
 
 ---
 
 ## Where it is now
 
-Seven days old. 352 tests on the web side, 153 in 30 suites on the Swift side, and 32
-of 34 core modules with Swift counterparts — the two that do not are the zod schema
-and a test-only fixture file, both declared with their reasons. CI regenerates the
-parity vectors on every run and fails if they differ from what was committed, so
-changing `core/` without re-emitting them is a failed job rather than a slow surprise.
+Seven days old. 373 tests across 26 suites — 17 of those suites in `core/`, 9 in
+`platform/`, 1 in `ui/`, which is the layer split showing up as a number. A
+row-level security suite is held out of that run because it needs two real Supabase
+sessions rather than mocks; `npm run rls` is one command instead of the four
+environment variables it started as. `npm run check` is typecheck, lint, format and
+tests together, and it is what runs before anything ships.
 
 It still does not work offline. Your people live in IndexedDB on the device, but
 there is no service worker caching the app shell, so with no network the page cannot
@@ -335,35 +257,36 @@ that got corrected.
 
 **A boundary maintained by good intentions is already gone.** The layer rule is an
 ESLint config, not a convention, and it has failed the build several times over seven
-days. Every one of those would otherwise have been a small reasonable exception that
-made the port a rewrite.
+days. Every one of those would otherwise have been a small reasonable exception, and
+the rules would now be spread across three layers instead of sitting in one.
 
-**Determinism is the port.** Passing a `Clock` and an `IdGenerator` into `core/`
-looked like ceremony for five days. It is the only reason a Swift transliteration
-could be held to the TypeScript bit for bit, and the only reason every test is
-reproducible. Those turned out to be the same property, bought once.
-
-**Parity has to be something CI enforces, not something a README claims.** I reported
-the module list complete and it was not, with both test suites green. Tests only
-cover what somebody remembered to write; the structural check covers what nobody
-remembered. If a claim matters, find the check that fails when it stops being true.
+**Determinism is worth its ceremony.** Passing a `Clock` and an `IdGenerator` into
+`core/` looked like overhead for five days, and it is the reason the layout engine
+can be tested at all: same input, same picture, every run. It is also why `d3-force`
+was rejected — a library that calls `Math.random()` inside its integrator cannot be
+held to that, and a determinism test written against it passes by luck.
 
 **The dangerous deploy is the one that looks like it worked.** Both privacy failures
 here print a success line. That is the specific shape worth hunting for — not the
 command that errors, but the command that quietly does the wrong thing and logs a
 pass.
 
-**Write down what you assumed, so being wrong is cheap.** ADR 0001 predicted Swift
-would be faster. It is three times slower. Because the prediction was written down in
-a specific, checkable form, measuring it took one afternoon and cost nothing but a
-corrected assumption. Vague optimism cannot be falsified, which is what makes it
-expensive.
+**A field that answers almost the right question reads as correct in every review.**
+`seedSource` was not a typo or a race. It was a name that described one thing and got
+used for another, and every reader of that code, me included, filled in the meaning
+they expected. Reviews catch wrong code. They do not catch code that is right about a
+different question.
+
+**Write down what you assumed, so being wrong is cheap.** ADR 0001 said no accounts,
+no backend, all data on device. Thirty hours later that was false. Because the
+assumption was written down in a specific form, reversing it meant opening the file
+and recording what it cost, which took an afternoon. Vague optimism cannot be
+falsified, which is what makes it expensive.
 
 ## What's next
 
-- Phase 2 remainder: gestures, the sheets, and the rest of the SwiftUI surface
-- Phase 3: Google sign-in and sync on device, with adoption behaving as it does on the web
 - A service worker, so "offline-first" stops being aspirational
+- Tests for `ui/`, which is one suite deep and is where every gesture bug will come from
 - Barnes-Hut, if the graph ever passes ~1000 people — repulsion is O(n²) with a distance cutoff today, which measures fine at this size
 
 Thanks for reading. More soon.
