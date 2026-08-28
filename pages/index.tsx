@@ -8,20 +8,24 @@ import Seo from '@/components/Seo';
 // GitHub's search API only counts PUBLIC commits, which undercounts heavily
 // (no private repos, no work orgs). The "contributions in the last year"
 // number from the profile page is the real flex. Hardcoded because the site is
-// a static export with no runtime; refresh it with the same command the page
-// prints:
+// a static export with no runtime, and shown as a floor (">2,600") so it stays
+// true as the real number drifts up between refreshes.
 //
-//   gh api graphql -f query='{viewer{contributionsCollection{contributionCalendar{totalContributions}}}}'
-//
-// 2,548 as of 2026-08-25.
-const CONTRIBUTIONS_LAST_YEAR = 2548;
+// 2,548 measured 2026-08-25; floored to 2,600 on 2026-08-28. Re-measure with
+// GH_CONTRIB_QUERY, which the ~/activity line copies to the clipboard.
+const CONTRIBUTIONS_FLOOR = 2600;
+
+// Was printed inline above the number, where it wrapped to three lines on a
+// phone. It now lives in the ~/activity tooltip, one click from the clipboard.
+const GH_CONTRIB_QUERY =
+  "gh api graphql -f query='{viewer{contributionsCollection{contributionCalendar{totalContributions}}}}'";
 
 export async function getStaticProps() {
   return {
     props: {
       posts: getAllPosts(),
       gh: {
-        contributions: CONTRIBUTIONS_LAST_YEAR,
+        contributions: CONTRIBUTIONS_FLOOR,
       },
     },
   };
@@ -169,6 +173,46 @@ function tagColor(tag: string) {
   return TAG_COLORS[tag] ?? 'text-zinc-500';
 }
 
+function ActivityCommand() {
+  const [copied, setCopied] = useState(false);
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(GH_CONTRIB_QUERY);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Clipboard denied (insecure origin, permission) -- the tooltip still
+      // shows the command in full to copy by hand.
+    }
+  };
+
+  return (
+    <div className="group relative inline-block mt-4">
+      <button
+        type="button"
+        onClick={copy}
+        aria-label={`Copy command: ${GH_CONTRIB_QUERY}`}
+        className="text-emerald-400 hover:bg-emerald-500/10 cursor-pointer"
+      >
+        $ cat ~/activity
+      </button>
+      {copied && (
+        <span className="ml-2 text-xs text-emerald-300/80">copied</span>
+      )}
+      {/* Above the line, not below: TerminalWindow is overflow-hidden and this
+          is the last command in it, so a tooltip below gets its bottom clipped. */}
+      <span
+        role="tooltip"
+        className="pointer-events-none absolute bottom-full left-0 z-10 mb-2 hidden w-max max-w-[min(90vw,34rem)] whitespace-pre-wrap break-all rounded border border-emerald-500/40 bg-zinc-900 px-2 py-1 text-xs text-zinc-300 shadow-lg group-hover:block group-focus-within:block"
+      >
+        {GH_CONTRIB_QUERY}
+        <span className="mt-1 block text-emerald-500/70">click to copy</span>
+      </span>
+    </div>
+  );
+}
+
 type GhProps = { contributions: number };
 
 export default function V2Home({
@@ -308,13 +352,10 @@ export default function V2Home({
             <p className="text-zinc-300">
               36 · 6&apos;4&quot; · 225 lbs · still bald
             </p>
-            <p className="text-emerald-400 mt-4 break-all">
-              $ gh api graphql -f
-              query=&apos;&#123;viewer&#123;contributionsCollection&#123;contributionCalendar&#123;totalContributions&#125;&#125;&#125;&#125;&apos;
-            </p>
+            <ActivityCommand />
             <p className="text-zinc-300">
               <span className="text-emerald-300">
-                {gh.contributions.toLocaleString()}
+                &gt;{gh.contributions.toLocaleString()}
               </span>{' '}
               contributions ·{' '}
               <a
