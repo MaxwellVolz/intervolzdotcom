@@ -1,0 +1,211 @@
+---
+title: 'Chronomial: build the whole thing, then find out what to cut'
+date: 2026-08-28T10:00:00.000-07:00
+description: 'Chronomial writes your social drafts and you still hit post. I built the maximal version of it first, in four days, so the cuts would be evidence, not a guess.'
+cover: ''
+technical: true
+draft: true
+work: false
+pinned: false
+in_progress: true
+tags: ai llm react web automation
+---
+
+Chronomial researches your market, picks out the few things worth posting about, drafts for each account, stops and waits for a person, then publishes only what that person chose. It is four days old, it is live, and as I write this it is being cut down to five screens and two channels.
+
+Live at: https://chronomial.com
+
+The positioning it is being cut down to is one line: **Chronomial writes the drafts. You still hit post.** Getting to that line took building the version that does not need it. I built the largest version of the idea I could defend, so that deciding what to strip would be a reading of evidence instead of a guess.
+
+---
+
+## The idea (August 25)
+
+The original brief is still sitting in the seed data, as the default Product Context that every broadcast reads:
+
+> Chronomial is a visual AI social media operations platform. Founders and growth teams wire up broadcasts that research a market, extract signals, draft per channel, pause for human approval, then publish.
+
+The audience, from the same defaults: founders, growth leads, and social media managers at seed to Series B companies.
+
+One conviction sits under all of it, and it is the only part that survives the pivot untouched. **Every AI step returns several options side by side, and nothing publishes without a person choosing one.** There is no auto-publish setting. Approval nodes have no bypass. Amber is used for exactly one idea across the entire product: this is waiting on you.
+
+## Everything, in one commit
+
+`af00bf5` is create-next-app. `d5e581f`, later the same day, is the product: 70 files, 13,298 insertions. Not a spike, not a skeleton, not a walking route with three real screens. The whole thing.
+
+| Piece       | Choice                                                                    |
+| ----------- | ------------------------------------------------------------------------- |
+| Canvas      | React Flow (`@xyflow/react`), 22 node types, drag to connect              |
+| Engine      | Pure TypeScript, no React and no DOM: validation, cycles, layering, retry |
+| Channels    | Five adapters, each encoding what is actually true about its platform     |
+| State       | Zustand, in memory, a refresh resets it                                   |
+| Persistence | A Prisma schema for Postgres that validates and is wired to nothing       |
+| Hosting     | Vercel, statically prerendered, zero API routes and zero server actions   |
+
+Three more days of commits followed, all of them narrowing rather than adding. `8228bbc` put real metadata, an OG image and a sitemap on it. `97871c6` made the sandbox and local-app split explicit in the config instead of implied by the fixtures. `09741b6` rewrote every string in the product for plain language and zero em dashes, 23 files, 135 insertions against 126 deletions. `2082711` restyled the whole app for mobile, 29 files. `20f437a` and `5a58814` fixed touch and added a first-run tour.
+
+Twelve commits, four days, and then a snapshot.
+
+## The seams that made it worth building
+
+There is one dependency rule and it is not negotiable: `domain/` never imports from `components/`, `app/`, or `store/`. The store depends on the domain, never the reverse. Three seams fall out of that.
+
+**A visual node only renders.** `BroadcastNodeCard` draws a box and handles clicks. It has no idea how a node executes. Execution lives in an executor registered by kind:
+
+| Executor                | Handles                                                           |
+| ----------------------- | ----------------------------------------------------------------- |
+| `ResearchExecutor`      | website, competitor, social and trend research, signal extraction |
+| `AIContentExecutor`     | angles, per-channel drafts, images, channel adaptation            |
+| `TransformExecutor`     | product context, pinned sources                                   |
+| `ApprovalExecutor`      | human review: raises the request, reads the decision              |
+| `ChannelActionExecutor` | clipboard, composer hand-off, schedule, publish                   |
+| `AnalyticsExecutor`     | metric collection, next-broadcast recommendations                 |
+
+**Executors never touch a provider.** They receive an `ExecutionServices` object and ask it for things. They cannot import the store, the seed data, or an SDK. That is what would let the same engine run in a browser, in a server action, or in a background worker without being rewritten.
+
+**Provider behavior lives in adapters.** No node knows what X's character limit is. It asks the registry and the adapter answers. LinkedIn is the one that justifies the design: 3,000 characters, a warning when there is no line break before the roughly 210-character fold, a warning that outbound links suppress reach, and a hard fact that it cannot accept pre-filled text from a third party. So Chronomial copies first and then opens the composer, while X and Threads get a pre-filled intent URL. That difference is four lines in one file, not a conditional threaded through the UI.
+
+TikTok, YouTube and Bluesky are declared as channels with no adapter registered. `requireAdapter` throws for them rather than silently degrading, which is the correct failure and took one line.
+
+## Where the depth actually went
+
+The engine is 482 lines and does this, in order: validate the graph, detect cycles with a colored DFS that reports the path by node name, layer it with Kahn's algorithm, run every ready node concurrently, freeze each node's inputs and outputs onto its run record, stream status on every transition, park at human review, resume from the decision, retry transient failures three times with backoff at 700ms, 1.4s and 2.8s, and use a derived idempotency key of `runId:candidateId:channel` so a replayed transmission is recognized and skipped.
+
+The demo proves all of it in one pass:
+
+```
+Open the launch broadcast, press Run
+        ↓
+ Competitor Research + Social Listening run side by side
+        ↓
+ Competitor Research fails once (seeded 503)  ── retry ──→  recovers
+        ↓
+ park at approval  ── you pick an angle ──→  resume
+        ↓
+ five X drafts, park again  ── you pick one ──→  resume
+        ↓
+ adapt per channel, publish  ── Instagram refuses ──→  keep what transmitted
+        ↓
+ 15 of 15 steps completed, 0 failed, roughly 35 seconds
+```
+
+Concurrency, deterministic fault injection, two approval gates, per-channel adaptation, partial-publish tolerance, idempotent publishing and analytics collection, in about 35 seconds of clicking. It is the single best thing in the repo.
+
+It is also the answer to a question nobody had asked yet. The value proposition is one sentence long. The machinery that delivers it is 4,852 lines of pure domain code, and a first-time visitor sees none of it.
+
+## The part that did not work
+
+**The canvas does not survive a phone.** The mobile restyle was not a styling pass, it was an admission. At 375px, with the desktop interaction model, the measured state was 0 of 15 steps draggable and 0 of 29 connection handles interactive. Tapping a step to select it changed neither number. The fix was a Move mode: an explicit toggle that makes exactly one step draggable and brings its handles live, with desktop left fully direct-manipulation and no Move button at all.
+
+The mode works. That it was necessary is the finding. When your central metaphor needs a mode to function on the device most people will open it with, the metaphor is not paying for itself there.
+
+**The surface outgrew its own documentation in four days.** The README says 23 node types. The snapshot file I wrote two days later says 25. The actual count is 22. Nobody was lying: the number had simply stopped being something a person could hold. Eighteen of those 22 types appear in one of the five seeded broadcasts. Four appear nowhere at all.
+
+**One capability got built twice.** There is a `select-draft` node type, category `review`, executor `approval`. There is also a `human-review` node whose `kind` setting offers "Choose a draft", and whose default value for that setting is `select-draft`. Same executor, same category, same job, shipped as both a node on the palette and a dropdown on a different node. That is what a surface looks like when it grows faster than anyone reads it back.
+
+**The product invented six nouns.** Broadcasts, transmissions, programs, signals, nodes, control room. A user had to learn all six before writing a single post.
+
+None of these were mistakes at the time. The pattern under them is that the effort went into generality: 22 node types so any workflow could be drawn, five adapters so any platform could be reached, an engine that would survive moving server-side. Generality is the right investment when you know what people want and are scaling to meet it. It is the wrong one when you are still finding out.
+
+## Where it is now
+
+Tagged `v0.1.0-sandbox` on branch `snapshot/pre-refactor`, so this exact state stays reachable.
+
+| Measure            | At the snapshot |
+| ------------------ | --------------- |
+| Tracked files      | 103             |
+| TypeScript and TSX | 11,944 lines    |
+| `src/domain/`      | 4,852           |
+| `src/components/`  | 3,409           |
+| `src/app/`         | 3,108           |
+| `src/store/`       | 742             |
+| Node types         | 22              |
+| Executors          | 6               |
+| Channel adapters   | 5               |
+| Prisma models      | 19              |
+| Routes             | 16              |
+
+Everything except the broadcast detail page is statically prerendered. There are no API routes and no server actions, which is the whole reason the sandbox is safe to leave on a public domain: it holds no credential and makes no outbound call. The only host contacted during a full run is the site's own origin.
+
+Real: clipboard formatting per channel, platform previews rendered to each feed's actual shape, composer deep links, channel validation and character counting, graph validation and cycle detection, concurrent scheduling, retry with backoff, pause and resume across approval gates, derived idempotency keys, the append-only event log, and the full approval lifecycle including rejection reasons and candidate lineage.
+
+Mocked: research providers, model calls, publishing, metrics, OAuth, persistence, and streaming. Fixtures are deterministic, fixed clock and seeded pseudo-random, so the server and the client render identically and the app reads the same on every load.
+
+## The pivot (August 28)
+
+The customer got specific, and everything followed from that. Not founders, growth leads and social media managers at seed to Series B. One solo founder who posts in their own voice, on X and Instagram, usually building in public. No team, no assignees, no approval routing, because there is nobody to route to.
+
+Their problem is not scheduling. It is that writing consistently is a weekly tax they keep failing to pay, and generic AI output is worse than not posting, because publishing boilerplate costs them credibility with their own audience. The differentiator is grounding plus voice: every draft cites a real dated source, and every draft sounds like the founder wrote it. Lose either one and this is a worse Buffer.
+
+| Built                                         | Becomes                                         |
+| --------------------------------------------- | ----------------------------------------------- |
+| The canvas, 22 node types, up to 15 per graph | An internal runtime no user ever sees           |
+| Ten product areas in the nav                  | Five: Queue, Signals, Calendar, Voice, Settings |
+| Five channel adapters                         | Two, X and Instagram                            |
+| 19 Prisma models                              | Three types, one of them primary                |
+| Approval gates routed to named assignees      | One person, one queue, three tabs               |
+| The analytics page                            | One toggle per post: Mark as worked             |
+| The history log page                          | Failure cards in the queue                      |
+| The templates library                         | A section in Settings                           |
+| Six invented nouns                            | Posts, drafts, sources. Signals survives.       |
+
+The whole product collapses to one loop. A source fires, or the founder asks, or the founder has a thought. A channel-native draft is generated with its reason attached. The founder approves, edits, or skips. They post it themselves in one tap. All three origins produce the same object, land in the same queue, and carry the same provenance line above the draft:
+
+```
+X · SPROUT RAISED SEATS 18% · PRICING PAGE · 7H AGO
+```
+
+That line is the signature element of the new design and it carries the entire argument: this draft exists because of a real, dated thing. The rule that falls out of it is a good one. Never show a draft without a provenance line, because if you cannot say why it exists, you should not have generated it.
+
+Nineteen models collapse to one primary object:
+
+```ts
+type Draft = {
+  channel: 'x' | 'instagram';
+  content: string | string[]; // array for threads
+  origin: 'found' | 'asked' | 'written';
+  reason: string; // the provenance line, shown above the draft
+  source: string;
+  state: 'pending' | 'posted' | 'skipped' | 'failed';
+  skipReason?: 'off-topic' | 'not-my-voice' | 'not-now';
+  worked?: boolean; // the one-bit analytics signal
+  originalContent: string; // frozen at generation; never mutate
+};
+```
+
+`originalContent` is the one field carried forward from the old design, under a different name and for a better reason. In the canvas app, freezing a node's inputs and outputs existed so a run could be rehydrated after an approval that took hours. Here, the diff between what was generated and what actually shipped is the training signal for voice and the health metric for the product. Same discipline, real payoff.
+
+## The best code in the repo is the code that goes
+
+Publishing is manual now, by design. On X, build a web intent URL and open it. On Instagram, copy the caption, offer the image as a download, open instagram.com. The founder pastes and posts.
+
+That one decision deletes all OAuth for both platforms, all token storage, the 1-hour and 60-day expiries and every line of refresh logic, Meta App Review at two to four weeks per permission with a screencast, the Instagram Business account requirement, X API write costs, and the entire class of "token expired mid-run" failures.
+
+It also deletes the most careful engineering in the repo. Retry with exponential backoff, derived idempotency keys, partial-publish tolerance, the publish path through five adapters: every one of those exists to make an automated API call safe. A web intent URL has no token to expire, no rate limit to respect, no partial failure to tolerate, and nothing to replay. There is no idempotency problem when a human clicks the button.
+
+What it costs is honest and accepted. No scheduling, because posts go out when the founder is at a device. No performance data, because nothing flows back. A one-bit `Mark as worked` toggle replaces the analytics page, and that is the whole reporting surface.
+
+I do not think I would have believed that trade before building the version that needed the other one. Reading a doc that says "you do not need OAuth" is easy to argue with. Having written the adapter that knows LinkedIn cannot accept pre-filled text from a third party, and then deleting LinkedIn, is not.
+
+## What I learned
+
+**Building the maximal version is a legitimate way to find the minimum.** I could have argued about scope for a week. Instead there is a running artifact, a measured baseline, and a specific list of things to delete. Four days bought a much better conversation than four days of planning would have.
+
+**The hardest engineering was solving a problem the product did not have.** Backoff, idempotency, partial-publish tolerance: correct code, carefully written, aimed at automated publishing. The pivot removes automated publishing. The complexity was not in the engine, it was in the decision the engine was built to support.
+
+**Vocabulary is scope.** Six invented nouns is not a naming problem, it is a confession that the product is a system rather than a tool. Every term a user has to learn before their first post is a feature you decided to keep.
+
+**A mode is a confession.** Adding Move mode made the canvas usable on touch and told me at the same time that the canvas is not the mobile product. Both are true and only the second one matters. The canvas is now unrouted.
+
+**Draw the seams even in a throwaway.** The one thing I am certain survives is the domain layer, because it never learned it was living inside a canvas app. The engine, the approval lifecycle and the frozen-output discipline all move into the new product as internal runtime. The dependency rule is what makes deleting nine tenths of the UI a routing change.
+
+## What's next
+
+- The data model migration, then the queue, then the compose sheet. Those three are the product; if they are good the rest is polish
+- Voice extraction, seeded from an X archive export rather than the API
+- A research job on pricing pages, changelogs and Reddit, since three of four useful signals in the old demo data came from somewhere other than X
+- Nav collapse and route deletion behind a feature flag, with the old canvas left running for anyone on it and a 60-day sunset for the three retired channels
+
+The metric that decides whether any of this worked is not posts per week. It is the share of drafts posted with zero edits. A founder forgives a draft that is wrong about the topic. They do not forgive one that sounds like generic social copy, and no amount of research infrastructure fixes that.
+
+Thanks for reading. More soon.
