@@ -88,14 +88,14 @@ Open the launch broadcast, press Run
         ↓
  adapt per channel, publish  ── Instagram refuses ──→  keep what transmitted
         ↓
- 15 of 15 steps completed, 0 failed, roughly 35 seconds
+ 15 of 15 steps completed, 0 failed, ~35s of machine time
 ```
 
 ![The run parked at its first approval gate. The toolbar reads 5 of 15 nodes with an amber Waiting on you badge, four campaign angles sit side by side with confidence scores, and the inspector lists the frozen inputs and the execution log.](/imgs/chronomial_approval.png 'Parked at the first gate. Four angles side by side, confidence scores, and an inspector showing exactly what the node was handed.')
 
-Concurrency, deterministic fault injection, two approval gates, per-channel adaptation, partial-publish tolerance, idempotent publishing and analytics collection, in about 35 seconds of clicking. It is the single best thing in the repo.
+Concurrency, deterministic fault injection, two approval gates, per-channel adaptation, partial-publish tolerance, idempotent publishing and analytics collection, in about 35 seconds of simulated work. Wall-clock is longer, because the run parks twice and waits however long you take. It is the single best thing in the repo.
 
-![The finished fifteen node graph, every step green, fanning out at both ends and stretching well past the width of the canvas. The toolbar reads 15 of 15 nodes, one minute seventeen seconds, completed.](/imgs/chronomial_graph.png 'The whole broadcast after a clean run. Fifteen steps, two fan-outs, wider than the canvas it is drawn on.')
+![The finished fifteen node graph, every step green, fanning out at both ends and stretching well past the width of the canvas. The toolbar reads 15 of 15 nodes, one minute seventeen seconds, completed.](/imgs/chronomial_graph.png 'The whole broadcast after a clean run. Fifteen steps, two fan-outs, wider than the canvas it is drawn on. The 1m 17s includes the time it sat parked waiting on me.')
 
 It is also the answer to a question nobody had asked yet. The value proposition is one sentence long. The machinery that delivers it is 4,852 lines of pure domain code, and a first-time visitor sees none of it.
 
