@@ -220,11 +220,13 @@ export default function BootSequence({ onComplete, skip }: Props) {
     const handler = () => finish();
     const t = setTimeout(() => {
       window.addEventListener('keydown', handler);
+      window.addEventListener('mousedown', handler);
       window.addEventListener('touchstart', handler, { passive: true });
     }, 200);
     return () => {
       clearTimeout(t);
       window.removeEventListener('keydown', handler);
+      window.removeEventListener('mousedown', handler);
       window.removeEventListener('touchstart', handler);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -280,7 +282,7 @@ export default function BootSequence({ onComplete, skip }: Props) {
               className="mt-6 text-xs md:text-sm text-green-500 animate-pulse"
               style={{ willChange: 'transform' }}
             >
-              press any key to continue...
+              press any key or click to continue...
             </div>
           </>
         )}
