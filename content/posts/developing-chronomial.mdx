@@ -42,6 +42,8 @@ One conviction sits under all of it, and it is the only part that survives the p
 | Persistence | A Prisma schema for Postgres that validates and is wired to nothing       |
 | Hosting     | Vercel, statically prerendered, zero API routes and zero server actions   |
 
+![The Chronomial control room: a sidebar of ten destinations, four headline metric tiles, and six panels covering approvals, recent runs, quick-start programs, upcoming transmissions, discovered signals and per-channel performance.](/imgs/chronomial_control_room.png 'The control room. Ten destinations in the nav, four metric tiles and six panels, all of it shipped on day one.')
+
 Three more days of commits followed, all of them narrowing rather than adding. `8228bbc` put real metadata, an OG image and a sitemap on it. `97871c6` made the sandbox and local-app split explicit in the config instead of implied by the fixtures. `09741b6` rewrote every string in the product for plain language and zero em dashes, 23 files, 135 insertions against 126 deletions. `2082711` restyled the whole app for mobile, 29 files. `20f437a` and `5a58814` fixed touch and added a first-run tour.
 
 Twelve commits, four days, and then a snapshot.
@@ -89,13 +91,19 @@ Open the launch broadcast, press Run
  15 of 15 steps completed, 0 failed, roughly 35 seconds
 ```
 
+![The run parked at its first approval gate. The toolbar reads 5 of 15 nodes with an amber Waiting on you badge, four campaign angles sit side by side with confidence scores, and the inspector lists the frozen inputs and the execution log.](/imgs/chronomial_approval.png 'Parked at the first gate. Four angles side by side, confidence scores, and an inspector showing exactly what the node was handed.')
+
 Concurrency, deterministic fault injection, two approval gates, per-channel adaptation, partial-publish tolerance, idempotent publishing and analytics collection, in about 35 seconds of clicking. It is the single best thing in the repo.
+
+![The finished fifteen node graph, every step green, fanning out at both ends and stretching well past the width of the canvas. The toolbar reads 15 of 15 nodes, one minute seventeen seconds, completed.](/imgs/chronomial_graph.png 'The whole broadcast after a clean run. Fifteen steps, two fan-outs, wider than the canvas it is drawn on.')
 
 It is also the answer to a question nobody had asked yet. The value proposition is one sentence long. The machinery that delivers it is 4,852 lines of pure domain code, and a first-time visitor sees none of it.
 
 ## The part that did not work
 
 **The canvas does not survive a phone.** The mobile restyle was not a styling pass, it was an admission. At 375px, with the desktop interaction model, the measured state was 0 of 15 steps draggable and 0 of 29 connection handles interactive. Tapping a step to select it changed neither number. The fix was a Move mode: an explicit toggle that makes exactly one step draggable and brings its handles live, with desktop left fully direct-manipulation and no Move button at all.
+
+![The same broadcast on a 375 pixel phone screen. Three of the fifteen steps are visible and two of them are cut off by the right edge of the display.](/imgs/chronomial_mobile.png 'The same fifteen step broadcast at 375px. Three steps visible, two of them clipped.')
 
 The mode works. That it was necessary is the finding. When your central metaphor needs a mode to function on the device most people will open it with, the metaphor is not paying for itself there.
 
