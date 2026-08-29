@@ -13,8 +13,6 @@ tags: ai llm web react
 
 ContextClues is a local dashboard that shows what a running Claude Code session currently has in its context window: how full it is, what is in it, which tools are enabled, and what just happened, live. It reads Claude CLI's own files, read-only, and nothing leaves the machine.
 
-It took a day. Discovery notes at 11:11am, first commit at 3:32pm (`e92bfec`), `contextclues@0.1.0` on npm at 6:32pm. The interesting part is not the speed. It is that the last three hours, turning a repo you clone into a package you install, found two real bugs that four hours of building had not.
-
 Live at: https://ctxclues.com
 
 npm: https://www.npmjs.com/package/contextclues
@@ -29,9 +27,9 @@ Repo: https://github.com/MaxwellVolz/contextclues
 
 The context window is the resource you spend all day and cannot see. The CLI gives you a percentage. You learn that you are 78% full and nothing about why: which file read cost 31k tokens, what the last compaction threw away, how many requests you have left before the next one.
 
-All of it is already on disk. Claude CLI writes a JSONL transcript for every session, and every assistant turn in that file carries the API's own `usage` counts. The numbers are not estimates and they are not hidden. Nobody was reading them back.
+All of it is already on disk. Claude CLI writes a transcript for every session that tracks its own `usage` counts. The numbers are not estimates and they are not hidden.
 
-So: a dashboard that treats a session as a **case file**, each transcript record as **evidence**, and its own conclusions as **clues**.
+So I made a dashboard to visualize this information and provide insight as to where my spend is going.
 
 ## Discovery before the plan
 
@@ -39,7 +37,9 @@ The first file written was not `PLAN.md`. It was `DISCOVERY.md`, and it opens wi
 
 > Investigation performed 2026-08-24 against Claude Code 2.1.241 on macOS (darwin), Node v22.22.1. Every field listed below was verified against real files on this machine. Nothing here is assumed from documentation alone; where we infer rather than observe, it is called out.
 
-None of what this project reads is a documented API. It is a directory layout that happens to exist, and it can change in any release. Writing the discovery document first turned "I think the CLI stores sessions somewhere" into a table of paths that had been opened and read:
+None of what this project reads is a documented API. It is a directory layout that happens to exist, and *it can change in any release*. 
+
+Writing the discovery document first turned "I think the CLI stores sessions somewhere" into a table of paths that had been opened and read:
 
 | Path                                                | What it is                                                  |
 | --------------------------------------------------- | ----------------------------------------------------------- |
@@ -48,31 +48,16 @@ None of what this project reads is a documented API. It is a directory layout th
 | `~/.claude.json`, `settings.json`, `.mcp.json`      | MCP servers, allowed tools, hooks, enabled plugins          |
 | `~/.claude/plugins/`, `~/.claude/skills/`           | What else can appear in a tool list                         |
 
-Two decisions fell out of that morning and never changed.
+Two decisions came from this:
 
-**Locate transcripts by search, not by algorithm.** The project directory name is the session's cwd with non-alphanumerics replaced by `-`. Re-implementing that munging is a bet on someone else's string handling; globbing for `<sessionId>.jsonl` is not.
+1. **Locate transcripts by search, not by algorithm.** The project directory name is the session's cwd with non-alphanumerics replaced by `-`.
+2. **Liveness is a signal, not a file.** A session file exists after the process is gone, so we can get historical session data.
 
-**Liveness is a signal, not a file.** A session file exists after the process is gone, so every entry is checked against the process table, and the sandbox case is handled explicitly:
-
-```ts
-function pidAlive(pid: number): boolean {
-  try {
-    process.kill(pid, 0);
-    return true;
-  } catch (err) {
-    // EPERM: the process exists but we may not signal it (e.g. sandboxing).
-    return (err as NodeJS.ErrnoException).code === 'EPERM';
-  }
-}
-```
-
-An EPERM there means the process exists and we simply are not allowed to signal it, so it counts as alive. Treating that as dead would make every sandboxed session vanish from the picker.
-
-Hooks were considered here and deferred. Claude Code hooks would push events instead of making us tail a file, but installing one writes to the user's `settings.json`. A tool whose entire pitch is that it only reads does not get to modify your configuration to make its own job easier.
+Hooks were considered here and deferred. Claude Code hooks would push events instead of making us tail a file, but installing one writes to the user's `settings.json`. And the whole idea of the tool is that it only reads does not get to modify your configuration to make its own job easier.
 
 ## Four labels
 
-The discovery pass produced the design spine. A context dashboard is only useful if you can tell measurement from guesswork, so every number in the UI carries one of four labels:
+The discovery pass produced the design. A context dashboard is only useful if you can tell measurement from guesswork, so every number in the UI carries one of four labels:
 
 | Label         | Means                                            | Example                                             |
 | ------------- | ------------------------------------------------ | --------------------------------------------------- |
@@ -81,7 +66,7 @@ The discovery pass produced the design spine. A context dashboard is only useful
 | **inferred**  | Derived indirectly from observed values          | System prompt overhead = observed total − estimates |
 | **assumed**   | A static mapping that cannot be verified locally | Model id → maximum context window                   |
 
-That last row is the one that mattered. No file on disk says how big the window is. The fallback is a model-id lookup, labeled assumed, with a test that pins the honest failure mode: an unknown model id yields `null`, not a plausible-looking wrong denominator. A meter that reads 41% against a made-up maximum is worse than a meter that says it does not know.
+That last row is important. No file on disk says how big the window is. The fallback is a model-id lookup, labeled assumed, with a test that pins the honest failure mode: an unknown model id yields `null`, not a plausible-looking value. A meter that reads 41% against a made-up maximum is worse than a meter that says it does not know.
 
 ## The build
 
@@ -96,17 +81,19 @@ One Next.js process. The collector is a lazily-initialized singleton inside the 
 
 Persistence is `node:sqlite`, built into Node 22.5+. That is the whole reason the package has no native build step and installs in a couple of seconds. Transcripts are tail-parsed from a stored byte offset per session, so a 40MB JSONL file is read once and appended to thereafter.
 
-Order of work was pure functions first: estimate, redact, normalize a transcript line, derive clues, all with `node --test` unit tests before any of it was wired to a route. 3,882 lines of TypeScript in total, 384 of them tests, 33 tests. Then the DB and API verified with curl against this machine's real sessions, then the UI, then the README.
+Order of work was pure functions first: estimate, redact, normalize a transcript line, derive clues, all with `node --test` unit tests before any of it was wired to a route. 3,882 lines of TypeScript in total, 384 of them tests, 33 tests. 
+
+Then the DB and API verified with curl against this machine's real sessions, then the UI, then the README.
 
 Redaction runs before storage, not before rendering: API keys, GitHub and Slack tokens, JWTs, private key blocks, and `*_SECRET=`-shaped assignments are scrubbed on the way into SQLite. A secret that reaches the index has already left the file it was supposed to stay in.
 
 ## The part that did not work: the burn rate
 
-The trajectory panel projects a runway: how many requests, and how many minutes, before the window fills. The first version took the median of the last 30 per-request deltas, with values beyond 1.5× the IQR trimmed out.
+The trajectory panel projects a runway: how many requests, and how many minutes, before the window fills. The first version used the median of the last 30 requests, filtering out anything unusually high or low.
 
-It is a defensible-looking estimator. It is the wrong one.
+While it seems to be a defensible-looking estimator, it is *the wrong one*.
 
-Growth per request is strongly right-skewed. Most requests add a few hundred tokens; occasionally one reads a lockfile and adds 40k. Trimming those out and taking the median answers "what does a typical request cost". Runway is not that question. Runway is a question about cumulative growth, and `E[sum] = n × E[delta]`, so the estimator has to be the mean, the one that counts big requests at the rate they actually happen. The median version quietly promised more headroom than the session had.
+Growth per request is strongly right-skewed. Most requests add a few hundred tokens; occasionally one reads a lockfile and adds 40k. Trimming those out and taking the median answers "what does a typical request cost". Runway is not that question. Runway is a question about cumulative growth, so the estimator has to be the mean, the one that counts big requests at the rate they actually happen. The median version quietly promised more headroom than the session had.
 
 ```ts
 const burnRatePerTurn = recent.reduce((a, b) => a + b, 0) / recent.length;
@@ -115,15 +102,21 @@ const burnRatePerTurn = recent.reduce((a, b) => a + b, 0) / recent.length;
 const typical = median(withoutOutliers(recent));
 ```
 
-The trimmed median did not get deleted, it got demoted to what it is actually good at. Both numbers ship, and the ratio between them became a feature: when the average sits more than 2× above the typical request, the session is spike-dominated, the panel labels it variable and widens the runway into a range instead of pretending to a single figure. Two tests hold the line: `a 40k spike does not move the typical rate`, and `the average predicts cumulative growth without bias`.
+Instead of deleting the trimmed median, we just demoted it to what it is actually represents. Both numbers ship, and the ratio between them became a feature: when the average sits more than 2× above the typical request, the session is spike-dominated, the panel labels it variable and widens the runway into a range instead of pretending to a single figure. 
+
+Two tests hold the line: `a 40k spike does not move the typical rate`, and `the average predicts cumulative growth without bias`.
 
 Compaction drops are excluded rather than averaged in, or a single compaction would report the context as shrinking forever.
 
 ## Publishing found the bugs
 
-At 6:18pm the project still had one install path: clone, `npm install`, `npm run dev`. Turning that into `npx contextclues` (`85a7368`) is mostly bookkeeping: a `bin` entry, a `files` list, `engines`, and a `prepublishOnly` that rebuilds and runs the tests. The CLI itself is 125 lines: parse flags, resolve the Next runtime, start the prebuilt server **from the package directory rather than the user's cwd**, open a browser when the child says it is ready.
+At this time the project still had one install path: clone, `npm install`, `npm run dev`.
 
-The bookkeeping is not what made the commit worth writing about. Packaging is a change of address, and four things only show up once the code lives somewhere other than the repo it was written in:
+Turning that into `npx contextclues` is mostly bookkeeping: a `bin` entry, a `files` list, `engines`, and a `prepublishOnly` that rebuilds and runs the tests. 
+
+The CLI itself is 125 lines: parse flags, resolve the Next runtime, start the prebuilt server **from the package directory rather than the user's cwd**, open a browser when the child says it is ready.
+
+Packaging includes a change of address, and four things only show up once the code lives somewhere other than the repo it was written in:
 
 | Found by packaging                                              | Why a clone never showed it                                                                       |
 | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
@@ -132,19 +125,34 @@ The bookkeeping is not what made the commit worth writing about. Packaging is a 
 | The server bound `0.0.0.0`                                      | On localhost you never notice you are also serving the LAN                                        |
 | `next.config.ts` triggers a runtime `typescript` install        | Dev machines already have it; a user's first run would fetch and write into the install directory |
 
-The middle two are real bugs, and they are the same bug wearing different clothes: a dev clone is a machine-shaped assumption. A globally installed binary starts from wherever you happen to be, so the index now lives in `~/.contextclues`. A dashboard of your own transcripts has no business on the local network, so both the CLI and the npm scripts now bind `127.0.0.1` and the README states it as a guarantee.
+The middle two are real bugs: 
+
+1. A globally installed binary starts from wherever you happen to be, so the index now lives in `~/.contextclues`. 
+2. A dashboard of your own transcripts has no business on the local network, so both the CLI and the npm scripts now bind `127.0.0.1` and the README states it as a guarantee.
 
 Verification was a dry run of someone else's first five minutes: `npm pack`, install the tarball into an empty project with `--omit=dev`, and check the list. 480K packed, 95 files, 1.95MB unpacked. No typescript fetch. Ready in 141ms. `/` and `/api/cases` both 200. The index written to the configured directory and nowhere else, no stray files in the cwd, and the LAN address refusing the connection.
 
-`contextclues@0.1.0` published at 6:32pm.
+`contextclues@0.1.0` is now published!
 
 ## Where it is now
 
-`npx contextclues` opens the dashboard on port 4310 and finds the running session on its own. Live sessions are marked with a dot. It needs Node 22.5 or newer and a machine where Claude CLI has run.
+`npx contextclues` opens the dashboard on port 4310 and finds the running session on its own. 
 
-Seven panels: the meter, the trajectory with burn rate and runway, composition by source, a searchable evidence table with per-entry token estimates and inclusion status, the tool registry with where each tool's existence was learned from, live activity over SSE, and the clue engine. The clues are the actionable half: oversized tool results, files read repeatedly, compactions with their exact token drop, enabled tools that never got used, window pressure.
+Live sessions are marked with a dot. It needs Node 22.5 or newer and a machine where Claude CLI has run.
 
-There is a one-page site at ctxclues.com, which got its own detour: the dashboard mockup on it had squeezed the Evidence preview column to 124px, so the densest panel on the page rendered as `[Read] ...`, `also up...`, `compact...`. Rebuilt at 1240px with a fixed table layout, the preview column gets 266px and the panel actually reads as a panel.
+The dashboard has seven panels:
+
+* The context meter
+* Usage over time, including burn rate and estimated runway
+* A breakdown of where the context is coming from
+* A searchable evidence table showing each entry’s estimated token count and whether it’s still in the window
+* A tool registry showing where each available tool was discovered
+* Live activity streamed over SSE
+* The clue engine
+
+The clue engine is where the dashboard becomes actionable. It flags oversized tool results, files that have been read repeatedly, compactions and their exact token reduction, enabled tools that were never used, and growing pressure on the context window.
+
+There is a one-page site at [ctxclues.com](https://ctxclues.com), and the package is on npm at [contextclues](https://www.npmjs.com/package/contextclues). The repo is at [github.com/MaxwellVolz/contextclues](https://github.com/MaxwellVolz/contextclues)
 
 ## What I learned
 
@@ -154,7 +162,9 @@ There is a one-page site at ctxclues.com, which got its own detour: the dashboar
 
 **Pick the estimator that matches the question, not the one that looks robust.** Trimmed median reads as the careful choice, and it was the wrong tool for a question about a sum. The tell was that the projection felt generous. Ask what quantity the user is actually asking about, then derive the estimator from that.
 
-**Packaging is a test suite you cannot write yourself.** Every implicit assumption of a dev clone becomes visible the moment the code has to run from somewhere else: the cwd, the network interface, what your toolchain already has installed, whether you ever wrote a license. Publishing an unfinished thing early is cheaper than discovering those on a user's machine.
+**Packaging is a test suite you cannot write yourself.** *"It works on my machine"*...ahhhh! Every implicit assumption of a dev clone becomes visible the moment the code has to run from somewhere else: the cwd, the network interface, what your toolchain already has installed, whether you ever wrote a license(which I hadn't). 
+
+**Publishing an unfinished thing early is cheaper than discovering those on a user's machine.**
 
 ## What's next
 
@@ -162,7 +172,7 @@ There is a one-page site at ctxclues.com, which got its own detour: the dashboar
 - An optional hook, installed by the user, for push-style events instead of tailing
 - Subagent trees, since sidechains are parsed but not yet drawn
 - Comparing sessions, and history across a project rather than one case file at a time
-- A changelog, and a 0.2.0 that is not published from a laptop at 6:32pm
-- Post it on Hacker News and go viral
+- A changelog, and a 0.2.0
+- Post it on Hacker News and go **viral**
 
 Thanks for reading. More soon.
