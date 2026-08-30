@@ -71,6 +71,9 @@ const ALL_PAGE_SIZE = 8;
 //
 // ~/live is deliberately not a post filter. It answers "what is running right
 // now," which is a fact about a URL, not about whether an article got written.
+//
+// An item marked `draft: true` is not running yet: it stays in the list so the
+// URL and preview survive, but it renders nowhere and is not counted.
 const ZONES = [
   {
     dir: '~/live',
@@ -81,6 +84,7 @@ const ZONES = [
         url: 'https://chronomial.com',
         preview: '/live/chronomial_preview.png',
         label: 'Chronomial',
+        draft: true,
       },
       {
         url: 'https://ctxclues.com',
@@ -385,14 +389,14 @@ export default function V2Home({
             </h1>
             <p className="text-emerald-400 mt-4">$ cat ~/status</p>
             <p className="text-zinc-300">
-              36 · 6&apos;4&quot; · 225 lbs · still bald
+              36 · 6&apos;4&quot; · 225 lbs · bald
             </p>
             <ActivityCommand />
             <p className="text-zinc-300">
               <span className="text-emerald-300">
                 &gt;{gh.contributions.toLocaleString()}
               </span>{' '}
-              contributions ·{' '}
+              contributions this year ·{' '}
               <a
                 href="https://github.com/MaxwellVolz"
                 target="_blank"
@@ -405,56 +409,59 @@ export default function V2Home({
           </div>
         </TerminalWindow>
 
-        {ZONES.map((zone) => (
-          <div className="mt-8" key={zone.dir}>
-            <TerminalWindow title={`mvolz@intervolz: ${zone.dir}`}>
-              <p className="text-emerald-400 mb-1">
-                $ ls {zone.dir}/ --preview
-              </p>
-              <p className="text-zinc-500 text-xs mb-4">
-                {zone.items.length} {zone.noun} - click to {zone.verb}
-              </p>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                {zone.items.map((item) => {
-                  const isExternal = item.url.startsWith('http');
-                  const LinkComponent: any = isExternal ? 'a' : Link;
-                  const linkProps = isExternal
-                    ? {
-                        href: item.url,
-                        target: '_blank',
-                        rel: 'noopener noreferrer',
-                      }
-                    : { href: item.url };
+        {ZONES.map((zone) => {
+          const items = zone.items.filter((item) => !item.draft);
+          return (
+            <div className="mt-8" key={zone.dir}>
+              <TerminalWindow title={`mvolz@intervolz: ${zone.dir}`}>
+                <p className="text-emerald-400 mb-1">
+                  $ ls {zone.dir}/ --preview
+                </p>
+                <p className="text-zinc-500 text-xs mb-4">
+                  {items.length} {zone.noun} - click to {zone.verb}
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                  {items.map((item) => {
+                    const isExternal = item.url.startsWith('http');
+                    const LinkComponent: any = isExternal ? 'a' : Link;
+                    const linkProps = isExternal
+                      ? {
+                          href: item.url,
+                          target: '_blank',
+                          rel: 'noopener noreferrer',
+                        }
+                      : { href: item.url };
 
-                  return (
-                    <LinkComponent
-                      key={item.url}
-                      {...linkProps}
-                      className="group block rounded border border-zinc-700 hover:border-emerald-400 bg-zinc-900 overflow-hidden transition-colors"
-                    >
-                      <div className="aspect-square overflow-hidden bg-zinc-950">
-                        <img
-                          src={item.preview}
-                          alt={item.label}
-                          className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
-                        />
-                      </div>
-                      <div className="px-2 py-1 border-t border-zinc-800 flex items-center gap-2">
-                        <span className="text-emerald-400">▸</span>
-                        <span className="text-emerald-300 group-hover:text-emerald-200 truncate">
-                          {item.label}
-                          {isExternal && (
-                            <span className="text-zinc-500 ml-1">↗</span>
-                          )}
-                        </span>
-                      </div>
-                    </LinkComponent>
-                  );
-                })}
-              </div>
-            </TerminalWindow>
-          </div>
-        ))}
+                    return (
+                      <LinkComponent
+                        key={item.url}
+                        {...linkProps}
+                        className="group block rounded border border-zinc-700 hover:border-emerald-400 bg-zinc-900 overflow-hidden transition-colors"
+                      >
+                        <div className="aspect-square overflow-hidden bg-zinc-950">
+                          <img
+                            src={item.preview}
+                            alt={item.label}
+                            className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+                          />
+                        </div>
+                        <div className="px-2 py-1 border-t border-zinc-800 flex items-center gap-2">
+                          <span className="text-emerald-400">▸</span>
+                          <span className="text-emerald-300 group-hover:text-emerald-200 truncate">
+                            {item.label}
+                            {isExternal && (
+                              <span className="text-zinc-500 ml-1">↗</span>
+                            )}
+                          </span>
+                        </div>
+                      </LinkComponent>
+                    );
+                  })}
+                </div>
+              </TerminalWindow>
+            </div>
+          );
+        })}
 
         {SECTIONS.map(renderSection)}
 
