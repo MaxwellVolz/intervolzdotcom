@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a statically-generated blog/portfolio site built with Next.js, MDX, and Decap CMS. Content is Git-backed with automated Jenkins deployment to NGINX via Cloudflare Tunnel. The homepage leads with hand-listed grids of things you can open (`~/live` products, `~/games`, `~/art`), then article buckets: `devlog` (build stories) and `work` (`work: true`), which a post can be in at the same time, plus `notes` as the exclusive catch-all, with `all` listing the complete archive.
+This is a statically-generated blog/portfolio site built with Next.js, MDX, and Decap CMS. Content is Git-backed with automated Jenkins deployment to NGINX via Cloudflare Tunnel. The homepage leads with hand-listed grids of things you can open (`~/live` products, `~/games`, `~/art`), then article buckets: `devlog` (build stories) and `work` (`work: true`), which a post can be in at the same time, plus `tutorials` as the exclusive catch-all, with `all` listing the complete archive.
 
 ## Development Commands
 
@@ -82,7 +82,7 @@ All page metadata goes through `components/Seo.tsx`; site-level constants live i
 
 ### Page Organization
 
-- **`pages/index.tsx`**: Homepage. Holds `ZONES` (hand-listed grids: `~/live`, `~/games`, `~/art`) which render first, then three curated `ls`-styled buckets: `~/devlog/` and `~/work/` are independent filters and a post can appear in both, `~/notes/` takes only what neither claimed. Then `~/all/` as the full paged archive. Also holds the `TAG_COLORS` map.
+- **`pages/index.tsx`**: Homepage. Holds `ZONES` (hand-listed grids: `~/live`, `~/games`, `~/art`) which render first, then three curated `ls`-styled buckets: `~/devlog/` and `~/work/` are independent filters and a post can appear in both, `~/tutorials/` takes only what neither claimed. Then `~/all/` as the full paged archive. Also holds the `TAG_COLORS` map.
   A live product is a `ZONES` item, never a post flag: `~/live` answers "what is running," which is a fact about a URL
 - **`pages/[slug].tsx`**: Individual blog post template
 - **Decap CMS**: served statically from `public/admin/` (there is no `pages/admin.tsx`)

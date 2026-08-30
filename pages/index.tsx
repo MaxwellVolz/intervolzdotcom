@@ -42,7 +42,7 @@ type Section = {
 // a product is a thing you open, not a thing you read about.
 //
 // ~/devlog and ~/work are independent: a client engagement that also got a build
-// write-up belongs in both, and saying so twice is the honest listing. ~/notes
+// write-up belongs in both, and saying so twice is the honest listing. ~/tutorials
 // stays exclusive, as the catch-all for the teaching posts that are neither --
 // otherwise nearly every post would appear in it a second time.
 const SECTIONS: Section[] = [
@@ -53,8 +53,8 @@ const SECTIONS: Section[] = [
     filter: (p) => !!p.work,
   },
   {
-    key: 'notes',
-    cmd: '> ls ~/notes/',
+    key: 'tutorials',
+    cmd: '> ls ~/tutorials/',
     filter: (p) => !p.devlog && !p.work && !!p.technical,
   },
 ];

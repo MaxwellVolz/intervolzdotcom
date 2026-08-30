@@ -53,7 +53,7 @@ What each one **actually does** (`lib/getPosts.ts`, `pages/index.tsx`):
 | `date`        | ISO 8601 **with offset** (`-07:00` PDT / `-08:00` PST). Sorts within a bucket.                                                                                                                                       |
 | `description` | **Required.** The `<meta name="description">`, the og/twitter description, the RSS summary, and the SERP snippet. 150–160 characters, one sentence, no throat-clearing. Write it like the lede: what it is, plainly. |
 | `cover`       | Optional image for the index, the post header, and the og:image. `''` is normal.                                                                                                                                     |
-| `technical`   | Buckets the post under `> ls ~/notes/`, the teaching catch-all. No effect on ordering.                                                                                                                               |
+| `technical`   | Buckets the post under `> ls ~/tutorials/`, the teaching catch-all. No effect on ordering.                                                                                                                               |
 | `work`        | Buckets under `> ls ~/work/`. For client engagements.                                                                                                                                                                |
 | `devlog`      | Buckets under `> ls ~/devlog/`, the build stories. Combines with `work`; suppresses `technical`.                                                                                                                     |
 | `draft`       | Hides from the homepage — **but the page still builds and is reachable at its URL**. This is how you stage an unpublished post on a deploy.                                                                          |
@@ -63,7 +63,7 @@ What each one **actually does** (`lib/getPosts.ts`, `pages/index.tsx`):
 **How the buckets are assigned.** `getAllPosts()` does not assign buckets;
 `pages/index.tsx` does. `~/devlog` (`devlog`) and `~/work` (`work`) are
 independent, so a client engagement that also got a build story appears in both.
-`~/notes` is the catch-all and stays exclusive: it takes a post only when neither
+`~/tutorials` is the catch-all and stays exclusive: it takes a post only when neither
 of the other two claimed it, which is what keeps nearly every write-up from
 listing twice. Everything, including all of the above, is also listed in `~/all`,
 which is the full archive and is paged.
