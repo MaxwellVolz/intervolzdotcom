@@ -11,7 +11,7 @@ export type PostMeta = {
   technical?: boolean;
   work?: boolean;
   draft?: boolean;
-  in_progress?: boolean;
+  devlog?: boolean;
   tags?: string[];
 };
 
@@ -33,7 +33,7 @@ export function getAllPosts(): PostMeta[] {
       technical: !!data.technical,
       work: !!data.work,
       draft: !!data.draft,
-      in_progress: !!data.in_progress,
+      devlog: !!data.devlog,
       tags:
         typeof data.tags === 'string'
           ? data.tags.trim().split(/\s+/)

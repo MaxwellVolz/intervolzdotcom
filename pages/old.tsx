@@ -223,7 +223,7 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
 
             <div className="space-y-8">
               {posts
-                .filter((post) => post.in_progress)
+                .filter((post) => post.devlog)
                 .map((post) => (
                   <article key={post.slug} className="group">
                     <Link href={`/${post.slug}`} className="block">
@@ -334,9 +334,7 @@ export default function BlogIndex({ posts = [] }: { posts: PostMeta[] }) {
 
             <div className="grid gap-8 md:grid-cols-2">
               {posts
-                .filter(
-                  (post) => !post.technical && !post.work && !post.in_progress
-                )
+                .filter((post) => !post.technical && !post.work && !post.devlog)
                 .map((post) => (
                   <article key={post.slug} className="group">
                     <Link href={`/${post.slug}`} className="block">

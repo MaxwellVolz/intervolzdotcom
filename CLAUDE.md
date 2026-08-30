@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a statically-generated blog/portfolio site built with Next.js, MDX, and Decap CMS. Content is Git-backed with automated Jenkins deployment to NGINX via Cloudflare Tunnel. The site serves as a personal portfolio showcasing blog posts bucketed on the homepage as `now` (in progress) and `shipped` (`work: true`), which a post can be in at the same time, plus `technical` as the exclusive catch-all, with `all` listing the complete archive.
+This is a statically-generated blog/portfolio site built with Next.js, MDX, and Decap CMS. Content is Git-backed with automated Jenkins deployment to NGINX via Cloudflare Tunnel. The homepage leads with hand-listed grids of things you can open (`~/live` products, `~/games`, `~/art`), then article buckets: `devlog` (build stories) and `work` (`work: true`), which a post can be in at the same time, plus `notes` as the exclusive catch-all, with `all` listing the complete archive.
 
 ## Development Commands
 
@@ -38,7 +38,7 @@ npm run format
 - **Frontmatter fields**:
   - `title`, `date`, `description` (meta description, 150-160 chars — required),
     `cover` (optional image)
-  - `in_progress` (current work), `work` (shipped projects), `technical` (build
+  - `devlog` (build stories), `work` (client engagements), `technical` (build
     write-ups), `draft` (hidden from the homepage, still builds at its URL),
     `pinned` (inert — read by nothing). Flags pick the section only; every
     section is ordered by `date`, newest first.
@@ -82,7 +82,8 @@ All page metadata goes through `components/Seo.tsx`; site-level constants live i
 
 ### Page Organization
 
-- **`pages/index.tsx`**: Homepage. Three curated `ls`-styled buckets: `~/now/` and `~/shipped/` are independent filters and a post can appear in both, `~/technical/` takes only what neither claimed. Then `~/all/` as the full paged archive. Also holds the `TAG_COLORS` map
+- **`pages/index.tsx`**: Homepage. Holds `ZONES` (hand-listed grids: `~/live`, `~/games`, `~/art`) which render first, then three curated `ls`-styled buckets: `~/devlog/` and `~/work/` are independent filters and a post can appear in both, `~/notes/` takes only what neither claimed. Then `~/all/` as the full paged archive. Also holds the `TAG_COLORS` map.
+  A live product is a `ZONES` item, never a post flag: `~/live` answers "what is running," which is a fact about a URL
 - **`pages/[slug].tsx`**: Individual blog post template
 - **Decap CMS**: served statically from `public/admin/` (there is no `pages/admin.tsx`)
 - **`components/layout/`**: IDE-themed layout components (unused in current build).
@@ -134,8 +135,8 @@ and a pre-publish checklist. Do not re-derive the voice by reading the archive.
 
 1. Create `.mdx` file in `content/posts/`
 2. Add frontmatter with required fields (`title`, `date`, `tags`)
-3. Use `in_progress: true` for current work, `work: true` for shipped projects,
-   `technical: true` for build write-ups (`pinned` is inert — nothing reads it)
+3. Use `devlog: true` for a build story, `work: true` for a client engagement,
+   `technical: true` for a teaching post (`pinned` is inert — nothing reads it)
 4. Commit and push to trigger deployment
 
 **Staging a post for review**: set `draft: true`. It is hidden from the homepage

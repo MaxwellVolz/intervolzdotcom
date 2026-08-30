@@ -40,7 +40,7 @@ technical: true
 draft: false
 work: false
 pinned: false
-in_progress: false
+devlog: false
 tags: ai llm web automation react
 ---
 ```
@@ -53,20 +53,27 @@ What each one **actually does** (`lib/getPosts.ts`, `pages/index.tsx`):
 | `date`        | ISO 8601 **with offset** (`-07:00` PDT / `-08:00` PST). Sorts within a bucket.                                                                                                                                       |
 | `description` | **Required.** The `<meta name="description">`, the og/twitter description, the RSS summary, and the SERP snippet. 150–160 characters, one sentence, no throat-clearing. Write it like the lede: what it is, plainly. |
 | `cover`       | Optional image for the index, the post header, and the og:image. `''` is normal.                                                                                                                                     |
-| `technical`   | Buckets the post under `> ls ~/technical/`. No effect on ordering.                                                                                                                                                   |
-| `work`        | Buckets under `> ls ~/shipped/`.                                                                                                                                                                                     |
-| `in_progress` | Buckets under `> ls ~/now/`. Combines with `work`; suppresses `technical`.                                                                                                                                           |
+| `technical`   | Buckets the post under `> ls ~/notes/`, the teaching catch-all. No effect on ordering.                                                                                                                               |
+| `work`        | Buckets under `> ls ~/work/`. For client engagements.                                                                                                                                                                |
+| `devlog`      | Buckets under `> ls ~/devlog/`, the build stories. Combines with `work`; suppresses `technical`.                                                                                                                     |
 | `draft`       | Hides from the homepage — **but the page still builds and is reachable at its URL**. This is how you stage an unpublished post on a deploy.                                                                          |
 | `pinned`      | **Inert.** Present in the Decap form and read by nothing. Leave it `false`.                                                                                                                                          |
 | `tags`        | Space-separated string.                                                                                                                                                                                              |
 
 **How the buckets are assigned.** `getAllPosts()` does not assign buckets;
-`pages/index.tsx` does. `~/now` (`in_progress`) and `~/shipped` (`work`) are
-independent, so a post that is released and still being worked on appears in
-both. `~/technical` is the catch-all and stays exclusive: it takes a post only
-when neither of the other two claimed it, which is what keeps nearly every
-write-up from listing twice. Everything, including all of the above, is also
-listed in `~/all`, which is the full archive and is paged.
+`pages/index.tsx` does. `~/devlog` (`devlog`) and `~/work` (`work`) are
+independent, so a client engagement that also got a build story appears in both.
+`~/notes` is the catch-all and stays exclusive: it takes a post only when neither
+of the other two claimed it, which is what keeps nearly every write-up from
+listing twice. Everything, including all of the above, is also listed in `~/all`,
+which is the full archive and is paged.
+
+**No flag puts a post in `~/live`.** That grid is hand-listed in `ZONES` in
+`pages/index.tsx` and holds products, not articles. Shipping something live means
+adding a URL, a label and a square preview under `public/live/`; it is not a
+frontmatter change. A product with a build story appears in both places, as a
+tile in `~/live` and as a post in `~/devlog`, which is the honest listing because
+they are two different objects.
 
 **Ordering is date, newest first, in every section.** `getAllPosts()` sorts once by
 `date` descending and each section filters that array, so `date` is the only thing

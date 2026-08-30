@@ -36,7 +36,7 @@ collections:
       - { name: 'draft', label: 'Draft', widget: 'boolean', default: false, required: false }
       - { name: 'work', label: 'Work', widget: 'boolean', default: false, required: false }
       - { name: 'pinned', label: 'Pinned', widget: 'boolean', default: false, required: false }
-      - { name: 'in_progress', label: 'In Progress', widget: 'boolean', default: false, required: false }
+      - { name: 'devlog', label: 'Devlog', widget: 'boolean', default: false, required: false }
       - { label: 'Tags',name: 'tags',widget: 'string' }
 
       - { name: 'body', label: 'Body', widget: 'markdown' }

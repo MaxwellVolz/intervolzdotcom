@@ -37,22 +37,25 @@ type Section = {
   filter: (p: PostMeta) => boolean;
 };
 
-// The curated buckets. ~/now and ~/shipped are independent: something that is
-// released AND still being worked on belongs in both, and saying so twice is the
-// honest listing. ~/technical stays exclusive, as the catch-all for build
-// write-ups that are neither live work nor a shipped product -- otherwise nearly
-// every post would appear in it a second time.
+// The curated buckets, all of them lists of ARTICLES. A live product is not an
+// article, so it is not here -- it is an item in the ~/live zone below, because
+// a product is a thing you open, not a thing you read about.
+//
+// ~/devlog and ~/work are independent: a client engagement that also got a build
+// write-up belongs in both, and saying so twice is the honest listing. ~/notes
+// stays exclusive, as the catch-all for the teaching posts that are neither --
+// otherwise nearly every post would appear in it a second time.
 const SECTIONS: Section[] = [
-  { key: 'now', cmd: '> ls ~/now/', filter: (p) => !!p.in_progress },
+  { key: 'devlog', cmd: '> ls ~/devlog/', filter: (p) => !!p.devlog },
   {
-    key: 'shipped',
-    cmd: '> ls ~/shipped/',
+    key: 'work',
+    cmd: '> ls ~/work/',
     filter: (p) => !!p.work,
   },
   {
-    key: 'technical',
-    cmd: '> ls ~/technical/',
-    filter: (p) => !p.in_progress && !p.work && !!p.technical,
+    key: 'notes',
+    cmd: '> ls ~/notes/',
+    filter: (p) => !p.devlog && !p.work && !!p.technical,
   },
 ];
 
@@ -60,11 +63,42 @@ const SECTIONS: Section[] = [
 // above also appears here. Paged, because it is the whole site.
 const ALL_PAGE_SIZE = 8;
 
+// Zones are hand-listed grids of things you can open, not filters over posts.
 // The old ~/fun-zone was one grid of everything interactive, which put a
 // scoring game and a generative drawing under the same heading. Split by what
-// the visitor is being asked to do: play something, or look at something.
-// Earth is parked -- restore it to ART by uncommenting the entry.
+// the visitor is being asked to do: use something, play something, or look at
+// something. Earth is parked -- restore it to ART by uncommenting the entry.
+//
+// ~/live is deliberately not a post filter. It answers "what is running right
+// now," which is a fact about a URL, not about whether an article got written.
 const ZONES = [
+  {
+    dir: '~/live',
+    noun: 'products',
+    verb: 'open',
+    items: [
+      {
+        url: 'https://chronomial.com',
+        preview: '/live/chronomial_preview.png',
+        label: 'Chronomial',
+      },
+      {
+        url: 'https://ctxclues.com',
+        preview: '/live/ctxclues_preview.png',
+        label: 'ContextClues',
+      },
+      {
+        url: 'https://acquaintances.app',
+        preview: '/live/acquaintances_preview.png',
+        label: 'Acquaintances',
+      },
+      {
+        url: 'https://slashwork.sh',
+        preview: '/live/slashwork_preview.png',
+        label: 'slashwork',
+      },
+    ],
+  },
   {
     dir: '~/games',
     noun: 'playable',
@@ -289,9 +323,10 @@ export default function V2Home({
     </li>
   );
 
-  // ~/now renders above ~/fun-zone and the rest below it, so current work is
-  // the first thing under the header. Extracted rather than duplicated so the
-  // two call sites cannot drift.
+  // Zones render above every section now, so the first thing under the header
+  // is what is actually running rather than what has been written about it.
+  // That leaves one call site, but keep this extracted: it was duplicated once
+  // already and the two copies drifted.
   const renderSection = (section: Section) => {
     const items = posts.filter(section.filter);
     if (items.length === 0) return null;
@@ -370,8 +405,6 @@ export default function V2Home({
           </div>
         </TerminalWindow>
 
-        {SECTIONS.filter((s) => s.key === 'now').map(renderSection)}
-
         {ZONES.map((zone) => (
           <div className="mt-8" key={zone.dir}>
             <TerminalWindow title={`mvolz@intervolz: ${zone.dir}`}>
@@ -423,7 +456,7 @@ export default function V2Home({
           </div>
         ))}
 
-        {SECTIONS.filter((s) => s.key !== 'now').map(renderSection)}
+        {SECTIONS.map(renderSection)}
 
         {renderAll()}
 
