@@ -475,7 +475,15 @@ export default function V2Home({
 
         <div className="mt-8 text-center text-xs text-zinc-600 font-mono">
           <p>
-            intervolz v2.0 - exploring ·{' '}
+            <a
+              href="https://calendly.com/maxwellvolz"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-emerald-400 hover:bg-emerald-500/10 hover:text-emerald-300"
+            >
+              $ ./wanna-chat.sh
+            </a>{' '}
+            ·{' '}
             <Link href="/old" className="underline hover:text-emerald-400">
               return to /old
             </Link>{' '}
