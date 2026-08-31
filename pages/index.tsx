@@ -479,9 +479,9 @@ export default function V2Home({
               href="https://calendly.com/maxwellvolz"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-emerald-400 hover:bg-emerald-500/10 hover:text-emerald-300"
+              className="text-emerald-300 underline hover:bg-emerald-500/10"
             >
-              $ ./wanna-chat.sh
+              wanna chat?
             </a>{' '}
             ·{' '}
             <Link href="/old" className="underline hover:text-emerald-400">
