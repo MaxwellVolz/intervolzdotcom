@@ -86,6 +86,13 @@ const urls = [
     priority: '0.5',
     changefreq: 'yearly',
   })),
+  // Indexable rather than noindex: it is the site's only disclosure of what is
+  // measured, so it should be findable on its own.
+  {
+    loc: `${SITE_URL}/privacy/`,
+    priority: '0.3',
+    changefreq: 'yearly',
+  },
 ].filter((u) => !EXCLUDED.some((e) => u.loc === `${SITE_URL}${e}`));
 
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>

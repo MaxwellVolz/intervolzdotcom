@@ -1,7 +1,5 @@
 import { Html, Head, Main, NextScript } from 'next/document';
 
-const GA_ID = 'G-D0Q7TRRTCS';
-
 export default function Document() {
   return (
     <Html lang="en">
@@ -34,20 +32,6 @@ export default function Document() {
           type="application/rss+xml"
           title="intervolz"
           href="/rss.xml"
-        />
-        <script
-          async
-          src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
-        />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', '${GA_ID}');
-            `,
-          }}
         />
       </Head>
       <body>

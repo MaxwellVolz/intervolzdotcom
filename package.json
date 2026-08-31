@@ -10,11 +10,13 @@
     "build": "next build",
     "start": "next dev",
     "format": "prettier --write .",
-    "prebuild": "node scripts/generate-seo-files.mjs"
+    "prebuild": "node scripts/generate-seo-files.mjs",
+    "postbuild": "node scripts/inject-subapp-analytics.mjs"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.11",
     "@vercel/analytics": "^2.0.1",
+    "@vercel/speed-insights": "^2.0.0",
     "clsx": "^2.1.1",
     "gray-matter": "^4.0.3",
     "lucide-react": "^0.525.0",

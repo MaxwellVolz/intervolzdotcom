@@ -64,11 +64,50 @@ gitignored — the build regenerates them). They must be produced by the build:
 `deploy_blog.sh` does `rm -rf` on the web root, so hand-placed files do not survive.
 
 Add new standalone apps under `public/` to the `SUB_APPS` list in that script so
-they land in the sitemap. Thin or duplicate routes go in `EXCLUDED` and should also
-carry `<Seo noindex>`.
+they land in the sitemap, and to `SUB_APP_DIRS` in
+`scripts/inject-subapp-analytics.mjs` so they are measured. Thin or duplicate routes
+go in `EXCLUDED` and should also carry `<Seo noindex>`.
 
 All page metadata goes through `components/Seo.tsx`; site-level constants live in
 `lib/site.ts`. Do not hand-write `<Head>` meta in a page.
+
+### Analytics
+
+**Google Analytics 4 is the only thing actually collecting.** `GA_ID` lives in
+`lib/site.ts`; `pages/_app.tsx` loads it through `next/script` with
+`strategy="afterInteractive"`, gated on `NODE_ENV === 'production'` so `next dev`
+no longer reports into the same property.
+
+`@vercel/analytics` and `@vercel/speed-insights` are installed and mounted, but
+only when `NEXT_PUBLIC_ON_VERCEL` is set, which `next.config.js` derives from
+Vercel's own `VERCEL` env var. **Both are dark on the NGINX box and stay dark
+until the Vercel cutover.** They have to be: `/_vercel/insights/script.js` on the
+current origin hits the SPA fallback and returns `index.html` with a 200, so the
+browser parses the homepage as JavaScript. Vercel Web Analytics was mounted
+ungated from 2026-07-30 and collected nothing that whole time. If a build is ever
+deployed to a non-Vercel host with that flag set, the same silent failure returns.
+
+The standalone apps under `public/` are static exports built in other repos, so
+they carry no tag of their own and were invisible in analytics. They are tagged
+at build time by `scripts/inject-subapp-analytics.mjs`, which runs as `postbuild`
+against `out/` and leaves `public/` untouched, so re-dropping an app cannot
+silently undo it. **Adding a new standalone app means adding it to `SUB_APP_DIRS`
+in that script as well as `SUB_APPS` in the SEO script**; the script warns about
+listed apps missing from `out/` but cannot know about an app nobody listed. It
+deliberately never walks the site's own pages: GA reaches those through the JS
+bundle, not the markup, so a markup scan would tag them a second time.
+
+Custom events go through `lib/analytics.ts`, which no-ops when `gtag` is absent.
+`product_click` fires on the homepage `ZONES` tiles and carries `product`, `zone`,
+`destination` and `outbound`, because GA4's built-in outbound-click tracking
+cannot tell one product from another.
+
+Two things are left to the GA4 dashboard and are not verifiable from the repo:
+SPA pageviews depend on the enhanced-measurement "page changes based on browser
+history events" toggle (on by default, worth confirming), and localhost traffic
+before this change is only excluded if an internal-traffic filter was configured.
+
+`/privacy/` discloses all of the above. Update it when what is collected changes.
 
 ### Deployment Flow
 
@@ -80,6 +119,12 @@ All page metadata goes through `components/Seo.tsx`; site-level constants live i
    - Archives artifacts
 3. **NGINX**: Serves static files from `/var/www/intervolz`
 4. **Cloudflare Tunnel**: Exposes localhost:80 without public IP
+
+**This is still the live path as of 2026-08-31.** `vercel.json` and `.vercel/`
+exist for an in-progress migration, but Vercel is not in the request path: none of
+`vercel.json`'s headers appear in a live response and its `www` redirect does not
+fire. Anything defined only in `vercel.json` (the security headers, the `www` to
+apex redirect) is therefore not in effect yet.
 
 ### Page Organization
 

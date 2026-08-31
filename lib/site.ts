@@ -10,6 +10,10 @@ export const SITE_DESCRIPTION =
 
 export const DEFAULT_OG_IMAGE = '/imgs/og-default.png';
 
+// Google Analytics 4 measurement ID. Mirrored in scripts/inject-subapp-analytics.mjs,
+// which cannot import from a .ts file; change both together.
+export const GA_ID = 'G-D0Q7TRRTCS';
+
 /** Absolute URL for a site-relative path. Keeps trailing slashes consistent. */
 export function absoluteUrl(path: string): string {
   if (/^https?:\/\//.test(path)) return path;

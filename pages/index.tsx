@@ -4,6 +4,7 @@ import { getAllPosts, type PostMeta } from '@/lib/getPosts';
 import BootSequence from '@/components/v2/BootSequence';
 import TerminalWindow from '@/components/v2/TerminalWindow';
 import Seo from '@/components/Seo';
+import { trackProductClick } from '@/lib/analytics';
 
 // GitHub's search API only counts PUBLIC commits, which undercounts heavily
 // (no private repos, no work orgs). The "contributions in the last year"
@@ -366,6 +367,13 @@ export default function V2Home({
                 <LinkComponent
                   key={item.url}
                   {...linkProps}
+                  onClick={() =>
+                    trackProductClick({
+                      product: item.label,
+                      zone: zone.dir,
+                      url: item.url,
+                    })
+                  }
                   className="group block rounded border border-zinc-700 hover:border-emerald-400 bg-zinc-900 overflow-hidden transition-colors"
                 >
                   <div className="aspect-square overflow-hidden bg-zinc-950">
@@ -470,6 +478,10 @@ export default function V2Home({
             intervolz v2.0 - exploring ·{' '}
             <Link href="/old" className="underline hover:text-emerald-400">
               return to /old
+            </Link>{' '}
+            ·{' '}
+            <Link href="/privacy" className="underline hover:text-emerald-400">
+              privacy
             </Link>
           </p>
         </div>
