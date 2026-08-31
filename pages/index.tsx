@@ -37,26 +37,20 @@ type Section = {
   filter: (p: PostMeta) => boolean;
 };
 
-// The curated buckets, all of them lists of ARTICLES. A live product is not an
-// article, so it is not here -- it is an item in the ~/live zone below, because
-// a product is a thing you open, not a thing you read about.
+// The curated bucket, a list of ARTICLES. A product is not an article, so it is
+// not here -- it is an item in the ~/work zone, because a product is a thing you
+// open, not a thing you read about.
 //
-// ~/devlog and ~/work are independent: a client engagement that also got a build
-// write-up belongs in both, and saying so twice is the honest listing. ~/tutorials
-// stays exclusive, as the catch-all for the teaching posts that are neither --
-// otherwise nearly every post would appear in it a second time.
+// One bucket now, not three. ~/work and ~/tutorials were article filters that
+// sorted the writing by who paid for it and whether it taught something, which
+// is not a distinction a reader can act on before clicking. ~/blog is the build
+// stories; everything else is one scroll down in ~/all.
+//
+// That leaves `work` and `technical` inert in the frontmatter, read now only by
+// /old. They stay in the CMS because retagging the archive to drop a field
+// nothing renders is churn, not cleanup.
 const SECTIONS: Section[] = [
-  { key: 'devlog', cmd: '> ls ~/devlog/', filter: (p) => !!p.devlog },
-  {
-    key: 'work',
-    cmd: '> ls ~/work/',
-    filter: (p) => !!p.work,
-  },
-  {
-    key: 'tutorials',
-    cmd: '> ls ~/tutorials/',
-    filter: (p) => !p.devlog && !p.work && !!p.technical,
-  },
+  { key: 'blog', cmd: '> ls ~/blog/', filter: (p) => !!p.devlog },
 ];
 
 // ~/all is the complete archive rather than a leftovers bucket, so everything
@@ -64,19 +58,23 @@ const SECTIONS: Section[] = [
 const ALL_PAGE_SIZE = 8;
 
 // Zones are hand-listed grids of things you can open, not filters over posts.
-// The old ~/fun-zone was one grid of everything interactive, which put a
-// scoring game and a generative drawing under the same heading. Split by what
-// the visitor is being asked to do: use something, play something, or look at
-// something. Earth is parked -- restore it to ART by uncommenting the entry.
+// Two of them: ~/work is what someone can use, ~/play is what someone can mess
+// with. ~/games and ~/art used to be separate on the theory that playing and
+// looking are different asks, but that put two items under one heading and
+// three under another, and nobody arrives choosing between them. Earth is
+// parked -- restore it to ~/play by uncommenting the entry.
 //
-// ~/live is deliberately not a post filter. It answers "what is running right
+// ~/work is deliberately not a post filter. It answers "what is running right
 // now," which is a fact about a URL, not about whether an article got written.
+// The old ~/work bucket filtered posts on a `work: true` flag and answered a
+// different question, who paid for it, which is why it is gone rather than
+// folded in here.
 //
 // An item marked `draft: true` is not running yet: it stays in the list so the
 // URL and preview survive, but it renders nowhere and is not counted.
 const ZONES = [
   {
-    dir: '~/live',
+    dir: '~/work',
     noun: 'products',
     verb: 'open',
     items: [
@@ -104,9 +102,9 @@ const ZONES = [
     ],
   },
   {
-    dir: '~/games',
-    noun: 'playable',
-    verb: 'play',
+    dir: '~/play',
+    noun: 'things',
+    verb: 'open',
     items: [
       {
         url: 'https://waynemo.com',
@@ -118,13 +116,6 @@ const ZONES = [
         preview: '/games/axisrecall_preview.png',
         label: 'Axis Recall',
       },
-    ],
-  },
-  {
-    dir: '~/art',
-    noun: 'pieces',
-    verb: 'open',
-    items: [
       {
         url: '/sollewitt',
         preview: '/games/sol_preview.png',
@@ -327,10 +318,10 @@ export default function V2Home({
     </li>
   );
 
-  // Zones render above every section now, so the first thing under the header
-  // is what is actually running rather than what has been written about it.
-  // That leaves one call site, but keep this extracted: it was duplicated once
-  // already and the two copies drifted.
+  // ~/work renders above the writing, so the first thing under the header is
+  // what is actually running rather than what has been written about it. One
+  // section left and one call site, but keep this extracted: it was duplicated
+  // once already and the two copies drifted.
   const renderSection = (section: Section) => {
     const items = posts.filter(section.filter);
     if (items.length === 0) return null;
@@ -340,6 +331,63 @@ export default function V2Home({
           <h2 className="text-emerald-400 mb-3">{section.cmd}</h2>
           <p className="text-zinc-500 text-xs mb-2">total {items.length}</p>
           <ul className="space-y-1">{items.map((p) => postRow(p))}</ul>
+        </TerminalWindow>
+      </div>
+    );
+  };
+
+  // Looked up by dir rather than mapped, because the two zones no longer sit
+  // next to each other: ~/work leads and ~/play follows the writing. The page
+  // order is the call order in the return below.
+  const renderZone = (dir: string) => {
+    const zone = ZONES.find((z) => z.dir === dir);
+    if (!zone) return null;
+    const items = zone.items.filter((item) => !item.draft);
+    return (
+      <div className="mt-8" key={zone.dir}>
+        <TerminalWindow title={`mvolz@intervolz: ${zone.dir}`}>
+          <p className="text-emerald-400 mb-1">$ ls {zone.dir}/ --preview</p>
+          <p className="text-zinc-500 text-xs mb-4">
+            {items.length} {zone.noun} - click to {zone.verb}
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            {items.map((item) => {
+              const isExternal = item.url.startsWith('http');
+              const LinkComponent: any = isExternal ? 'a' : Link;
+              const linkProps = isExternal
+                ? {
+                    href: item.url,
+                    target: '_blank',
+                    rel: 'noopener noreferrer',
+                  }
+                : { href: item.url };
+
+              return (
+                <LinkComponent
+                  key={item.url}
+                  {...linkProps}
+                  className="group block rounded border border-zinc-700 hover:border-emerald-400 bg-zinc-900 overflow-hidden transition-colors"
+                >
+                  <div className="aspect-square overflow-hidden bg-zinc-950">
+                    <img
+                      src={item.preview}
+                      alt={item.label}
+                      className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+                    />
+                  </div>
+                  <div className="px-2 py-1 border-t border-zinc-800 flex items-center gap-2">
+                    <span className="text-emerald-400">▸</span>
+                    <span className="text-emerald-300 group-hover:text-emerald-200 truncate">
+                      {item.label}
+                      {isExternal && (
+                        <span className="text-zinc-500 ml-1">↗</span>
+                      )}
+                    </span>
+                  </div>
+                </LinkComponent>
+              );
+            })}
+          </div>
         </TerminalWindow>
       </div>
     );
@@ -409,61 +457,11 @@ export default function V2Home({
           </div>
         </TerminalWindow>
 
-        {ZONES.map((zone) => {
-          const items = zone.items.filter((item) => !item.draft);
-          return (
-            <div className="mt-8" key={zone.dir}>
-              <TerminalWindow title={`mvolz@intervolz: ${zone.dir}`}>
-                <p className="text-emerald-400 mb-1">
-                  $ ls {zone.dir}/ --preview
-                </p>
-                <p className="text-zinc-500 text-xs mb-4">
-                  {items.length} {zone.noun} - click to {zone.verb}
-                </p>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                  {items.map((item) => {
-                    const isExternal = item.url.startsWith('http');
-                    const LinkComponent: any = isExternal ? 'a' : Link;
-                    const linkProps = isExternal
-                      ? {
-                          href: item.url,
-                          target: '_blank',
-                          rel: 'noopener noreferrer',
-                        }
-                      : { href: item.url };
-
-                    return (
-                      <LinkComponent
-                        key={item.url}
-                        {...linkProps}
-                        className="group block rounded border border-zinc-700 hover:border-emerald-400 bg-zinc-900 overflow-hidden transition-colors"
-                      >
-                        <div className="aspect-square overflow-hidden bg-zinc-950">
-                          <img
-                            src={item.preview}
-                            alt={item.label}
-                            className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
-                          />
-                        </div>
-                        <div className="px-2 py-1 border-t border-zinc-800 flex items-center gap-2">
-                          <span className="text-emerald-400">▸</span>
-                          <span className="text-emerald-300 group-hover:text-emerald-200 truncate">
-                            {item.label}
-                            {isExternal && (
-                              <span className="text-zinc-500 ml-1">↗</span>
-                            )}
-                          </span>
-                        </div>
-                      </LinkComponent>
-                    );
-                  })}
-                </div>
-              </TerminalWindow>
-            </div>
-          );
-        })}
+        {renderZone('~/work')}
 
         {SECTIONS.map(renderSection)}
+
+        {renderZone('~/play')}
 
         {renderAll()}
 

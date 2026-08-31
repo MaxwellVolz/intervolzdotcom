@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a statically-generated blog/portfolio site built with Next.js, MDX, and Decap CMS. Content is Git-backed with automated Jenkins deployment to NGINX via Cloudflare Tunnel. The homepage leads with hand-listed grids of things you can open (`~/live` products, `~/games`, `~/art`), then article buckets: `devlog` (build stories) and `work` (`work: true`), which a post can be in at the same time, plus `tutorials` as the exclusive catch-all, with `all` listing the complete archive.
+This is a statically-generated blog/portfolio site built with Next.js, MDX, and Decap CMS. Content is Git-backed with automated Jenkins deployment to NGINX via Cloudflare Tunnel. The homepage alternates hand-listed grids of things you can open with lists of things to read: `~/work` (live products), then `~/blog` (build stories, `devlog: true`), then `~/play` (games and generative art), then `~/all` as the complete archive.
 
 ## Development Commands
 
@@ -38,10 +38,11 @@ npm run format
 - **Frontmatter fields**:
   - `title`, `date`, `description` (meta description, 150-160 chars — required),
     `cover` (optional image)
-  - `devlog` (build stories), `work` (client engagements), `technical` (build
-    write-ups), `draft` (hidden from the homepage, still builds at its URL),
-    `pinned` (inert — read by nothing). Flags pick the section only; every
-    section is ordered by `date`, newest first.
+  - `devlog` (build stories — the only flag the homepage reads, it fills
+    `~/blog`), `draft` (hidden from the homepage, still builds at its URL).
+    `work`, `technical` and `pinned` are inert: the homepage stopped filtering
+    on them when `~/work` and `~/tutorials` were removed as article buckets, and
+    only `/old` still reads them. Every list is ordered by `date`, newest first.
   - `tags` (space-separated or array)
 - **Media**: Uploaded to `public/uploads`
 
@@ -82,8 +83,8 @@ All page metadata goes through `components/Seo.tsx`; site-level constants live i
 
 ### Page Organization
 
-- **`pages/index.tsx`**: Homepage. Holds `ZONES` (hand-listed grids: `~/live`, `~/games`, `~/art`) which render first, then three curated `ls`-styled buckets: `~/devlog/` and `~/work/` are independent filters and a post can appear in both, `~/tutorials/` takes only what neither claimed. Then `~/all/` as the full paged archive. Also holds the `TAG_COLORS` map.
-  A live product is a `ZONES` item, never a post flag: `~/live` answers "what is running," which is a fact about a URL
+- **`pages/index.tsx`**: Homepage. Holds `ZONES` (hand-listed grids: `~/work`, `~/play`) and `SECTIONS` (one `ls`-styled article bucket, `~/blog/`, filtered on `devlog: true`). They interleave rather than grouping, so the page order is the call order in the return: `renderZone('~/work')`, the sections, `renderZone('~/play')`, then `renderAll()` for the full paged archive. Also holds the `TAG_COLORS` map.
+  A live product is a `ZONES` item, never a post flag: `~/work` answers "what is running," which is a fact about a URL. A zone item with `draft: true` keeps its URL and preview in the list but renders nowhere and is left out of the count.
 - **`pages/[slug].tsx`**: Individual blog post template
 - **Decap CMS**: served statically from `public/admin/` (there is no `pages/admin.tsx`)
 - **`components/layout/`**: IDE-themed layout components (unused in current build).
@@ -135,8 +136,8 @@ and a pre-publish checklist. Do not re-derive the voice by reading the archive.
 
 1. Create `.mdx` file in `content/posts/`
 2. Add frontmatter with required fields (`title`, `date`, `tags`)
-3. Use `devlog: true` for a build story, `work: true` for a client engagement,
-   `technical: true` for a teaching post (`pinned` is inert — nothing reads it)
+3. Use `devlog: true` to put the post in `~/blog`. Without it the post is
+   reachable only from `~/all` (`work`, `technical` and `pinned` are inert)
 4. Commit and push to trigger deployment
 
 **Staging a post for review**: set `draft: true`. It is hidden from the homepage
