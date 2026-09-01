@@ -1,7 +1,7 @@
 ---
 title: 'ContextClues: a case file for the context window'
-date: 2026-08-25T10:00:00.000-07:00
-description: 'ContextClues is a local, read-only dashboard for what a running Claude Code session has in context. Discovery to a published npm package in a single day.'
+date: 2026-09-01T10:00:00.000-07:00
+description: 'ContextClues is a local, read-only dashboard for what a Claude Code session has in context. Discovery to npm in a day, then a redaction hole and three releases.'
 cover: /imgs/ctxclues_dashboard.jpg
 technical: true
 draft: false
@@ -37,7 +37,7 @@ The first file written was not `PLAN.md`. It was `DISCOVERY.md`, and it opens wi
 
 > Investigation performed 2026-08-24 against Claude Code 2.1.241 on macOS (darwin), Node v22.22.1. Every field listed below was verified against real files on this machine. Nothing here is assumed from documentation alone; where we infer rather than observe, it is called out.
 
-None of what this project reads is a documented API. It is a directory layout that happens to exist, and *it can change in any release*. 
+None of what this project reads is a documented API. It is a directory layout that happens to exist, and _it can change in any release_.
 
 Writing the discovery document first turned "I think the CLI stores sessions somewhere" into a table of paths that had been opened and read:
 
@@ -79,9 +79,9 @@ One Next.js process. The collector is a lazily-initialized singleton inside the 
 .mcp.json, plugins, skills ─┘
 ```
 
-Persistence is `node:sqlite`, built into Node 22.5+. That is the whole reason the package has no native build step and installs in a couple of seconds. Transcripts are tail-parsed from a stored byte offset per session, so a 40MB JSONL file is read once and appended to thereafter.
+Persistence is `node:sqlite`, built into the runtime. That is the whole reason the package has no native build step and installs in a couple of seconds. Transcripts are tail-parsed from a stored byte offset per session, so a 40MB JSONL file is read once and appended to thereafter.
 
-Order of work was pure functions first: estimate, redact, normalize a transcript line, derive clues, all with `node --test` unit tests before any of it was wired to a route. 3,882 lines of TypeScript in total, 384 of them tests, 33 tests. 
+Order of work was pure functions first: estimate, redact, normalize a transcript line, derive clues, all with `node --test` unit tests before any of it was wired to a route. 3,882 lines of TypeScript in total, 384 of them tests, 33 tests.
 
 Then the DB and API verified with curl against this machine's real sessions, then the UI, then the README.
 
@@ -91,7 +91,7 @@ Redaction runs before storage, not before rendering: API keys, GitHub and Slack 
 
 The trajectory panel projects a runway: how many requests, and how many minutes, before the window fills. The first version used the median of the last 30 requests, filtering out anything unusually high or low.
 
-While it seems to be a defensible-looking estimator, it is *the wrong one*.
+While it seems to be a defensible-looking estimator, it is _the wrong one_.
 
 Growth per request is strongly right-skewed. Most requests add a few hundred tokens; occasionally one reads a lockfile and adds 40k. Trimming those out and taking the median answers "what does a typical request cost". Runway is not that question. Runway is a question about cumulative growth, so the estimator has to be the mean, the one that counts big requests at the rate they actually happen. The median version quietly promised more headroom than the session had.
 
@@ -102,7 +102,7 @@ const burnRatePerTurn = recent.reduce((a, b) => a + b, 0) / recent.length;
 const typical = median(withoutOutliers(recent));
 ```
 
-Instead of deleting the trimmed median, we just demoted it to what it is actually represents. Both numbers ship, and the ratio between them became a feature: when the average sits more than 2× above the typical request, the session is spike-dominated, the panel labels it variable and widens the runway into a range instead of pretending to a single figure. 
+Instead of deleting the trimmed median, we just demoted it to what it is actually represents. Both numbers ship, and the ratio between them became a feature: when the average sits more than 2× above the typical request, the session is spike-dominated, the panel labels it variable and widens the runway into a range instead of pretending to a single figure.
 
 Two tests hold the line: `a 40k spike does not move the typical rate`, and `the average predicts cumulative growth without bias`.
 
@@ -112,7 +112,7 @@ Compaction drops are excluded rather than averaged in, or a single compaction wo
 
 At this time the project still had one install path: clone, `npm install`, `npm run dev`.
 
-Turning that into `npx contextclues` is mostly bookkeeping: a `bin` entry, a `files` list, `engines`, and a `prepublishOnly` that rebuilds and runs the tests. 
+Turning that into `npx contextclues` is mostly bookkeeping: a `bin` entry, a `files` list, `engines`, and a `prepublishOnly` that rebuilds and runs the tests.
 
 The CLI itself is 125 lines: parse flags, resolve the Next runtime, start the prebuilt server **from the package directory rather than the user's cwd**, open a browser when the child says it is ready.
 
@@ -125,30 +125,113 @@ Packaging includes a change of address, and four things only show up once the co
 | The server bound `0.0.0.0`                                      | On localhost you never notice you are also serving the LAN                                        |
 | `next.config.ts` triggers a runtime `typescript` install        | Dev machines already have it; a user's first run would fetch and write into the install directory |
 
-The middle two are real bugs: 
+The middle two are real bugs:
 
-1. A globally installed binary starts from wherever you happen to be, so the index now lives in `~/.contextclues`. 
+1. A globally installed binary starts from wherever you happen to be, so the index now lives in `~/.contextclues`.
 2. A dashboard of your own transcripts has no business on the local network, so both the CLI and the npm scripts now bind `127.0.0.1` and the README states it as a guarantee.
 
 Verification was a dry run of someone else's first five minutes: `npm pack`, install the tarball into an empty project with `--omit=dev`, and check the list. 480K packed, 95 files, 1.95MB unpacked. No typescript fetch. Ready in 141ms. `/` and `/api/cases` both 200. The index written to the configured directory and nowhere else, no stray files in the cwd, and the LAN address refusing the connection.
 
 `contextclues@0.1.0` is now published!
 
+## The redaction rule was correct when I wrote it
+
+That was August 24. Seven days later 0.2.0, 0.2.1 and 0.2.2 all went out in a single day, and the first of them exists because of the one function the whole pitch rests on.
+
+Redaction is the load-bearing claim of this project. Nothing leaves the machine, and secrets are scrubbed before anything is written to the local index. The first half was true because the tool makes no network requests. The second half was a function with a handful of tests and a lot of confidence behind it.
+
+Writing a real suite for it found ten common credential formats going through unredacted, into the SQLite database at `~/.contextclues/` and onto the rendered page at `localhost:4310`.
+
+The worst one was every modern OpenAI key.
+
+```ts
+{ kind: "openai-key", re: /sk-[A-Za-z0-9]{20,}/g },
+```
+
+That character class allows only unbroken alphanumerics after `sk-`. Current keys are `sk-proj-…`, `sk-svcacct-…`, `sk-admin-…`. The match dies at the first internal hyphen, four characters in, well short of the twenty the rule demands, so the rule does not fire at all. It was written when an OpenAI key was a flat alphanumeric blob, it was correct then, and nothing in the project noticed when the format grew prefixes. The fix is one character class:
+
+```ts
+// Modern keys are sk-proj-… / sk-svcacct-… / sk-admin-…, so the character
+// class must allow the internal hyphens and underscores those prefixes introduce.
+{ kind: "openai-key", re: /\bsk-[A-Za-z0-9_-]{20,}/g },
+```
+
+The other nine were the same species of gap. Passwords inside connection strings, which appear in transcripts constantly. Google `AIza…` keys. Stripe `sk_live_…` and `pk_test_…`. GitLab, npm and HuggingFace tokens. AWS temporary access key ids beginning `ASIA`, where the old rule covered only permanent `AKIA` ids. Lowercase `aws_secret_access_key = …`, which an uppercase-only rule stepped over.
+
+Connection strings keep the parts that make a preview useful:
+
+```ts
+{
+  kind: "url-credential",
+  re: /\b([a-z][a-z0-9+.-]*:\/\/)([^\s:/@]+):([^\s/@]+)@/gi,
+  replace: (_m, scheme, user) => `${scheme}${user}:[REDACTED:url-credential]@`,
+},
+```
+
+Scheme, user and host survive, the password does not. A preview that redacts everything tells the reader nothing, which is its own kind of failure.
+
+The policy comment at the top of the file now states the asymmetry plainly. **A preview is a 280-character hint, so over-redacting costs a little legibility and under-redacting copies a live credential into a database and onto a web page.** When in doubt, scrub. Each of the ten formats has a regression test.
+
+Nothing was exposed to a network, because there is no network. The failure is that a file the tool promised to keep clean was not clean, and the release note says so: an index written by an earlier version may hold unredacted values, and deleting `~/.contextclues/` discards it, since it rebuilds from the transcripts on next launch.
+
+Coverage at 0.1.0 was 33 tests over 384 lines, all of it on the pure functions I wrote first. It is now 135 tests over 1,984 lines against 5,668 lines of TypeScript. The second bug 0.2.0 fixed came out of the same new suites: re-ingesting a transcript line erased the `file_path` resolved from its matching `tool_use` record, so evidence rows lost their file attribution. A first pass over a transcript gets it right, which is why using the tool never showed it.
+
+## npx will run a stranger's package and call it a pass
+
+There was no CI before 0.2.0. There is now, and its first run failed in a way that was more interesting than a red check usually is.
+
+| Job     | What it proves                                                                                                                                       |
+| ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `test`  | Typecheck and the 135 tests pass on Ubuntu and macOS, on Node 22.x and 24.x                                                                          |
+| `build` | The repo builds and packs, and the resulting tarball is kept as an artifact                                                                          |
+| `floor` | That tarball installs into an empty project with only its four runtime dependencies, `node:sqlite` is usable, the CLI runs, and `/api/cases` answers |
+
+The first run failed on the oldest Node in the matrix only. Two separate things were wrong.
+
+`npm ci` crashed there with "Exit handler never called!". That is a bug in npm 10.8.2, the version bundled with that Node release. It says nothing about whether ContextClues works, which is the problem with testing a package by installing its dev toolchain.
+
+The second one is the one worth remembering. With `node_modules` empty after that crash, `npx tsc --noEmit` did not fail. It went to the registry, found an unrelated package that happens to hold the name `tsc`, downloaded `tsc@2.0.4`, ran it, and exited zero. **A typecheck meant to guard the build instead fetched and executed an arbitrary package from the internet and reported success.** Every local tool now runs through `npm run`, which resolves from `node_modules/.bin` and fails loudly when the binary is not there.
+
+The `floor` job exists because of the first failure. Installing the dev toolchain on the oldest supported Node was testing npm. Installing the packed tarball tests the contract a user actually depends on, which is that `npx contextclues` works on the version the manifest says it works on.
+
+It then found that the manifest was wrong. `node:sqlite` first appeared in Node 22.5.0, and 22.5.0 is the number that went into `engines`, the startup guard, the README and the website. But the module stayed behind an `--experimental-sqlite` flag until 22.13.0. ContextClues could not run unflagged anywhere in 22.5 through 22.12 while telling users it could. Someone on 22.9 was waved past the version guard and then hit a module-not-found error with nothing to explain it.
+
+The floor is 22.13.0 everywhere now, shipped as 0.2.1, with the guard verified against 20.11, 22.5, 22.12, 22.13 and 24. The number had been sitting in four files for a week and I had read it several times. It took a job that installs the published artifact on the declared minimum and boots it.
+
+## Three releases in one day, and one of them is a link
+
+0.2.0 carried the redaction fixes, the test suite, CI, the two bugs the suite found, and a set of smaller things that had been overdue.
+
+| Change                                                    | What it fixes                                                                                                                                                         |
+| --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Named startup failures                                    | A port already in use says so, instead of an `EADDRINUSE` stack trace, and the version check names `node:sqlite` as the reason instead of failing to resolve a module |
+| Loading skeletons and a real empty state                  | Earlier versions showed "Scanning ~/.claude…" forever when there were no sessions to find. "Still scanning" and "nothing here" are now different screens              |
+| Cached prepared statements                                | A large backfill no longer re-prepares the same statement once per transcript line                                                                                    |
+| One grouped query for event counts                        | The case list stopped running a `COUNT(*)` per session                                                                                                                |
+| Dead columns and fields removed                           | `git_branch`, `parent_uuid`, `input_chars` and several parsed-but-unused transcript fields were written and never read                                                |
+| A favicon, custom 404s, a privacy page, self-hosted fonts | The dashboard tab is findable among twenty others, and the website makes no third-party requests                                                                      |
+
+0.2.1 was the Node floor correction. 0.2.2 is a link.
+
+The sponsor URL shipped as an unreplaced `REPLACE_ME` in four places: the funding config, the `funding` field in the package manifest, the README's support section, and the site footer. The registry renders both the README and the funding field on the package page, so the dead link was not buried in a config file, it was on the page a visitor lands on. Registry metadata cannot be edited in place after publish.
+
+So the fix costs a version number. The diff is the link, the version and a changelog entry, and no code at all. **A version number is cheap and a broken payment link on your package page is not**, which makes 0.2.2 an easy trade. The replacement was checked for a 200 and a live checkout page before it was committed, which is the step that should have happened before 0.2.1.
+
 ## Where it is now
 
-`npx contextclues` opens the dashboard on port 4310 and finds the running session on its own. 
+`contextclues@0.2.2` is the current release. `npx contextclues` opens the dashboard on port 4310 and finds the running session on its own.
 
-Live sessions are marked with a dot. It needs Node 22.5 or newer and a machine where Claude CLI has run.
+Live sessions are marked with a dot. It needs Node 22.13 or newer and a machine where Claude CLI has run. 5,668 lines of TypeScript, 1,984 of them tests, 135 tests, green on Ubuntu and macOS across Node 22 and 24.
 
 The dashboard has seven panels:
 
-* The context meter
-* Usage over time, including burn rate and estimated runway
-* A breakdown of where the context is coming from
-* A searchable evidence table showing each entry’s estimated token count and whether it’s still in the window
-* A tool registry showing where each available tool was discovered
-* Live activity streamed over SSE
-* The clue engine
+- The context meter
+- Usage over time, including burn rate and estimated runway
+- A breakdown of where the context is coming from
+- A searchable evidence table showing each entry’s estimated token count and whether it’s still in the window
+- A tool registry showing where each available tool was discovered
+- Live activity streamed over SSE
+- The clue engine
 
 The clue engine is where the dashboard becomes actionable. It flags oversized tool results, files that have been read repeatedly, compactions and their exact token reduction, enabled tools that were never used, and growing pressure on the context window.
 
@@ -162,9 +245,15 @@ There is a one-page site at [ctxclues.com](https://ctxclues.com), and the packag
 
 **Pick the estimator that matches the question, not the one that looks robust.** Trimmed median reads as the careful choice, and it was the wrong tool for a question about a sum. The tell was that the projection felt generous. Ask what quantity the user is actually asking about, then derive the estimator from that.
 
-**Packaging is a test suite you cannot write yourself.** *"It works on my machine"*...ahhhh! Every implicit assumption of a dev clone becomes visible the moment the code has to run from somewhere else: the cwd, the network interface, what your toolchain already has installed, whether you ever wrote a license(which I hadn't). 
+**Packaging is a test suite you cannot write yourself.** _"It works on my machine"_...ahhhh! Every implicit assumption of a dev clone becomes visible the moment the code has to run from somewhere else: the cwd, the network interface, what your toolchain already has installed, whether you ever wrote a license(which I hadn't).
 
 **Publishing an unfinished thing early is cheaper than discovering those on a user's machine.**
+
+**A regex over someone else's format expires, and nothing tells you when.** The `sk-` rule was correct on the day it was written and stopped being correct when OpenAI added prefixes, with no failing build and no warning in between. Anything that hard-codes a vendor's shape is a dependency you never declared, so it never gets an update notification.
+
+**A minimum supported version is only as true as the job that boots on it.** `engines` said 22.5.0 for a week because that is when `node:sqlite` landed, and nothing in the project had ever run on 22.5.0 to find out that the module stayed flagged until 22.13.0. Testing the claim is a different activity from writing it down in four places.
+
+**Coverage follows the code that was pleasant to write.** The 33 tests at 0.1.0 sat on the estimator and the trajectory math, which are pure functions with tidy inputs and a satisfying answer. The function the entire privacy claim rested on got a few happy-path cases, and the ten credential formats nobody had thought to name went through it onto disk.
 
 ## What's next
 
@@ -172,7 +261,6 @@ There is a one-page site at [ctxclues.com](https://ctxclues.com), and the packag
 - An optional hook, installed by the user, for push-style events instead of tailing
 - Subagent trees, since sidechains are parsed but not yet drawn
 - Comparing sessions, and history across a project rather than one case file at a time
-- A changelog, and a 0.2.0
 - Post it on Hacker News and go **viral**
 
 Thanks for reading. More soon.
