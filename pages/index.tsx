@@ -456,7 +456,7 @@ export default function V2Home({
             </h1>
             <p className="text-emerald-400 mt-4">$ cat ~/status</p>
             <p className="text-zinc-300">
-              36 · 6&apos;4&quot; · 225 lbs · bald
+              37 · 6&apos;4&quot; · 225 lbs · bald
             </p>
             <ActivityCommand />
             <p className="text-zinc-300">
