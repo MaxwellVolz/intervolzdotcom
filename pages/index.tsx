@@ -9,12 +9,13 @@ import { trackProductClick } from '@/lib/analytics';
 // GitHub's search API only counts PUBLIC commits, which undercounts heavily
 // (no private repos, no work orgs). The "contributions in the last year"
 // number from the profile page is the real flex. Hardcoded because the site is
-// a static export with no runtime, and shown as a floor (">2,600") so it stays
+// a static export with no runtime, and shown as a floor (">3,000") so it stays
 // true as the real number drifts up between refreshes.
 //
-// 2,548 measured 2026-08-25; floored to 2,600 on 2026-08-28. Re-measure with
-// GH_CONTRIB_QUERY, which the ~/activity line copies to the clipboard.
-const CONTRIBUTIONS_FLOOR = 2600;
+// 2,548 measured 2026-08-25, floored to 2,600 on 2026-08-28. 3,043 measured
+// 2026-09-14, floored to 3,000. Re-measure with GH_CONTRIB_QUERY, which the
+// ~/activity line copies to the clipboard.
+const CONTRIBUTIONS_FLOOR = 3000;
 
 // Was printed inline above the number, where it wrapped to three lines on a
 // phone. It now lives in the ~/activity tooltip, one click from the clipboard.
