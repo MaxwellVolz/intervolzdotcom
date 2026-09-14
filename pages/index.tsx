@@ -108,6 +108,11 @@ const ZONES = [
     verb: 'open',
     items: [
       {
+        url: 'https://playcatch.net',
+        preview: '/games/playcatch_preview.png',
+        label: 'PlayCatch',
+      },
+      {
         url: 'https://cuedle.com',
         preview: '/games/cuedle_preview.png',
         label: 'Cuedle',
