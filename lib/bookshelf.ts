@@ -106,8 +106,8 @@ export function spineGeometry(
   const base = Math.round(Math.min(68, Math.max(30, 22 + title.length * 0.9)));
   return {
     width: base + (hash % 5),
-    heightVariant: ((hash >> 3) % 3) as 0 | 1 | 2,
-    leans: (hash >> 6) % 6 === 0,
+    heightVariant: ((hash >>> 3) % 3) as 0 | 1 | 2,
+    leans: (hash >>> 6) % 6 === 0,
   };
 }
 

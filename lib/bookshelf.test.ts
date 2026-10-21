@@ -56,6 +56,12 @@ describe('spineGeometry', () => {
     const g = spineGeometry('https://b.example', 'x'.repeat(140));
     assert.ok(g.width >= 68 && g.width <= 72, `width ${g.width}`);
   });
+  it('keeps heightVariant in 0..2 across many urls', () => {
+    for (let i = 0; i < 300; i++) {
+      const g = spineGeometry(`https://site${i}.example/post-${i * 7}`, 'title');
+      assert.ok([0, 1, 2].includes(g.heightVariant), `url ${i}: ${g.heightVariant}`);
+    }
+  });
   it('is deterministic for the same inputs', () => {
     assert.deepEqual(
       spineGeometry('https://a.example', 'abc'),
