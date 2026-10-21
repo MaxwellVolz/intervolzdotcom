@@ -160,3 +160,126 @@ p img {
 .v2-logo-jitter {
   animation: v2-logo-jitter 0.12s steps(1) infinite;
 }
+
+/* =======================
+   📚 Bookshelf
+   ======================= */
+/* Planks are a repeating background sized to one row, so wrapped rows each get
+   a plank with no per-row markup. Values from the design spec; phone first. */
+.bookshelf {
+  --h0: 140px;
+  --h1: 152px;
+  --h2: 160px;
+  --book-h: 160px; /* = tallest variant */
+  --plank-h: 12px;
+  --shelf-gap: 28px;
+  --below-books: calc(var(--plank-h) + var(--shelf-gap));
+  --row-h: calc(var(--book-h) + var(--below-books));
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  column-gap: 2px;
+  row-gap: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0 var(--book-h),
+    #3f3f46 var(--book-h) calc(var(--book-h) + 2px),
+    #27272a calc(var(--book-h) + 2px) calc(var(--book-h) + var(--plank-h)),
+    #09090b calc(var(--book-h) + var(--plank-h))
+      calc(var(--book-h) + var(--plank-h) + 2px),
+    transparent calc(var(--book-h) + var(--plank-h) + 2px) var(--row-h)
+  );
+}
+@media (min-width: 640px) {
+  .bookshelf {
+    --h0: 168px;
+    --h1: 184px;
+    --h2: 196px;
+    --book-h: 196px;
+  }
+}
+.bookshelf > li {
+  display: flex;
+  align-items: flex-end;
+  height: var(--row-h);
+  padding-bottom: var(--below-books);
+}
+.spine {
+  position: relative;
+  display: block;
+  writing-mode: vertical-rl;
+  font: 500 12px/1 'Roboto Mono', monospace;
+  color: rgba(228, 228, 231, 0.9);
+  padding: 10px 0;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  text-decoration: none;
+}
+.spine__label {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  height: 100%;
+}
+/* Publisher bands: one line near each end in the paired band colour. */
+.spine::before,
+.spine::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--band);
+}
+.spine::before {
+  top: 14px;
+}
+.spine::after {
+  bottom: 14px;
+}
+.spine:hover {
+  background-image: linear-gradient(
+    rgba(52, 211, 153, 0.12),
+    rgba(52, 211, 153, 0.12)
+  );
+}
+.spine:focus-visible {
+  outline: 2px solid #34d399;
+  outline-offset: 1px;
+}
+.spine--lean {
+  transform: rotate(-6deg);
+  transform-origin: bottom right;
+  margin-left: 6px;
+}
+.bookshelf__end {
+  width: 6px;
+  margin-left: 4px;
+}
+.bookshelf__end::after {
+  content: '';
+  display: block;
+  width: 6px;
+  height: var(--h1);
+  background: #52525b;
+}
+.bookshelf > li.bookshelf__tip {
+  display: block;
+  height: auto;
+  padding: 0.25rem 0.5rem;
+}
+.bookshelf__tip {
+  position: absolute;
+  z-index: 10;
+  width: min(20rem, 100%);
+  pointer-events: none;
+  white-space: normal;
+}
