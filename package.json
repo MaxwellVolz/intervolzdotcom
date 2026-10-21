@@ -10,9 +10,10 @@
     "build": "next build",
     "start": "next dev",
     "format": "prettier --write .",
-    "prebuild": "node scripts/generate-seo-files.mjs",
+    "prebuild": "node scripts/generate-seo-files.mjs && node scripts/fetch-bookshelf-titles.mjs",
     "postbuild": "node scripts/inject-subapp-analytics.mjs",
-    "test": "node --test lib/*.test.ts scripts/lib/*.test.mjs"
+    "test": "node --test lib/*.test.ts scripts/lib/*.test.mjs",
+    "bookshelf": "node scripts/fetch-bookshelf-titles.mjs"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.11",

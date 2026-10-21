@@ -4,18 +4,22 @@ items:
   - url: https://paulgraham.com/ds.html
     note: placeholder entry, replace me
     category: blog
-    added: 2026-10-21
+    added: '2026-10-21'
+    title: Do Things that Don't Scale
   - url: https://overreacted.io/a-complete-guide-to-useeffect/
     note: placeholder entry, replace me
     category: react
-    added: 2026-10-20
+    added: '2026-10-20'
+    title: A Complete Guide to useEffect
   - url: https://jvns.ca/blog/2023/01/04/some-ways-to-get-better-at-debugging/
     note: placeholder entry, replace me
     category: howto
-    added: 2026-10-19
+    added: '2026-10-19'
   - url: https://karpathy.github.io/2019/04/25/recipe/
     note: placeholder entry, replace me
     category: ml
-    added: 2026-10-18
+    added: '2026-10-18'
+    title: A Recipe for Training Neural Networks
   - url: https://www.joelonsoftware.com/2000/04/06/things-you-should-never-do-part-i/
-    added: 2026-10-17
+    added: '2026-10-17'
+    title: Things You Should Never Do, Part I
