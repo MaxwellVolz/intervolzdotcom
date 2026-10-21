@@ -20,6 +20,12 @@ npm run build
 
 # Format code
 npm run format
+
+# Run the unit tests (node --test; covers lib/bookshelf.ts and the title fetch)
+npm test
+
+# Fill in bookshelf titles locally and pin them into content/bookshelf.yml
+npm run bookshelf
 ```
 
 ## Architecture
@@ -45,6 +51,37 @@ npm run format
     only `/old` still reads them. Every list is ordered by `date`, newest first.
   - `tags` (space-separated or array)
 - **Media**: Uploaded to `public/uploads`
+
+### Bookshelf
+
+A curated reading list of other people's articles, rendered as book spines on
+shelves. The source is one file, `content/bookshelf.yml`, a map with an `items`
+list. `url` is the only required field; `note` (one line), `category` (a post
+tag name, sets the spine colour), `added` (orders the shelf, newest first),
+`title` and `author` are optional.
+
+- **Titles are fetched, not typed.** `scripts/fetch-bookshelf-titles.mjs` runs
+  as part of `prebuild`, fetches `og:title` or `<title>` for entries without a
+  `title`, and writes them back into the YAML. A local `npm run build` or
+  `npm run bookshelf` pins titles for you to commit; on Vercel the write-back
+  is discarded and missing titles are refetched each build. A failed fetch is
+  never fatal: the spine shows the hostname plus first path segment instead.
+  Set `title:` by hand to override a site's junk title.
+- **Adding from a phone**: the Decap "Bookshelf" collection in
+  `public/admin/config.yml` edits the same file. Adding from a laptop: paste a
+  block into the YAML and push.
+- **Where it renders**: a `~/bookshelf` terminal window on the homepage between
+  `~/play` and `~/all` (newest 12, hidden while the file is empty), and the full
+  shelf plus a plain list with notes at `/bookshelf/` (`pages/bookshelf.tsx`).
+  `components/Bookshelf.tsx` renders both; `lib/bookshelf.ts` holds the palette,
+  sort and spine geometry (unit-tested with `npm test`); `lib/getBookshelf.ts`
+  reads the file in `getStaticProps`.
+- **Adding a category**: one line in `CATEGORY_FAMILY` in `lib/bookshelf.ts`
+  (maps the tag to one of six muted colour families) and one option in the
+  Decap select, plus a `TAG_COLORS` entry if posts use the tag too.
+- `content/bookshelf.yml` is in `.prettierignore` so `npm run format`, the
+  title script and Decap do not take turns reformatting it. Dates are loaded as
+  strings (js-yaml `CORE_SCHEMA`), so quoted and unquoted dates behave the same.
 
 ### MDX Processing Pipeline
 
@@ -141,6 +178,7 @@ apex redirect) is therefore not in effect yet.
 
 ### Styling
 
+- **`pages/bookshelf.tsx`**: The full reading list, shelves plus a plain list. Indexable, in the sitemap. See Bookshelf above.
 - **Tailwind CSS**: Primary styling system with custom theme
 - **Typography**: `@tailwindcss/typography` for prose content
 - **Fonts**: Orbitron (display), Roboto Mono (monospace), both self-hosted WOFF2 in

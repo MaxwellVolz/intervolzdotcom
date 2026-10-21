@@ -48,7 +48,9 @@ export default function Privacy() {
           <p>
             When you click one of the project tiles on the front page, I log the
             project name and the destination, so I can see which projects
-            actually get opened. That records the click, not the person.
+            actually get opened. That records the click, not the person. Links
+            on the bookshelf are outbound too and are recorded the same way,
+            with the article title in place of the project name.
           </p>
           <p>
             I collect nothing else. There are no advertising networks, no ad

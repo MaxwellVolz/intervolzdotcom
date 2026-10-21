@@ -40,3 +40,57 @@ collections:
       - { label: 'Tags',name: 'tags',widget: 'string' }
 
       - { name: 'body', label: 'Body', widget: 'markdown' }
+
+  # The reading list. One file, edited in place; the build fills in titles.
+  # Category options mirror CATEGORY_FAMILY in lib/bookshelf.ts (this file
+  # cannot import it, so add new ones in both places).
+  - name: 'bookshelf'
+    label: 'Bookshelf'
+    files:
+      - name: 'bookshelf'
+        label: 'Bookshelf'
+        file: 'content/bookshelf.yml'
+        fields:
+          - label: 'Items'
+            name: 'items'
+            widget: 'list'
+            summary: '{{fields.title}} {{fields.url}}'
+            collapsed: true
+            fields:
+              - { name: 'url', label: 'URL', widget: 'string', hint: 'Paste the link. That is the only required field.' }
+              - { name: 'note', label: 'Note', widget: 'text', required: false, hint: 'One line, your review.' }
+              - label: 'Category'
+                name: 'category'
+                widget: 'select'
+                required: false
+                hint: 'Sets the spine colour. Same names as post tags.'
+                options:
+                  - 'web'
+                  - 'automation'
+                  - 'fastapi'
+                  - 'backend'
+                  - 'howto'
+                  - 'blog'
+                  - 'react'
+                  - 'threeJS'
+                  - 'dataviz'
+                  - 'docker'
+                  - 'windows'
+                  - 'CI/CD'
+                  - 'ai'
+                  - 'llm'
+                  - 'ml'
+                  - 'arvr'
+                  - '@meta'
+                  - 'python'
+                  - 'javascript'
+                  - 'rust'
+                  - 'swift'
+                  - 'blender'
+                  - 'art'
+                  - 'rant'
+                  - 'n8n'
+                  - 'unity'
+              - { name: 'added', label: 'Added', widget: 'datetime', required: false, format: 'YYYY-MM-DD', date_format: 'YYYY-MM-DD', time_format: false, hint: 'Defaults to today.' }
+              - { name: 'title', label: 'Title', widget: 'string', required: false, hint: 'Leave blank, the build fills it in.' }
+              - { name: 'author', label: 'Author', widget: 'string', required: false }
