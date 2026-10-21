@@ -4,6 +4,9 @@ import { getAllPosts, type PostMeta } from '@/lib/getPosts';
 import BootSequence from '@/components/v2/BootSequence';
 import TerminalWindow from '@/components/v2/TerminalWindow';
 import Seo from '@/components/Seo';
+import Bookshelf from '@/components/Bookshelf';
+import { getBookshelf } from '@/lib/getBookshelf.ts';
+import type { Book } from '@/lib/bookshelf.ts';
 import { trackProductClick } from '@/lib/analytics';
 
 // GitHub's search API only counts PUBLIC commits, which undercounts heavily
@@ -26,6 +29,7 @@ export async function getStaticProps() {
   return {
     props: {
       posts: getAllPosts(),
+      books: getBookshelf(),
       gh: {
         contributions: CONTRIBUTIONS_FLOOR,
       },
@@ -258,9 +262,11 @@ type GhProps = { contributions: number };
 
 export default function V2Home({
   posts,
+  books,
   gh,
 }: {
   posts: PostMeta[];
+  books: Book[];
   gh: GhProps;
 }) {
   const [booted, setBooted] = useState(false);
@@ -412,6 +418,35 @@ export default function V2Home({
     );
   };
 
+  // ~/bookshelf is a window like the zones, not a post filter: it lists things
+  // to read elsewhere, fed by content/bookshelf.yml rather than by frontmatter.
+  // The homepage shows the newest few; the full shelf with notes is /bookshelf.
+  const BOOKSHELF_HOME_LIMIT = 12;
+  const renderBookshelf = () => {
+    if (books.length === 0) return null;
+    return (
+      <div className="mt-8">
+        <TerminalWindow title="mvolz@intervolz: ~/bookshelf">
+          <p className="text-emerald-400 mb-1">$ ls ~/bookshelf/ --spines</p>
+          <p className="text-zinc-500 text-xs mb-4">
+            {books.length} things read - hover for notes
+          </p>
+          <Bookshelf
+            books={books}
+            limit={BOOKSHELF_HOME_LIMIT}
+            showList={false}
+          />
+          <Link
+            href="/bookshelf"
+            className="mt-4 inline-block text-emerald-400 hover:bg-emerald-500/10 hover:text-emerald-300"
+          >
+            $ cd /bookshelf
+          </Link>
+        </TerminalWindow>
+      </div>
+    );
+  };
+
   const renderAll = () => (
     <div className="mt-8">
       <TerminalWindow title="mvolz@intervolz: ~/all">
@@ -481,6 +516,8 @@ export default function V2Home({
         {SECTIONS.map(renderSection)}
 
         {renderZone('~/play')}
+
+        {renderBookshelf()}
 
         {renderAll()}
 

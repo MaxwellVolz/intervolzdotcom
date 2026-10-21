@@ -105,6 +105,12 @@ describe('parseBookshelf', () => {
 });
 
 describe('toBooks', () => {
+  it('never leans the first book, which has nothing to lean on', () => {
+    // This url's hash leans on its own; at index 0 it must not.
+    const url = 'https://overreacted.io/a-complete-guide-to-useeffect/';
+    assert.equal(spineGeometry(url, 'x').leans, true);
+    assert.equal(toBooks([{ url }])[0].leans, false);
+  });
   it('derives a display title and colours', () => {
     const books = toBooks([{ url: 'https://x.example/p/q', category: 'rust' }]);
     assert.equal(books[0].displayTitle, 'x.example/p');

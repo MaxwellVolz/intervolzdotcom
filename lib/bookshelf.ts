@@ -123,13 +123,17 @@ export function sortEntries<T extends BookshelfEntry>(items: T[]): T[] {
 }
 
 export function toBooks(items: BookshelfEntry[]): Book[] {
-  return sortEntries(items).map((e) => {
+  return sortEntries(items).map((e, i) => {
     const displayTitle = e.title || fallbackTitle(e.url);
+    const geometry = spineGeometry(e.url, displayTitle);
     return {
       ...e,
       displayTitle,
       ...spineColors(e.category),
-      ...spineGeometry(e.url, displayTitle),
+      ...geometry,
+      // Books lean left onto their neighbour. The first book has none, so a
+      // lean there reads as falling off the shelf.
+      leans: i === 0 ? false : geometry.leans,
     };
   });
 }

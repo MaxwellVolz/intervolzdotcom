@@ -121,26 +121,30 @@ export default function Bookshelf({ books, limit, showList = true }: Props) {
           <ul className="space-y-2">
             {shown.map((book) => (
               <li key={book.url}>
-                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                {/* Same shape as the homepage post rows: the date never wraps
+                    away from its title; the title wraps inside its own box. */}
+                <div className="flex items-baseline gap-x-3">
                   <time dateTime={book.added} className="shrink-0 text-zinc-500" title={fmtDateFull(book.added)}>
                     {fmtDateShort(book.added)}
                   </time>
-                  <a
-                    href={book.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-emerald-300 hover:bg-emerald-500/10 hover:text-emerald-200"
-                    onClick={click(book)}
-                  >
-                    {book.displayTitle}
-                    <span className="text-zinc-500 ml-1">↗</span>
-                  </a>
-                  {book.author && <span className="text-zinc-500">by {book.author}</span>}
-                  {book.category && (
-                    <span className="text-xs" style={{ color: book.band }}>
-                      #{book.category}
-                    </span>
-                  )}
+                  <span className="min-w-0 flex-1">
+                    <a
+                      href={book.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-emerald-300 hover:bg-emerald-500/10 hover:text-emerald-200"
+                      onClick={click(book)}
+                    >
+                      {book.displayTitle}
+                      <span className="text-zinc-500 ml-1">↗</span>
+                    </a>
+                    {book.author && <span className="ml-3 text-zinc-500">by {book.author}</span>}
+                    {book.category && (
+                      <span className="ml-3 text-xs" style={{ color: book.band }}>
+                        #{book.category}
+                      </span>
+                    )}
+                  </span>
                 </div>
                 {book.note && <p className="pl-[3.25rem] text-zinc-400">{book.note}</p>}
               </li>

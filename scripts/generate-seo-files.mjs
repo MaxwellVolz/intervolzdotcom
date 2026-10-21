@@ -93,6 +93,12 @@ const urls = [
     priority: '0.3',
     changefreq: 'yearly',
   },
+  // The reading list. Changes whenever something gets shelved.
+  {
+    loc: `${SITE_URL}/bookshelf/`,
+    priority: '0.6',
+    changefreq: 'weekly',
+  },
 ].filter((u) => !EXCLUDED.some((e) => u.loc === `${SITE_URL}${e}`));
 
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
