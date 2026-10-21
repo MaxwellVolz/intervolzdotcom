@@ -1,6 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import {
+  leadingComments,
   cleanTitle,
   extractTitle,
   fetchTitle,
@@ -24,6 +25,12 @@ describe('cleanTitle', () => {
     assert.equal(
       cleanTitle('Rust &amp; Go &#39;quoted&#39;', 'https://x.example'),
       "Rust & Go 'quoted'"
+    );
+  });
+  it('decodes typographic entities', () => {
+    assert.equal(
+      cleanTitle('Why it&rsquo;s hard &mdash; notes &hellip; &ldquo;ok&rdquo;', 'https://x.example'),
+      'Why it’s hard — notes … “ok”'
     );
   });
   it('keeps a suffix that does not match the host', () => {
@@ -51,6 +58,18 @@ describe('extractTitle', () => {
     assert.equal(
       extractTitle('<meta content="OG Title" property="og:title">', 'https://x.example'),
       'OG Title'
+    );
+  });
+  it('keeps an apostrophe inside a double-quoted og:title', () => {
+    assert.equal(
+      extractTitle('<meta property="og:title" content="Do Things that Don\'t Scale">', 'https://x.example'),
+      "Do Things that Don't Scale"
+    );
+  });
+  it('keeps double quotes inside a single-quoted og:title', () => {
+    assert.equal(
+      extractTitle(`<meta content='The "best" post' property='og:title'>`, 'https://x.example'),
+      'The "best" post'
     );
   });
   it('returns empty for a page with no title', () => {
@@ -111,5 +130,14 @@ describe('fillTitles', () => {
     );
     assert.equal(out.filled, 1);
     assert.equal(out.failed, 1);
+  });
+});
+
+describe('leadingComments', () => {
+  it('returns the comment lines at the top of the file, newline-terminated', () => {
+    assert.equal(leadingComments('# a\n# b\nitems:\n  - url: x\n'), '# a\n# b\n');
+  });
+  it('returns empty when the file starts with data', () => {
+    assert.equal(leadingComments('items: []\n'), '');
   });
 });

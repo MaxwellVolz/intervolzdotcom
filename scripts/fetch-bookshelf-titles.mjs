@@ -8,12 +8,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import yaml from 'js-yaml';
-import { fillTitles } from './lib/bookshelf-titles.mjs';
+import { fillTitles, leadingComments } from './lib/bookshelf-titles.mjs';
 
 const FILE = path.join(process.cwd(), 'content/bookshelf.yml');
-const HEADER = `# Reading list. Add an entry with just a url; the build fills in the title.
-# PLACEHOLDER ENTRIES: replace before merging to master.
-`;
 
 if (!fs.existsSync(FILE)) process.exit(0);
 
@@ -29,7 +26,8 @@ if (filled > 0) {
     { items: filledItems },
     { lineWidth: -1, quotingType: "'", forceQuotes: false }
   );
-  fs.writeFileSync(FILE, HEADER + body);
+  // js-yaml drops comments; carry the file's own header over by hand.
+  fs.writeFileSync(FILE, leadingComments(text) + body);
 }
 
 console.log(

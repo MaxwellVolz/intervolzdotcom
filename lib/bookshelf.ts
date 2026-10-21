@@ -94,7 +94,12 @@ export function fallbackTitle(url: string): string {
 }
 
 export function spineColors(category?: string): { fill: string; band: string } {
-  const fam: Family = (category && CATEGORY_FAMILY[category]) || 'zinc';
+  // hasOwn, not a bare lookup: `constructor` is a category name someone could
+  // type, and it must land on zinc rather than on Object.prototype.
+  const fam: Family =
+    category && Object.hasOwn(CATEGORY_FAMILY, category)
+      ? CATEGORY_FAMILY[category]
+      : 'zinc';
   return { ...PALETTE[fam] };
 }
 
@@ -153,7 +158,9 @@ export function parseBookshelf(yamlText: string): BookshelfEntry[] {
     const entry: Record<string, unknown> = {};
     for (const [k, v] of Object.entries(item as Record<string, unknown>)) {
       if (v === '' || v === null || v === undefined) continue;
-      entry[k] = v;
+      // `title: 1984` loads as a number under any schema; every field here is
+      // text, and a numeric displayTitle has no .length, so width went NaN.
+      entry[k] = typeof v === 'number' || typeof v === 'boolean' ? String(v) : v;
     }
     if (typeof entry.url !== 'string' || !entry.url) continue;
     if (typeof entry.added === 'string' && entry.added.length > 10) {

@@ -8,7 +8,28 @@ const ENTITIES = {
   quot: '"',
   apos: "'",
   nbsp: ' ',
+  // Typographic entities WordPress and friends put in titles.
+  rsquo: '\u2019',
+  lsquo: '\u2018',
+  rdquo: '\u201d',
+  ldquo: '\u201c',
+  mdash: '\u2014',
+  ndash: '\u2013',
+  hellip: '\u2026',
+  middot: '\u00b7',
+  copy: '\u00a9',
+  trade: '\u2122',
 };
+
+// The comment lines at the top of the YAML file, so a rewrite keeps them.
+export function leadingComments(text) {
+  const out = [];
+  for (const line of text.split('\n')) {
+    if (!line.startsWith('#')) break;
+    out.push(line);
+  }
+  return out.length ? out.join('\n') + '\n' : '';
+}
 
 function decodeEntities(s) {
   return s
@@ -43,17 +64,20 @@ export function cleanTitle(raw, url) {
 }
 
 function metaContent(html, prop) {
-  // Either attribute order; single or double quotes.
+  // Either attribute order. The value's closing quote is a backreference to
+  // its opening one, so an apostrophe inside a double-quoted title survives.
   const re1 = new RegExp(
-    `<meta[^>]*?(?:property|name)=["']${prop}["'][^>]*?content=["']([^"']*)["']`,
+    `<meta[^>]*?(?:property|name)=(["'])${prop}\\1[^>]*?content=(["'])(.*?)\\2`,
     'i'
   );
   const re2 = new RegExp(
-    `<meta[^>]*?content=["']([^"']*)["'][^>]*?(?:property|name)=["']${prop}["']`,
+    `<meta[^>]*?content=(["'])(.*?)\\1[^>]*?(?:property|name)=(["'])${prop}\\3`,
     'i'
   );
-  const m = html.match(re1) || html.match(re2);
-  return m ? m[1] : '';
+  const m1 = html.match(re1);
+  if (m1) return m1[3];
+  const m2 = html.match(re2);
+  return m2 ? m2[2] : '';
 }
 
 export function extractTitle(html, url) {

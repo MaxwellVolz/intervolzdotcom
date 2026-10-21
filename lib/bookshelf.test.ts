@@ -33,6 +33,12 @@ describe('spineColors', () => {
       band: '#3f3f46',
     });
   });
+  it('falls back to zinc for a prototype property name', () => {
+    assert.deepEqual(spineColors('constructor'), {
+      fill: '#27272a',
+      band: '#3f3f46',
+    });
+  });
   it('falls back to zinc for no category', () => {
     assert.deepEqual(spineColors(undefined), {
       fill: '#27272a',
@@ -95,6 +101,13 @@ describe('parseBookshelf', () => {
   });
   it('loads a Decap-written file identically', () => {
     assert.deepEqual(parseBookshelf(decap), parseBookshelf(hand));
+  });
+  it('coerces numeric and boolean scalars to strings', () => {
+    const [e] = parseBookshelf(
+      'items:\n  - url: https://x.example/p\n    title: 1984\n    note: true\n    author: 42\n'
+    );
+    assert.deepEqual(e, { url: 'https://x.example/p', title: '1984', note: 'true', author: '42' });
+    assert.equal(typeof toBooks([e])[0].width, 'number');
   });
   it('returns an empty list for an empty document', () => {
     assert.deepEqual(parseBookshelf(''), []);
