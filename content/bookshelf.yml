@@ -1,0 +1,21 @@
+# Reading list. Add an entry with just a url; the build fills in the title.
+# PLACEHOLDER ENTRIES: replace before merging to master.
+items:
+  - url: https://paulgraham.com/ds.html
+    note: placeholder entry, replace me
+    category: blog
+    added: 2026-10-21
+  - url: https://overreacted.io/a-complete-guide-to-useeffect/
+    note: placeholder entry, replace me
+    category: react
+    added: 2026-10-20
+  - url: https://jvns.ca/blog/2023/01/04/some-ways-to-get-better-at-debugging/
+    note: placeholder entry, replace me
+    category: howto
+    added: 2026-10-19
+  - url: https://karpathy.github.io/2019/04/25/recipe/
+    note: placeholder entry, replace me
+    category: ml
+    added: 2026-10-18
+  - url: https://www.joelonsoftware.com/2000/04/06/things-you-should-never-do-part-i/
+    added: 2026-10-17
