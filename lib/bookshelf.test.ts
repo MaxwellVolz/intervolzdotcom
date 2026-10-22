@@ -53,20 +53,48 @@ describe('spineColors', () => {
 });
 
 describe('spineGeometry', () => {
-  it('clamps a one-character title to the minimum width plus jitter', () => {
-    const g = spineGeometry('https://a.example', 'x');
-    assert.ok(g.width >= 30 && g.width <= 34, `width ${g.width}`);
+  it('sets a short title in one line on a narrow spine', () => {
+    const g = spineGeometry('https://a.example', 'x'.repeat(17));
+    assert.equal(g.lines, 1);
+    assert.ok(g.width >= 26 && g.width <= 34, `width ${g.width}`);
     assert.ok([0, 1, 2].includes(g.heightVariant));
   });
-  it('clamps a 140-character title to the maximum width plus jitter', () => {
+  it('wraps a middling title to two lines on a wider spine', () => {
+    const g = spineGeometry('https://a.example', 'x'.repeat(18));
+    assert.equal(g.lines, 2);
+    assert.ok(g.width >= 42 && g.width <= 50, `width ${g.width}`);
+  });
+  it('wraps a long title to three lines and never more', () => {
     const g = spineGeometry('https://b.example', 'x'.repeat(140));
-    assert.ok(g.width >= 68 && g.width <= 72, `width ${g.width}`);
+    assert.equal(g.lines, 3);
+    assert.ok(g.width >= 58 && g.width <= 66, `width ${g.width}`);
   });
   it('keeps heightVariant in 0..2 across many urls', () => {
     for (let i = 0; i < 300; i++) {
-      const g = spineGeometry(`https://site${i}.example/post-${i * 7}`, 'title');
-      assert.ok([0, 1, 2].includes(g.heightVariant), `url ${i}: ${g.heightVariant}`);
+      const g = spineGeometry(
+        `https://site${i}.example/post-${i * 7}`,
+        'title'
+      );
+      assert.ok(
+        [0, 1, 2].includes(g.heightVariant),
+        `url ${i}: ${g.heightVariant}`
+      );
     }
+  });
+  it('spreads labelStyle over 0..3 and keeps it in range', () => {
+    const seen = new Set<number>();
+    for (let i = 0; i < 300; i++) {
+      const g = spineGeometry(
+        `https://site${i}.example/post-${i * 7}`,
+        'title'
+      );
+      assert.ok(
+        [0, 1, 2, 3].includes(g.labelStyle),
+        `url ${i}: ${g.labelStyle}`
+      );
+      seen.add(g.labelStyle);
+    }
+    assert.equal(seen.size, 4);
   });
   it('is deterministic for the same inputs', () => {
     assert.deepEqual(
@@ -106,7 +134,12 @@ describe('parseBookshelf', () => {
     const [e] = parseBookshelf(
       'items:\n  - url: https://x.example/p\n    title: 1984\n    note: true\n    author: 42\n'
     );
-    assert.deepEqual(e, { url: 'https://x.example/p', title: '1984', note: 'true', author: '42' });
+    assert.deepEqual(e, {
+      url: 'https://x.example/p',
+      title: '1984',
+      note: 'true',
+      author: '42',
+    });
     assert.equal(typeof toBooks([e])[0].width, 'number');
   });
   it('returns an empty list for an empty document', () => {

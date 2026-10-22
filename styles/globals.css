@@ -25,7 +25,6 @@
    📐 Root Layout
    ======================= */
 
-
 html,
 body,
 #__next {
@@ -35,12 +34,13 @@ body,
   padding: 0;
 }
 
-
 body {
   font-family: system-ui, sans-serif;
   background-color: var(--bg);
   color: var(--fg);
-  transition: background-color 0.3s, color 0.3s;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
 }
 
 @layer base {
@@ -87,7 +87,6 @@ body {
   }
 }
 
-
 pre {
   position: relative;
   padding: 1rem;
@@ -119,12 +118,14 @@ pre:hover .copy-button {
 pre code {
   font-family: monospace;
   font-size: 0.875rem;
-  font-size: .6em !important;
+  font-size: 0.6em !important;
 }
 
 p img {
   border-radius: 0.5rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), 0 1px 6px rgba(0, 0, 0, 0.04);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.08),
+    0 1px 6px rgba(0, 0, 0, 0.04);
 }
 
 /* global.css or tailwind layer */
@@ -133,16 +134,36 @@ p img {
 }
 /* v2 terminal window interactions */
 @keyframes v2-shake {
-  0%, 100% { transform: translateX(0); }
-  10%, 30%, 50%, 70%, 90% { transform: translateX(-6px) rotate(-0.3deg); }
-  20%, 40%, 60%, 80% { transform: translateX(6px) rotate(0.3deg); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-6px) rotate(-0.3deg);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(6px) rotate(0.3deg);
+  }
 }
 .v2-shake {
-  animation: v2-shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+  animation: v2-shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
 }
 @keyframes v2-fold {
-  from { transform: scaleY(1); opacity: 1; }
-  to { transform: scaleY(0); opacity: 0; }
+  from {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+  to {
+    transform: scaleY(0);
+    opacity: 0;
+  }
 }
 .v2-fold {
   animation: v2-fold 0.25s ease-in forwards;
@@ -150,12 +171,24 @@ p img {
 }
 
 @keyframes v2-logo-jitter {
-  0%   { transform: translate(0, 0); }
-  20%  { transform: translate(-1px, 1px); }
-  40%  { transform: translate(1px, -1px); }
-  60%  { transform: translate(-1px, -1px); }
-  80%  { transform: translate(1px, 1px); }
-  100% { transform: translate(0, 0); }
+  0% {
+    transform: translate(0, 0);
+  }
+  20% {
+    transform: translate(-1px, 1px);
+  }
+  40% {
+    transform: translate(1px, -1px);
+  }
+  60% {
+    transform: translate(-1px, -1px);
+  }
+  80% {
+    transform: translate(1px, 1px);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
 }
 .v2-logo-jitter {
   animation: v2-logo-jitter 0.12s steps(1) infinite;
@@ -166,40 +199,66 @@ p img {
    ======================= */
 /* Planks are a repeating background sized to one row, so wrapped rows each get
    a plank with no per-row markup. Values from the design spec; phone first. */
+/* ---- bookshelf ----------------------------------------------------------
+   Spines on planks. The planks are one repeating background on the <ul>,
+   sized to a row, so wrapped rows get a plank without JS knowing where a row
+   ends. Each spine is a flex child whose colour comes in as --fill/--band and
+   whose design (plain, paper label, foil, two-tone) comes in as data-style. */
 .bookshelf {
-  --h0: 140px;
-  --h1: 152px;
-  --h2: 160px;
-  --book-h: 160px; /* = tallest variant */
-  --plank-h: 12px;
-  --shelf-gap: 28px;
+  --h0: 164px;
+  --h1: 180px;
+  --h2: 196px;
+  --book-h: 196px; /* = tallest variant */
+  --plank-h: 14px;
+  --shelf-gap: 34px;
   --below-books: calc(var(--plank-h) + var(--shelf-gap));
   --row-h: calc(var(--book-h) + var(--below-books));
+  --plank-top: var(--book-h);
+  --plank-bot: calc(var(--book-h) + var(--plank-h));
   position: relative;
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
-  column-gap: 2px;
+  column-gap: 1px;
   row-gap: 0;
   list-style: none;
   margin: 0;
-  padding: 0;
-  background: repeating-linear-gradient(
-    to bottom,
-    transparent 0 var(--book-h),
-    #3f3f46 var(--book-h) calc(var(--book-h) + 2px),
-    #27272a calc(var(--book-h) + 2px) calc(var(--book-h) + var(--plank-h)),
-    #09090b calc(var(--book-h) + var(--plank-h))
-      calc(var(--book-h) + var(--plank-h) + 2px),
-    transparent calc(var(--book-h) + var(--plank-h) + 2px) var(--row-h)
-  );
+  padding: 0 10px;
+  border-radius: 4px;
+  background:
+    /* the plank: lit top edge, grained front face, dark underside, then the
+       shadow it throws down the back wall */
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0 var(--plank-top),
+      #63636c var(--plank-top) calc(var(--plank-top) + 1px),
+      #4a4a52 calc(var(--plank-top) + 1px) calc(var(--plank-top) + 2px),
+      #38383f calc(var(--plank-top) + 2px) calc(var(--plank-top) + 3px),
+      #2d2d33 calc(var(--plank-top) + 3px) calc(var(--plank-top) + 5px),
+      #34343b calc(var(--plank-top) + 5px) calc(var(--plank-top) + 6px),
+      #2a2a30 calc(var(--plank-top) + 6px) calc(var(--plank-top) + 9px),
+      #30303a calc(var(--plank-top) + 9px) calc(var(--plank-top) + 10px),
+      #26262c calc(var(--plank-top) + 10px) calc(var(--plank-top) + 12px),
+      #1c1c20 calc(var(--plank-top) + 12px) calc(var(--plank-top) + 13px),
+      #08080a calc(var(--plank-top) + 13px) var(--plank-bot),
+      rgba(0, 0, 0, 0.7) var(--plank-bot),
+      rgba(0, 0, 0, 0) calc(var(--plank-bot) + 18px),
+      transparent calc(var(--plank-bot) + 18px) var(--row-h)
+    ),
+    /* the back wall of the case, a shade lighter than the window */
+      repeating-linear-gradient(
+        to bottom,
+        #141418 0,
+        #0f0f12 var(--plank-top),
+        #0f0f12 var(--row-h)
+      );
 }
 @media (min-width: 640px) {
   .bookshelf {
-    --h0: 168px;
-    --h1: 184px;
-    --h2: 196px;
-    --book-h: 196px;
+    --h0: 192px;
+    --h1: 208px;
+    --h2: 224px;
+    --book-h: 224px;
   }
 }
 .bookshelf > li {
@@ -208,69 +267,282 @@ p img {
   height: var(--row-h);
   padding-bottom: var(--below-books);
 }
+
+/* ---- one spine ---- */
 .spine {
+  --rule: var(--band);
   position: relative;
   display: block;
+  box-sizing: border-box;
   writing-mode: vertical-rl;
-  font: 500 12px/1 'Roboto Mono', monospace;
-  color: rgba(228, 228, 231, 0.9);
-  padding: 10px 0;
+  font:
+    500 12px/1.25 'Roboto Mono',
+    monospace;
+  color: rgba(244, 244, 245, 0.92);
+  -webkit-font-smoothing: antialiased;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
+  padding: 26px 0 22px;
   text-align: center;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  border-right: 1px solid rgba(255, 255, 255, 0.06);
   text-decoration: none;
+  border-radius: 2px 2px 1px 1px;
+  background-color: var(--fill);
+  background-image:
+    /* head and tail rules in the paired band colour */
+    linear-gradient(var(--rule), var(--rule)),
+    linear-gradient(var(--rule), var(--rule)),
+    /* cloth weave */
+      repeating-linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.035) 0 1px,
+        transparent 1px 3px
+      ),
+    /* the spine is a cylinder: lit on the left, falling off to the right */
+      linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0.16),
+        rgba(255, 255, 255, 0.05) 22%,
+        rgba(0, 0, 0, 0) 52%,
+        rgba(0, 0, 0, 0.26) 86%,
+        rgba(0, 0, 0, 0.48)
+      );
+  background-repeat: no-repeat, no-repeat, repeat, no-repeat;
+  background-size:
+    100% 1px,
+    100% 1px,
+    100% 3px,
+    100% 100%;
+  background-position:
+    0 20px,
+    0 calc(100% - 18px),
+    0 0,
+    0 0;
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.12),
+    inset -1px 0 0 rgba(0, 0, 0, 0.5),
+    inset 5px 0 6px -4px rgba(0, 0, 0, 0.55),
+    0 2px 2px rgba(0, 0, 0, 0.6);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    filter 0.15s ease;
 }
-.spine__label {
-  display: block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  height: 100%;
-}
-/* Publisher bands: one line near each end in the paired band colour. */
-.spine::before,
-.spine::after {
+/* The page block, seen from a little above: the boards overhang it. */
+.spine::before {
   content: '';
+  position: absolute;
+  top: 0;
+  left: 3px;
+  right: 3px;
+  height: 6px;
+  border-radius: 1px;
+  background: linear-gradient(to right, #a89f85, #d6cdb3 45%, #b3aa90);
+  box-shadow:
+    inset 0 -1px 0 rgba(0, 0, 0, 0.35),
+    0 1px 1px rgba(0, 0, 0, 0.45);
+}
+/* Publisher's mark at the foot. */
+.spine::after {
+  content: '\25C6';
   position: absolute;
   left: 0;
   right: 0;
-  height: 1px;
-  background: var(--band);
+  bottom: 8px;
+  writing-mode: horizontal-tb;
+  font-size: 7px;
+  line-height: 1;
+  text-align: center;
+  text-shadow: none;
+  color: color-mix(in srgb, var(--band), #fff 40%);
 }
-.spine::before {
-  top: 14px;
+.spine__label {
+  /* In vertical-rl a wrapped line is a new column to the left, so a wide
+     spine carries two or three lines down it the way a real one does. The
+     clamp adds the ellipsis on the last one. */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--lines, 1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  overflow-wrap: anywhere;
+  height: 100%;
 }
-.spine::after {
-  bottom: 14px;
+
+/* 1: a paper label pasted on the spine, title reading from the head */
+.spine[data-style='1'] {
+  text-align: start;
 }
-.spine:hover {
+.spine[data-style='1'] .spine__label {
+  height: auto;
+  max-height: 100%;
+  box-sizing: border-box;
+  padding: 8px 2px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.14),
+    0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+/* 2: gilt lettering between double foil rules */
+.spine[data-style='2'] {
+  --rule: rgba(229, 201, 122, 0.8);
+  color: #e6ca7d;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 1px rgba(0, 0, 0, 0.9),
+    0 1px 0 rgba(0, 0, 0, 0.5);
+  background-image:
+    linear-gradient(
+      var(--rule) 0 1px,
+      transparent 1px 4px,
+      var(--rule) 4px 5px
+    ),
+    linear-gradient(
+      var(--rule) 0 1px,
+      transparent 1px 4px,
+      var(--rule) 4px 5px
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.035) 0 1px,
+      transparent 1px 3px
+    ),
+    linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.16),
+      rgba(255, 255, 255, 0.05) 22%,
+      rgba(0, 0, 0, 0) 52%,
+      rgba(0, 0, 0, 0.26) 86%,
+      rgba(0, 0, 0, 0.48)
+    );
+  background-size:
+    100% 5px,
+    100% 5px,
+    100% 3px,
+    100% 100%;
+  background-position:
+    0 18px,
+    0 calc(100% - 16px),
+    0 0,
+    0 0;
+}
+.spine[data-style='2']::after {
+  color: #e6ca7d;
+}
+
+/* 3: two-tone, a contrasting block at the head and the title below it */
+.spine[data-style='3'] {
+  --rule: rgba(255, 255, 255, 0.18);
+  text-align: start;
+  padding-top: 56px;
+  background-image:
+    linear-gradient(var(--rule), var(--rule)),
+    linear-gradient(var(--band), var(--band)),
+    repeating-linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.035) 0 1px,
+      transparent 1px 3px
+    ),
+    linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.16),
+      rgba(255, 255, 255, 0.05) 22%,
+      rgba(0, 0, 0, 0) 52%,
+      rgba(0, 0, 0, 0.26) 86%,
+      rgba(0, 0, 0, 0.48)
+    );
+  background-repeat: no-repeat, no-repeat, repeat, no-repeat;
+  background-size:
+    100% 1px,
+    100% 46px,
+    100% 3px,
+    100% 100%;
+  background-position:
+    0 46px,
+    0 0,
+    0 0,
+    0 0;
+}
+
+/* lean, hover, focus. The lean pivots on the bottom-left corner so the top
+   swings left onto the neighbour; the margin is the room that swing needs
+   (sin 6deg * height). The hover lives on the <li>, which does not move: a
+   hover on the lifting <a> drops out under a cursor near its foot and
+   flickers. */
+.spine--lean {
+  transform: rotate(-6deg);
+  transform-origin: bottom left;
+  margin-left: calc(var(--book-h) * 0.105);
   background-image: linear-gradient(
-    rgba(52, 211, 153, 0.12),
-    rgba(52, 211, 153, 0.12)
+    to right,
+    rgba(255, 255, 255, 0.16),
+    rgba(255, 255, 255, 0.05) 22%,
+    rgba(0, 0, 0, 0) 52%,
+    rgba(0, 0, 0, 0.26) 86%,
+    rgba(0, 0, 0, 0.48)
   );
+  background-size: 100% 100%;
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.12),
+    inset -1px 0 0 rgba(0, 0, 0, 0.5),
+    -4px 2px 6px rgba(0, 0, 0, 0.55),
+    0 2px 2px rgba(0, 0, 0, 0.6);
+}
+.bookshelf > li:hover > .spine,
+.spine:focus-visible {
+  transform: translateY(-7px);
+  filter: brightness(1.14);
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.14),
+    inset -1px 0 0 rgba(0, 0, 0, 0.5),
+    3px 0 6px -1px rgba(0, 0, 0, 0.7),
+    0 10px 10px -4px rgba(0, 0, 0, 0.75);
+}
+.bookshelf > li:hover > .spine--lean,
+.spine--lean:focus-visible {
+  transform: rotate(-6deg) translateY(-7px);
 }
 .spine:focus-visible {
   outline: 2px solid #34d399;
-  outline-offset: 1px;
+  outline-offset: 2px;
 }
-.spine--lean {
-  transform: rotate(-6deg);
-  transform-origin: bottom right;
-  margin-left: 6px;
+@media (prefers-reduced-motion: reduce) {
+  .spine {
+    transition: none;
+  }
 }
+
+/* the bookend: an L of brushed metal, foot tucked under the last book */
 .bookshelf__end {
-  width: 6px;
-  margin-left: 4px;
+  position: relative;
+  width: 8px;
+  margin-left: 6px;
 }
 .bookshelf__end::after {
   content: '';
   display: block;
-  width: 6px;
-  height: var(--h1);
-  background: #52525b;
+  width: 7px;
+  height: calc(var(--h1) - 16px);
+  border-radius: 2px 2px 0 0;
+  background: linear-gradient(to right, #8b8b94, #5b5b63 40%, #3f3f46);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    2px 0 3px rgba(0, 0, 0, 0.6);
 }
+.bookshelf__end::before {
+  content: '';
+  position: absolute;
+  right: 1px;
+  bottom: var(--below-books);
+  width: 30px;
+  height: 3px;
+  border-radius: 1px 0 0 0;
+  background: linear-gradient(to right, #6b6b73, #8b8b94);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.6);
+}
+
 .bookshelf > li.bookshelf__tip {
   display: block;
   height: auto;

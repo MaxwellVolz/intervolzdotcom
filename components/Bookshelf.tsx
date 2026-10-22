@@ -1,4 +1,10 @@
-import { useRef, useState, type CSSProperties, type FocusEvent, type MouseEvent } from 'react';
+import {
+  useRef,
+  useState,
+  type CSSProperties,
+  type FocusEvent,
+  type MouseEvent,
+} from 'react';
 import type { Book } from '@/lib/bookshelf.ts';
 import { trackProductClick } from '@/lib/analytics';
 
@@ -16,8 +22,18 @@ const CARD_WIDTH = 320; // keep in sync with the tooltip's max width below
 const CARD_ROOM = 96; // px of shelf above a spine before the card goes above it
 
 const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
 ];
 
 function fmtDateFull(iso?: string) {
@@ -32,7 +48,9 @@ function fmtDateShort(iso?: string) {
 }
 
 function ariaLabel(book: Book) {
-  return book.author ? `${book.displayTitle} by ${book.author}` : book.displayTitle;
+  return book.author
+    ? `${book.displayTitle} by ${book.author}`
+    : book.displayTitle;
 }
 
 // Spines on planks, then the same books as a list. The shelves are the
@@ -64,12 +82,18 @@ export default function Bookshelf({ books, limit, showList = true }: Props) {
     setTip({ book, left, top: above ? spineTop - 8 : 0, above });
   };
 
-  const onEnter = (book: Book) => (e: MouseEvent<HTMLElement>) => show(book, e.currentTarget);
-  const onFocus = (book: Book) => (e: FocusEvent<HTMLElement>) => show(book, e.currentTarget);
+  const onEnter = (book: Book) => (e: MouseEvent<HTMLElement>) =>
+    show(book, e.currentTarget);
+  const onFocus = (book: Book) => (e: FocusEvent<HTMLElement>) =>
+    show(book, e.currentTarget);
   const hide = () => setTip(null);
 
   const click = (book: Book) => () =>
-    trackProductClick({ product: book.displayTitle, zone: '~/bookshelf', url: book.url });
+    trackProductClick({
+      product: book.displayTitle,
+      zone: '~/bookshelf',
+      url: book.url,
+    });
 
   return (
     <div>
@@ -82,11 +106,13 @@ export default function Bookshelf({ books, limit, showList = true }: Props) {
               rel="noopener noreferrer"
               aria-label={ariaLabel(book)}
               className={`spine${book.leans ? ' spine--lean' : ''}`}
+              data-style={book.labelStyle}
               style={
                 {
                   width: book.width,
                   height: `var(--h${book.heightVariant})`,
-                  backgroundColor: book.fill,
+                  '--lines': book.lines,
+                  '--fill': book.fill,
                   '--band': book.band,
                 } as CSSProperties
               }
@@ -111,13 +137,19 @@ export default function Bookshelf({ books, limit, showList = true }: Props) {
               transform: tip.above ? 'translateY(-100%)' : undefined,
             }}
           >
-            <span className="block text-emerald-300">{tip.book.displayTitle}</span>
+            <span className="block text-emerald-300">
+              {tip.book.displayTitle}
+            </span>
             {(tip.book.author || tip.book.added) && (
               <span className="block text-zinc-500">
-                {[tip.book.author, fmtDateFull(tip.book.added)].filter(Boolean).join(' · ')}
+                {[tip.book.author, fmtDateFull(tip.book.added)]
+                  .filter(Boolean)
+                  .join(' · ')}
               </span>
             )}
-            {tip.book.note && <span className="block text-zinc-300">{tip.book.note}</span>}
+            {tip.book.note && (
+              <span className="block text-zinc-300">{tip.book.note}</span>
+            )}
           </li>
         )}
       </ul>
@@ -131,7 +163,11 @@ export default function Bookshelf({ books, limit, showList = true }: Props) {
                 {/* Same shape as the homepage post rows: the date never wraps
                     away from its title; the title wraps inside its own box. */}
                 <div className="flex items-baseline gap-x-3">
-                  <time dateTime={book.added} className="shrink-0 text-zinc-500" title={fmtDateFull(book.added)}>
+                  <time
+                    dateTime={book.added}
+                    className="shrink-0 text-zinc-500"
+                    title={fmtDateFull(book.added)}
+                  >
                     {fmtDateShort(book.added)}
                   </time>
                   <span className="min-w-0 flex-1">
@@ -145,15 +181,24 @@ export default function Bookshelf({ books, limit, showList = true }: Props) {
                       {book.displayTitle}
                       <span className="text-zinc-500 ml-1">↗</span>
                     </a>
-                    {book.author && <span className="ml-3 text-zinc-500">by {book.author}</span>}
+                    {book.author && (
+                      <span className="ml-3 text-zinc-500">
+                        by {book.author}
+                      </span>
+                    )}
                     {book.category && (
-                      <span className="ml-3 text-xs" style={{ color: book.band }}>
+                      <span
+                        className="ml-3 text-xs"
+                        style={{ color: book.band }}
+                      >
                         #{book.category}
                       </span>
                     )}
                   </span>
                 </div>
-                {book.note && <p className="pl-[3.25rem] text-zinc-400">{book.note}</p>}
+                {book.note && (
+                  <p className="pl-[3.25rem] text-zinc-400">{book.note}</p>
+                )}
               </li>
             ))}
           </ul>

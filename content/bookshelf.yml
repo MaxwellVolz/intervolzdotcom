@@ -1,25 +1,41 @@
 # Reading list. Add an entry with just a url; the build fills in the title.
-# PLACEHOLDER ENTRIES: replace before merging to master.
 items:
-  - url: https://paulgraham.com/ds.html
-    note: placeholder entry, replace me
-    category: blog
-    added: '2026-10-21'
-    title: Do Things that Don't Scale
-  - url: https://overreacted.io/a-complete-guide-to-useeffect/
-    note: placeholder entry, replace me
-    category: react
-    added: '2026-10-20'
-    title: A Complete Guide to useEffect
-  - url: https://jvns.ca/blog/2023/01/04/some-ways-to-get-better-at-debugging/
-    note: placeholder entry, replace me
+  - url: https://maurycyz.com/projects/mcufont/
+    note: Extremely amazing and cool font
+    category: art
+    added: '2026-10-22'
+    title: 5x5 Pixel font for tiny screens
+  - url: https://www.bloodinthemachine.com/p/with-the-backlash-to-data-centers
+    note: We need power but we don't want power plants...
+    category: rant
+    added: '2026-10-22'
+    title: The backlash to data centers
+    author: Brian Merchant
+  - url: https://lws.io/blog/my-local-model-setup/
+    note: Real working local first guide to LLMs
+    category: llm
+    added: '2026-10-22'
+    title: My local model setup on an M4 Pro Mac mini
+  - url: https://mmoustafa.com/blog/so-you-want-to-use-openrouter/
+    note: Openrouter isn't as dope as it sounds...
+    category: ai
+    added: '2026-10-22'
+    title: So you want to use OpenRouter?
+    author: Mo Moustafa
+  - url: https://john.hartnup.uk/2026/06/07/ai-event-posters.html
+    note: Tips for an AI artist
+    category: art
+    added: '2026-10-22'
+    title: AI-generated posters don’t have to be horrible
+    author: John Hartnup
+  - url: https://crystl.dev/guides/tmux-for-ai-agents/
+    note: Trying to learn tmux for the 10th time this decade!
     category: howto
-    added: '2026-10-19'
-  - url: https://karpathy.github.io/2019/04/25/recipe/
-    note: placeholder entry, replace me
-    category: ml
-    added: '2026-10-18'
-    title: A Recipe for Training Neural Networks
-  - url: https://www.joelonsoftware.com/2000/04/06/things-you-should-never-do-part-i/
-    added: '2026-10-17'
-    title: Things You Should Never Do, Part I
+    added: '2026-10-22'
+    title: 'tmux + Claude Code: Sessions, send-keys, and the Ceiling'
+  - url: https://brianroemmele.substack.com/p/how-the-cia-gave-steve-jobs-a-top
+    note: A Silicon Valley conspiracy, how rare lol. Good read though
+    category: blog
+    added: '2026-10-22'
+    title: How the CIA gave Steve Jobs a Top Secret clearance
+    author: Brian Roemmele

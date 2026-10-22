@@ -17,9 +17,18 @@ export type Book = BookshelfEntry & {
   fill: string;
   band: string;
   heightVariant: 0 | 1 | 2;
+  /** Which spine design the CSS draws: 0 plain, 1 paper label, 2 foil, 3 two-tone. */
+  labelStyle: 0 | 1 | 2 | 3;
+  /** How many lines the title runs down the spine; the CSS clamps to this. */
+  lines: 1 | 2 | 3;
   width: number;
   leans: boolean;
 };
+
+// Roughly how many 12px monospace glyphs fit down a spine between the caps.
+const CHARS_PER_LINE = 17;
+const LINE_WIDTH = 16;
+const SPINE_MIN = 26;
 
 export const HEIGHTS_DESKTOP = [168, 184, 196] as const;
 export const HEIGHTS_PHONE = [140, 152, 160] as const;
@@ -106,12 +115,17 @@ export function spineColors(category?: string): { fill: string; band: string } {
 export function spineGeometry(
   url: string,
   title: string
-): Pick<Book, 'heightVariant' | 'width' | 'leans'> {
+): Pick<Book, 'heightVariant' | 'labelStyle' | 'lines' | 'width' | 'leans'> {
   const hash = hashString(url);
-  const base = Math.round(Math.min(68, Math.max(30, 22 + title.length * 0.9)));
+  const lines = Math.min(
+    3,
+    Math.max(1, Math.ceil(title.length / CHARS_PER_LINE))
+  ) as 1 | 2 | 3;
   return {
-    width: base + (hash % 5),
+    lines,
+    width: SPINE_MIN + (lines - 1) * LINE_WIDTH + (hash % 9),
     heightVariant: ((hash >>> 3) % 3) as 0 | 1 | 2,
+    labelStyle: ((hash >>> 9) % 4) as 0 | 1 | 2 | 3,
     leans: (hash >>> 6) % 6 === 0,
   };
 }
@@ -160,7 +174,8 @@ export function parseBookshelf(yamlText: string): BookshelfEntry[] {
       if (v === '' || v === null || v === undefined) continue;
       // `title: 1984` loads as a number under any schema; every field here is
       // text, and a numeric displayTitle has no .length, so width went NaN.
-      entry[k] = typeof v === 'number' || typeof v === 'boolean' ? String(v) : v;
+      entry[k] =
+        typeof v === 'number' || typeof v === 'boolean' ? String(v) : v;
     }
     if (typeof entry.url !== 'string' || !entry.url) continue;
     if (typeof entry.added === 'string' && entry.added.length > 10) {
